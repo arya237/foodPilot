@@ -37,6 +37,19 @@ func (fdb *FakeDb) GetUserById(id int) (*models.User, error) {
 	return fdb.Users[id], nil
 }
 
+func (fdb *FakeDb) GetAllUsers() ([]*models.User, error) {
+	var users []*models.User
+	for _, user := range fdb.Users {
+		users = append(users, user)
+	}
+	
+	if len(users) == 0 {
+		return nil,repositories.ErrorNoUser
+	}
+
+	return users,nil
+}
+
 func (fdb *FakeDb) DeleteUser(id int) error {
 	if _, find := fdb.Users[id]; !find {
 		return repositories.ErrorInvalidID
