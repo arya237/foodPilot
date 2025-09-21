@@ -2,19 +2,19 @@ package main
 
 import (
 	"fmt"
+	"github.com/arya237/foodPilot/pkg"
+	samad "github.com/arya237/foodPilot/pkg/samad"
 	"log"
 	"time"
-	// "github.com/arya237/foodPilot/pkg"
-	samad "github.com/arya237/foodPilot/pkg/samad"
 )
 
-func main(){
+func main() {
 	var model samad.Samad
 	token, err := model.GetAccessToken("40112358043", "arya1383")
 
-	if err != nil{
+	if err != nil {
 		log.Println(err)
-		return 
+		return
 	}
 
 	fmt.Println(token)
@@ -30,17 +30,17 @@ func main(){
 
 	listFood, err := model.GetFoodProgram(token, t)
 
-	if err != nil{
+	if err != nil {
 		log.Println(err)
-		return 
+		return
 	}
 
 	fmt.Println(listFood)
 
-	// res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
-	// if err != nil{
-	// 	log.Println(err)
-	// 	return 
-	// }
-	// fmt.Println(res)
+	res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println(res)
 }

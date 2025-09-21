@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7a516f4-8104-430e-9eb1-e4ecde93d252" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/requiredFunctions.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/requiredFunctions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/samad/samad.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/samad/samad.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/samad_service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/samad_service/service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
