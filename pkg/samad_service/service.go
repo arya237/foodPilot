@@ -6,7 +6,7 @@ import (
 	"github.com/arya237/foodPilot/pkg"
 )
 
-func SeperateLunchsDinners(ProgramWeekFoodList []interface{}) pkg.WeekFood {
+func CreateWeekFood(ProgramWeekFoodList []interface{}) pkg.WeekFood {
 
 	Week := pkg.WeekFood{
 		DailyFood: make(map[string]map[string][]pkg.ReserveModel),

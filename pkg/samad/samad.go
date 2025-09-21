@@ -11,10 +11,8 @@ import (
 	"strings"
 	"time"
 
-	service "github.com/arya237/foodPilot/pkg/samad_service"
 	pkg "github.com/arya237/foodPilot/pkg"
-
-	
+	service "github.com/arya237/foodPilot/pkg/samad_service"
 )
 
 type TokenResponse struct {
@@ -96,7 +94,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", `Bearer ` + token)
+	req.Header.Set("Authorization", `Bearer `+token)
 
 	client := &http.Client{}
 
@@ -113,9 +111,8 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood
 		return nil, err
 	}
 
-	
 	var income map[string]any
-	
+
 	err = json.Unmarshal(datas, &income)
 	if err != nil {
 		log.Println("line 114: ", err.Error())
@@ -125,17 +122,17 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood
 	tmp, _ := income["payload"].(map[string]interface{})
 	ProgramWeekFoodList := tmp["selfWeekPrograms"].([]interface{})
 
-	weekFood := service.SeperateLunchsDinners(ProgramWeekFoodList)
+	weekFood := service.CreateWeekFood(ProgramWeekFoodList)
 
 	return &weekFood, nil
 }
 
-func (s *Samad) ReserveFood(token string, meal pkg.ReserveModel) (string, error){
+func (s *Samad) ReserveFood(token string, meal pkg.ReserveModel) (string, error) {
 
 	url := fmt.Sprintf(ReserveUrl, meal.ProgramId)
 
 	body := fmt.Sprintf(`{"foodTypeId":%s,"mealTypeId":%s,"selectedCount":1,"freeFoodSelected":false,"selected":true}`,
-			meal.FoodTypeId, meal.MealTypeId)
+		meal.FoodTypeId, meal.MealTypeId)
 
 	req, err := http.NewRequest("PUT", url, bytes.NewBufferString(body))
 
@@ -159,7 +156,7 @@ func (s *Samad) ReserveFood(token string, meal pkg.ReserveModel) (string, error)
 	datas, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("line 150: ",err.Error())
+		log.Println("line 150: ", err.Error())
 		return "", err
 	}
 
