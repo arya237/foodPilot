@@ -1,6 +1,9 @@
-package services
+package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/arya237/foodPilot/internal/handler/auth"
+	"github.com/gin-gonic/gin"
+)
 
 func New() *gin.Engine {
 	r := gin.Default()
@@ -9,5 +12,5 @@ func New() *gin.Engine {
 }
 
 func setup(r *gin.Engine) {
-	
+	auth.RegisterRoutes(r.Group("/auth"))
 }

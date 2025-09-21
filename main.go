@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/arya237/foodPilot/internal/handler"
+)
+
 
 func main(){
-	fmt.Println("I am alive")
+	server := handler.New()
+
+	if err := server.Run(":8080"); err != nil {
+		log.Println(err)
+	}
+	
 }
