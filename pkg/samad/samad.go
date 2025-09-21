@@ -1,16 +1,20 @@
 package pkg
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/arya237/foodPilot/pkg"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-	"bytes"
+
+	service "github.com/arya237/foodPilot/pkg/samad_service"
+	pkg "github.com/arya237/foodPilot/pkg"
+
+	
 )
 
 type TokenResponse struct {
@@ -76,7 +80,7 @@ func (s *Samad) GetAccessToken(studentNumber string, password string) (string, e
 	return tokenResp.AccessToken, nil
 }
 
-func (s *Samad) GetFoodProgram(token string, startDate time.Time) ([]interface{}, error) {
+func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood, error) {
 	baseURL := GetProgramUrl
 	params := url.Values{}
 
@@ -117,13 +121,13 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) ([]interface{}
 		log.Println("line 114: ", err.Error())
 		return nil, err
 	}
-	
-	fmt.Println(income)
-	
+
 	tmp, _ := income["payload"].(map[string]interface{})
 	ProgramWeekFoodList := tmp["selfWeekPrograms"].([]interface{})
 
-	return ProgramWeekFoodList, nil
+	weekFood := service.SeperateLunchsDinners(ProgramWeekFoodList)
+
+	return &weekFood, nil
 }
 
 func (s *Samad) ReserveFood(token string, meal pkg.ReserveModel) (string, error){

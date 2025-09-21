@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"github.com/arya237/foodPilot/pkg"
+	// "github.com/arya237/foodPilot/pkg"
 	samad "github.com/arya237/foodPilot/pkg/samad"
 )
 
@@ -35,12 +35,12 @@ func main(){
 		return 
 	}
 
-	fmt.Println(listFood...)
+	fmt.Println(listFood)
 
-	res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
-	if err != nil{
-		log.Println(err)
-		return 
-	}
-	fmt.Println(res)
+	// res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
+	// if err != nil{
+	// 	log.Println(err)
+	// 	return 
+	// }
+	// fmt.Println(res)
 }
