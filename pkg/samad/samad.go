@@ -13,5 +13,5 @@ func NewSamad(rf pkg.RequiredFunctions) *Samad {
 }
 
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
-
+	return "", nil
 }
