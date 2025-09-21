@@ -1,6 +1,6 @@
 package models
 
-type food struct {
-	id   int
-	name int
+type Food struct {
+	Id   int
+	Name int
 }
