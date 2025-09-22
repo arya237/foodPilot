@@ -22,7 +22,7 @@ func main() {
 	}
 
 	
-	token, err := model.GetAccessToken("40112358043", "arya1383")
+	token, err := model.GetAccessToken("40112358043", "")
 	if err != nil {
 		log.Println(err)
 		return
@@ -54,4 +54,11 @@ func main() {
 		return
 	}
 	fmt.Println(res)
+  
+  server := handler.New()
+
+	if err := server.Run(":8080"); err != nil {
+		log.Println(err)
+	}
 }
+
