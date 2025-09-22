@@ -31,8 +31,8 @@ func TestSomething(t *testing.T) {
 
 	meal := pkg.ReserveModel{
 		ProgramId:  "prog1",
-		FoodName:   "Pizza",
 		FoodTypeId: "1",
+		FoodName:   "pizza",
 		MealTypeId: "lunch",
 	}
 
