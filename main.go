@@ -1,14 +1,16 @@
 package main
 
 import (
+	"log"
 
-	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/internal/handler"
 )
 
+
 func main(){
-	log := logger.New("main logger")
-	log.Info("I am alive", logger.Field{
-		Key: "key",
-		Value: "Value",
-	})
+	server := handler.New()
+
+	if err := server.Run(":8080"); err != nil {
+		log.Println(err)
+	}
 }
