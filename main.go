@@ -7,8 +7,8 @@ import (
 
 	"github.com/arya237/foodPilot/internal/config"
 	"github.com/arya237/foodPilot/internal/handler"
-	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
-	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
+	"github.com/arya237/foodPilot/pkg/reservations"
+	samad "github.com/arya237/foodPilot/pkg/reservations/samad"
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 
 	fmt.Println(listFood)
 
-	res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
+	res, err := model.ReserveFood(token, reservations.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
 	if err != nil {
 		log.Println(err)
 		return

@@ -3,7 +3,7 @@ package pkg
 import (
 	"testing"
 
-	samad "github.com/arya237/foodPilot/pkg/food_reserve"
+	"github.com/arya237/foodPilot/pkg/reservations"
 )
 
 func TestSomething(t *testing.T) {
@@ -14,12 +14,12 @@ func TestSomething(t *testing.T) {
 		if studentNumber == "12345" && password == "pass" {
 			return "valid-token", nil
 		}
-		return "", samad.ErorrInvalidToken // note: typo in your var name
+		return "", reservations.ErorrInvalidToken // note: typo in your var name
 	})
 
-	mock.SetReserveFood(func(token string, meal samad.ReserveModel) (string, error) {
+	mock.SetReserveFood(func(token string, meal reservations.ReserveModel) (string, error) {
 		if token != "valid-token" {
-			return "", samad.ErorrInvalidToken
+			return "", reservations.ErorrInvalidToken
 		}
 		return "reservation-success", nil
 	})
@@ -30,7 +30,7 @@ func TestSomething(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	meal := samad.ReserveModel{
+	meal := reservations.ReserveModel{
 		ProgramId:  "prog1",
 		FoodTypeId: "1",
 		FoodName:   "pizza",

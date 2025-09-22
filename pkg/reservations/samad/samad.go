@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	food "github.com/arya237/foodPilot/pkg/food_reserve"
+	"github.com/arya237/foodPilot/pkg/reservations"
 
 )
 
@@ -23,7 +23,7 @@ type Samad struct {
 	Config
 }
 
-func NewSamad(conf Config) food.RequiredFunctions {
+func NewSamad(conf Config) reservations.RequiredFunctions {
 	return &Samad{Config: conf}
 }
 
@@ -78,7 +78,7 @@ func (s Samad) GetAccessToken(studentNumber string, password string) (string, er
 	return tokenResp.AccessToken, nil
 }
 
-func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*food.WeekFood, error) {
+func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations.WeekFood, error) {
 	baseURL := s.GetProgramUrl
 	params := url.Values{}
 
@@ -127,7 +127,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*food.WeekFoo
 	return &weekFood, nil
 }
 
-func (s *Samad) ReserveFood(token string, meal food.ReserveModel) (string, error) {
+func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (string, error) {
 
 	url := fmt.Sprintf(s.ReserveUrl, meal.ProgramId)
 

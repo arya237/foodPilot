@@ -1,4 +1,4 @@
-package samad
+package reservations
 
 
 type ReserveModel struct {

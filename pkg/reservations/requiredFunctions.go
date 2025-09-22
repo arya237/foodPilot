@@ -1,4 +1,4 @@
-package samad
+package reservations
 
 import "time"
 
