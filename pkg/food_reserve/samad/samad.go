@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	pkg "github.com/arya237/foodPilot/pkg"
-	service "github.com/arya237/foodPilot/pkg/samad_service"
+	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
+	service "github.com/arya237/foodPilot/pkg/food_reserve/samad_service"
 )
 
 type TokenResponse struct {

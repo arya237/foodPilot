@@ -3,7 +3,7 @@ package pkg
 import (
 	"strconv"
 
-	"github.com/arya237/foodPilot/pkg"
+	"github.com/arya237/foodPilot/pkg/food_reserve"
 )
 
 func CreateWeekFood(ProgramWeekFoodList []interface{}) pkg.WeekFood {

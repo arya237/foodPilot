@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/arya237/foodPilot/pkg"
-	samad "github.com/arya237/foodPilot/pkg/samad"
+	"github.com/arya237/foodPilot/pkg/food_reserve"
+	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
 	"log"
 	"time"
 )
