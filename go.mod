@@ -42,4 +42,7 @@ require (
 	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
+
+	github.com/joho/godotenv v1.5.1
+	github.com/rs/zerolog v1.34.0
 )

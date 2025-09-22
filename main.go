@@ -13,5 +13,4 @@ func main(){
 	if err := server.Run(":8080"); err != nil {
 		log.Println(err)
 	}
-	
 }
