@@ -1,7 +1,14 @@
 package main
 
-import "fmt"
+import (
+
+	"github.com/arya237/foodPilot/pkg/logger"
+)
 
 func main(){
-	fmt.Println("I am alive")
+	log := logger.New("main logger")
+	log.Info("I am alive", logger.Field{
+		Key: "key",
+		Value: "Value",
+	})
 }
