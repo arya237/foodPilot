@@ -1,4 +1,4 @@
-package pkg
+package samad
 
 
 type ReserveModel struct {
@@ -9,5 +9,5 @@ type ReserveModel struct {
 }
 
 type WeekFood struct{
-	DailyFood map[string]map[string][]ReserveModel
+	DailyFood map[Weekday]map[Meal][]ReserveModel
 }

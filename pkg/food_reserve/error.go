@@ -1,4 +1,4 @@
-package pkg
+package samad
 
 import "errors"
 

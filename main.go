@@ -2,16 +2,27 @@ package main
 
 import (
 	"fmt"
-	"github.com/arya237/foodPilot/pkg/food_reserve"
-	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
 	"log"
 	"time"
+
+	"github.com/arya237/foodPilot/internal/config"
+	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
+	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
 )
 
 func main() {
-	var model samad.Samad
-	token, err := model.GetAccessToken("40112358043", "arya1383")
 
+	
+	conf, err := config.New()
+	log.Print("kir")
+	model := samad.NewSamad(*conf.SamadConfig)
+	
+	if err != nil{
+		return
+	}
+
+	
+	token, err := model.GetAccessToken("40112358043", "arya1383")
 	if err != nil {
 		log.Println(err)
 		return

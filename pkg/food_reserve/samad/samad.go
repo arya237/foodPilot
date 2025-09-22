@@ -1,4 +1,4 @@
-package pkg
+package samad
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
-	service "github.com/arya237/foodPilot/pkg/food_reserve/samad_service"
+	food "github.com/arya237/foodPilot/pkg/food_reserve"
+
 )
 
 type TokenResponse struct {
@@ -20,16 +20,16 @@ type TokenResponse struct {
 }
 
 type Samad struct {
-	rf pkg.RequiredFunctions
+	Config
 }
 
-func NewSamad(rf pkg.RequiredFunctions) *Samad {
-	return &Samad{rf: rf}
+func NewSamad(conf Config) food.RequiredFunctions {
+	return &Samad{Config: conf}
 }
 
-func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
+func (s Samad) GetAccessToken(studentNumber string, password string) (string, error) {
 
-	baseUrl := GetTokenUrl
+	baseUrl := s.GetTokenUrl
 	const authHeader = "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ="
 
 	param := url.Values{}
@@ -78,8 +78,8 @@ func (s *Samad) GetAccessToken(studentNumber string, password string) (string, e
 	return tokenResp.AccessToken, nil
 }
 
-func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood, error) {
-	baseURL := GetProgramUrl
+func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*food.WeekFood, error) {
+	baseURL := s.GetProgramUrl
 	params := url.Values{}
 
 	params.Add("selfId", "1")
@@ -122,14 +122,14 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*pkg.WeekFood
 	tmp, _ := income["payload"].(map[string]interface{})
 	ProgramWeekFoodList := tmp["selfWeekPrograms"].([]interface{})
 
-	weekFood := service.CreateWeekFood(ProgramWeekFoodList)
+	weekFood := CreateWeekFood(ProgramWeekFoodList)
 
 	return &weekFood, nil
 }
 
-func (s *Samad) ReserveFood(token string, meal pkg.ReserveModel) (string, error) {
+func (s *Samad) ReserveFood(token string, meal food.ReserveModel) (string, error) {
 
-	url := fmt.Sprintf(ReserveUrl, meal.ProgramId)
+	url := fmt.Sprintf(s.ReserveUrl, meal.ProgramId)
 
 	body := fmt.Sprintf(`{"foodTypeId":%s,"mealTypeId":%s,"selectedCount":1,"freeFoodSelected":false,"selected":true}`,
 		meal.FoodTypeId, meal.MealTypeId)
