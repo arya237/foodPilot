@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/handler"
 	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
 	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
 )
@@ -14,7 +15,7 @@ func main() {
 
 	
 	conf, err := config.New()
-	log.Print("kir")
+	log.Print("ali")
 	model := samad.NewSamad(*conf.SamadConfig)
 	
 	if err != nil{
@@ -55,7 +56,7 @@ func main() {
 	}
 	fmt.Println(res)
   
-  server := handler.New()
+  	server := handler.New()
 
 	if err := server.Run(":8080"); err != nil {
 		log.Println(err)

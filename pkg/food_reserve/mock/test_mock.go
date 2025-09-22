@@ -1,8 +1,9 @@
 package pkg
 
 import (
-	"github.com/arya237/foodPilot/pkg"
 	"testing"
+
+	samad "github.com/arya237/foodPilot/pkg/food_reserve"
 )
 
 func TestSomething(t *testing.T) {
@@ -13,12 +14,12 @@ func TestSomething(t *testing.T) {
 		if studentNumber == "12345" && password == "pass" {
 			return "valid-token", nil
 		}
-		return "", pkg.ErorrInvalidToken // note: typo in your var name
+		return "", samad.ErorrInvalidToken // note: typo in your var name
 	})
 
-	mock.SetReserveFood(func(token string, meal pkg.ReserveModel) (string, error) {
+	mock.SetReserveFood(func(token string, meal samad.ReserveModel) (string, error) {
 		if token != "valid-token" {
-			return "", pkg.ErorrInvalidToken
+			return "", samad.ErorrInvalidToken
 		}
 		return "reservation-success", nil
 	})
@@ -29,7 +30,7 @@ func TestSomething(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	meal := pkg.ReserveModel{
+	meal := samad.ReserveModel{
 		ProgramId:  "prog1",
 		FoodTypeId: "1",
 		FoodName:   "pizza",

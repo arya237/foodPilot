@@ -2,9 +2,10 @@ package pkg
 
 import (
 	"errors"
-	"github.com/arya237/foodPilot/pkg"
 	"sync"
 	"time"
+
+	samad "github.com/arya237/foodPilot/pkg/food_reserve"
 )
 
 type MockRequiredFunctions struct {
@@ -15,7 +16,7 @@ type MockRequiredFunctions struct {
 	getFoodProgramFn      func(token string, startDate time.Time) (string, error)
 	getFoodProgramCounter int
 
-	reserveFoodFn      func(token string, meal pkg.ReserveModel) (string, error)
+	reserveFoodFn      func(token string, meal samad.ReserveModel) (string, error)
 	reserveFoodCounter int
 }
 
@@ -35,7 +36,7 @@ func (m *MockRequiredFunctions) SetGetFoodProgram(fn func(token string, startDat
 	m.getFoodProgramFn = fn
 }
 
-func (m *MockRequiredFunctions) SetReserveFood(fn func(token string, meal pkg.ReserveModel) (string, error)) {
+func (m *MockRequiredFunctions) SetReserveFood(fn func(token string, meal samad.ReserveModel) (string, error)) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.reserveFoodFn = fn
@@ -71,7 +72,7 @@ func (m *MockRequiredFunctions) GetFoodProgram(token string, startDate time.Time
 	return "", errors.New("GetFoodProgram not implemented in mock")
 }
 
-func (m *MockRequiredFunctions) ReserveFood(token string, meal pkg.ReserveModel) (string, error) {
+func (m *MockRequiredFunctions) ReserveFood(token string, meal samad.ReserveModel) (string, error) {
 	m.mu.RLock()
 	fn := m.reserveFoodFn
 	m.mu.RUnlock()
