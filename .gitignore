@@ -19,4 +19,6 @@ go.work
 # custom files
 .env
 
-
+# IDE/editor files
+.vscode/
+.idea/
