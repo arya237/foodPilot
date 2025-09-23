@@ -1,4 +1,4 @@
-package samad
+package reservations
 
 type Weekday int8
 type Meal int8

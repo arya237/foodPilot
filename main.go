@@ -6,15 +6,16 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/config"
-	pkg "github.com/arya237/foodPilot/pkg/food_reserve"
-	samad "github.com/arya237/foodPilot/pkg/food_reserve/samad"
+	"github.com/arya237/foodPilot/internal/handler"
+	"github.com/arya237/foodPilot/pkg/reservations"
+	samad "github.com/arya237/foodPilot/pkg/reservations/samad"
 )
 
 func main() {
 
 	
 	conf, err := config.New()
-	log.Print("kir")
+	log.Print("ali")
 	model := samad.NewSamad(*conf.SamadConfig)
 	
 	if err != nil{
@@ -48,14 +49,14 @@ func main() {
 
 	fmt.Println(listFood)
 
-	res, err := model.ReserveFood(token, pkg.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
+	res, err := model.ReserveFood(token, reservations.ReserveModel{ProgramId: "494338", FoodTypeId: "599", MealTypeId: "1"})
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	fmt.Println(res)
   
-  server := handler.New()
+  	server := handler.New()
 
 	if err := server.Run(":8080"); err != nil {
 		log.Println(err)
