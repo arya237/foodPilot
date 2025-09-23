@@ -5,25 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7a516f4-8104-430e-9eb1-e4ecde93d252" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/repositories/food_repo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/repositories/rate_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/configs.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/configs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/load.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/load.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/food.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/food.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/fakedb/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/fakedb/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/mock/mock_required_function.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/mock/mock_required_function.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/mock/test_mock.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/mock/test_mock.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/requiredFunctions.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/requiredFunctions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/samad/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/samad/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/samad/samad.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/samad/samad.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/samad/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/samad/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/food_reserve/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/types.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/food_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/user_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/reservations/samad/samad.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/reservations/samad/samad.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +46,7 @@
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "Merging feature-samad",
+    "git-widget-placeholder": "feature-samad",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "last_opened_file_path": "/home/arya/GolandProjects/foodPilot",

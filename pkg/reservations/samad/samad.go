@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/pkg/reservations"
-
 )
 
 type TokenResponse struct {
@@ -27,7 +26,7 @@ func NewSamad(conf Config) reservations.RequiredFunctions {
 	return &Samad{Config: conf}
 }
 
-func (s Samad) GetAccessToken(studentNumber string, password string) (string, error) {
+func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
 
 	baseUrl := s.GetTokenUrl
 	const authHeader = "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ="
