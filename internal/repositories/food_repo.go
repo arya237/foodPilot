@@ -5,7 +5,7 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
-type FoodRepository interface {
+type Food interface {
 	SaveFood(name string) (int, error)
 	GetFoodById(id int) (*models.Food, error)
 	GetAllFood() ([]*models.Food, error)
@@ -17,7 +17,7 @@ type foodRepo struct {
 	db *fakedb.FakeDb
 }
 
-func NewFoodRepo(db *fakedb.FakeDb) FoodRepository {
+func NewFoodRepo(db *fakedb.FakeDb) Food {
 	return &foodRepo{
 		db: db,
 	}
@@ -38,7 +38,7 @@ func (fdb *foodRepo) SaveFood(name string) (int, error) {
 }
 
 func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
-	fdb.db.FoodMu.Lock()
+	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.Unlock()
 	if _, find := fdb.db.Foods[id]; !find {
 		return nil, ErrorInvalidFID
@@ -47,7 +47,7 @@ func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
 }
 
 func (fdb *foodRepo) GetAllFood() ([]*models.Food, error) {
-	fdb.db.FoodMu.Lock()
+	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.Unlock()
 	var foods []*models.Food
 	for _, food := range fdb.db.Foods {

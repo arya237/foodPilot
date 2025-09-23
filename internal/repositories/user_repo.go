@@ -5,7 +5,7 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
-type UserRepository interface {
+type User interface {
 	SaveUser(username, password string) (int, error)
 	GetUserById(id int) (*models.User, error)
 	GetUserByUserName(username string) (*models.User, error)
@@ -18,7 +18,7 @@ type userRepo struct {
 	db *fakedb.FakeDb
 }
 
-func NewUserRepo(db *fakedb.FakeDb) UserRepository {
+func NewUserRepo(db *fakedb.FakeDb) User {
 	return &userRepo{
 		db: db,
 	}
@@ -39,7 +39,7 @@ func (fdb *userRepo) SaveUser(username, password string) (int, error) {
 }
 
 func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
-	fdb.db.UserMu.Lock()
+	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[id]; !find {
 		return nil, ErrorInvalidUID
@@ -48,7 +48,7 @@ func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
 }
 
 func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
-	fdb.db.UserMu.Lock()
+	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.Unlock()
 	for _, user := range fdb.db.Users {
 		if user.Username == username {
@@ -60,7 +60,7 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 }
 
 func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
-	fdb.db.UserMu.Lock()
+	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.Unlock()
 	var users []*models.User
 	for _, user := range fdb.db.Users {

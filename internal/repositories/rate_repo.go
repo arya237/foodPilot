@@ -5,7 +5,7 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
-type RateRepository interface {
+type Rate interface {
 	SaveRate(user_id, food_id, score int) error
 	GetRateByUser(user_id int) ([]*models.Rate, error)
 	DeleteRate(user_id, rate_id int) error
@@ -16,7 +16,7 @@ type rateRepo struct {
 	db *fakedb.FakeDb
 }
 
-func NewRateRepo(db *fakedb.FakeDb) RateRepository {
+func NewRateRepo(db *fakedb.FakeDb) Rate {
 	return &rateRepo{
 		db: db,
 	}
@@ -42,7 +42,7 @@ func (fdb *rateRepo) SaveRate(user_id, food_id, score int) error {
 }
 
 func (fdb *rateRepo) GetRateByUser(user_id int) ([]*models.Rate, error) {
-	fdb.db.RateMu.Lock()
+	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.Unlock()
 	if _, ok := fdb.db.Rates[user_id]; !ok {
 		return nil, ErrorInvalidUID
