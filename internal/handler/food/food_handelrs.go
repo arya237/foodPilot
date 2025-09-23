@@ -6,9 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func (h *FoodHandler) GetFoods(c *gin.Context) {
-	//TODO: 
+	//TODO:
 	c.JSON(http.StatusOK, GetFoodsResponse{
 		Foods: nil,
 	})
@@ -32,7 +31,7 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 }
 
 func (h *FoodHandler) AutoSave(c *gin.Context) {
-	
+
 	req := AutoSaveRequest{}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
