@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrorInvalidUID = errors.New("user not found")
+	ErrorInvalidUName = errors.New("user not found")
 	ErrorDuplicateUser  = errors.New("duplicate user")
 	ErrorNoUser = errors.New("there is no user in database")
 	ErrorInvalidFID = errors.New("food not found")

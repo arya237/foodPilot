@@ -51,6 +51,18 @@ func (fdb *FakeDb) GetUserById(id int) (*models.User, error) {
 	return fdb.Users[id], nil
 }
 
+func (fdb *FakeDb) GetUserByUserName(username string) (*models.User, error) {
+	fdb.UserMu.Lock()
+	defer fdb.UserMu.Unlock()
+	for _, user := range fdb.Users {
+		if user.Username == username {
+			return user, nil
+		}
+		return nil, repositories.ErrorInvalidUName
+	}
+	return nil, repositories.ErrorNoUser
+}
+
 func (fdb *FakeDb) GetAllUsers() ([]*models.User, error) {
 	fdb.UserMu.Lock()
 	defer fdb.UserMu.Unlock()
