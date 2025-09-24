@@ -13,11 +13,3 @@ type RateFoodsRequest struct {
 type RateFoodsResponse struct {
 	Message string `json:"message"`
 }
-
-type AutoSaveRequest struct {
-	AutoSave bool `json:"autosave" binding:"required"`
-}
-
-type AutoSaveResponse struct {
-	Message string `json:"message"`
-}

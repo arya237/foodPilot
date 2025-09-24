@@ -18,6 +18,7 @@ type UserService interface {
 	GetAll() ([]*models.User, error)
 	Delete(id int) error
 	Update(new *models.User) error
+	ToggleAutoSave(userID int, autoSave bool) error
 }
 
 type userService struct {
@@ -112,4 +113,18 @@ func (u *userService) Update(new *models.User) error {
 		u.logger.Info(err.Error())
 	}
 	return err
+}
+
+func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
+	user, err := u.repo.GetUserById(userID)
+	if err != nil {
+		return err
+	}
+
+	user.AutoSave = autoSave
+	err = u.repo.UpdateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }

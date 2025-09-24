@@ -33,7 +33,7 @@ func (fdb *userRepo) SaveUser(username, password string) (int, error) {
 		}
 	}
 
-	fdb.db.Users[fdb.db.UserCounter] = &models.User{Username: username, Password: password, Id: fdb.db.UserCounter}
+	fdb.db.Users[fdb.db.UserCounter] = &models.User{Username: username, Password: password, Id: fdb.db.UserCounter, AutoSave: true}
 	fdb.db.UserCounter++
 	return fdb.db.UserCounter - 1, nil
 }

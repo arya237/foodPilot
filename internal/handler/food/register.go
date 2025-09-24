@@ -27,5 +27,4 @@ func RegisterRoutes(group *gin.RouterGroup, foodHandler *FoodHandler) {
 
 	group.GET("/list", foodHandler.GetFoods)
 	group.POST("/rate", foodHandler.RateFoods)
-	group.POST("/autosave", foodHandler.AutoSave)
 }

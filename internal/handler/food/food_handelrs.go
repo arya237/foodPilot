@@ -41,18 +41,3 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 		Message: message,
 	})
 }
-
-func (h *FoodHandler) AutoSave(c *gin.Context) {
-
-	req := AutoSaveRequest{}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
-		return
-	}
-
-	//h.service.ToggleAutoSave(body.AutoSave)
-
-	c.JSON(http.StatusOK, AutoSaveResponse{
-		Message: "Auto save updateed",
-	})
-}
