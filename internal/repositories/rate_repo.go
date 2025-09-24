@@ -78,8 +78,6 @@ func (fdb *rateRepo) UpdateRate(userID int, new *models.Rate) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 
-	fdb.db.RateMu.Lock()
-	defer fdb.db.RateMu.Unlock()
 	if rates, ok := fdb.db.Rates[userID]; ok {
 		if _, find := rates[new.FoodID]; find {
 			rates[new.FoodID] = new

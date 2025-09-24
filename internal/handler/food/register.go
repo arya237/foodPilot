@@ -1,8 +1,10 @@
 package food
 
 import (
+	"github.com/arya237/foodPilot/internal/auth"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/gin-gonic/gin"
 )
 
 type FoodHandler struct {
@@ -19,11 +21,11 @@ func NewFoodHandler(r services.RateFoodService, f services.FoodService) *FoodHan
 	}
 }
 
-//func RegisterRoutes(group *gin.RouterGroup) {
-//	h := NewFoodHandler()
-//	group.Use(auth.AuthMiddleware())
-//
-//	group.GET("/list", h.GetFoods)
-//	group.POST("/rate", h.RateFoods)
-//	group.POST("/autosave", h.AutoSave)
-//}
+func RegisterRoutes(group *gin.RouterGroup, foodHandler *FoodHandler) {
+
+	group.Use(auth.AuthMiddleware())
+
+	group.GET("/list", foodHandler.GetFoods)
+	group.POST("/rate", foodHandler.RateFoods)
+	group.POST("/autosave", foodHandler.AutoSave)
+}

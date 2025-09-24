@@ -7,9 +7,14 @@ import (
 )
 
 func (h *FoodHandler) GetFoods(c *gin.Context) {
-	//TODO:
+
+	foodList, err := h.FoodService.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
 	c.JSON(http.StatusOK, GetFoodsResponse{
-		Foods: nil,
+		foodList,
 	})
 }
 
@@ -20,13 +25,20 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 		return
 	}
 
-	// if err := h.service.RateFoods(rates); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "userNotFound"})
+		return
+	}
+
+	message, err := h.RateService.SaveRate(userID.(string), rates.Foods)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, RateFoodsResponse{
-		Message: "ratings saved",
+		Message: message,
 	})
 }
 

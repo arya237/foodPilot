@@ -7,11 +7,9 @@ func New() (*Config, error) {
 		SamadConfig: &samad.Config{},
 	}
 
-	config.SamadConfig.Username = GetEnv("username", "")
-	config.SamadConfig.Password = GetEnv("password", "")
-	config.SamadConfig.GetProgramUrl = GetEnv("GetProgramUrl", "")
-	config.SamadConfig.GetTokenUrl = GetEnv("GetTokenUrl", "")
-	config.SamadConfig.ReserveUrl = GetEnv("ReserveUrl", "")
+	config.SamadConfig.GetProgramUrl = GetEnv("GETPROGRAMURL", "")
+	config.SamadConfig.GetTokenUrl = GetEnv("GETTOKENURL", "")
+	config.SamadConfig.ReserveUrl = GetEnv("RESERVEURL", "")
 
 	return &config, nil
 }

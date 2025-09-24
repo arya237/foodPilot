@@ -3,7 +3,7 @@ package food
 import "github.com/arya237/foodPilot/internal/models"
 
 type GetFoodsResponse struct {
-	Foods []models.Food `json:"foods"`
+	Foods []*models.Food `json:"foods"`
 }
 
 type RateFoodsRequest struct {

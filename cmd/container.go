@@ -6,6 +6,7 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/pkg/reservations/samad"
 	"sync"
 	"time"
 )
@@ -30,7 +31,7 @@ func NewContainer() *Container {
 	return &Container{}
 }
 
-func (c *Container) init(db *fakedb.FakeDb) {
+func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.db = db
@@ -38,21 +39,21 @@ func (c *Container) init(db *fakedb.FakeDb) {
 	c.FoodRepo = repositories.NewFoodRepo(c.db)
 	c.RateRepo = repositories.NewRateRepo(c.db)
 
-	c.UserService = services.NewUserService(c.UserRepo)
+	c.UserService = services.NewUserService(c.UserRepo, conf)
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
 }
 
 func (c *Container) GetFoodHandler() *food.FoodHandler {
 	c.mutex.RLock()
-	defer c.mutex.Unlock()
+	defer c.mutex.RUnlock()
 	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService)
 	return foodHandler
 }
 
 func (c *Container) GetLoginHandler() *auth.LoginHandler {
 	c.mutex.RLock()
-	defer c.mutex.Unlock()
+	defer c.mutex.RUnlock()
 	loginHandler := auth.NewLoginHandler(time.Hour, c.UserService)
 	return loginHandler
 }

@@ -1,13 +1,18 @@
 package services
 
 import (
+	"errors"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/pkg/reservations"
+	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"strconv"
 )
 
 type UserService interface {
-	Save(user *models.User) (int, error)
+	Login(userName, password string) (string, string, error)
+	Save(username, password string) (int, error)
 	GetById(id int) (*models.User, error)
 	GetByUserName(username string) (*models.User, error)
 	GetAll() ([]*models.User, error)
@@ -17,25 +22,47 @@ type UserService interface {
 
 type userService struct {
 	repo   repositories.User
+	samad  reservations.RequiredFunctions
 	logger logger.Logger
 }
 
-func NewUserService(repo repositories.User) UserService {
+func NewUserService(repo repositories.User, config *samad.Config) UserService {
 	return &userService{
 		repo:   repo,
 		logger: logger.New("userService"),
+		samad:  samad.NewSamad(config),
 	}
 }
 
-func (u *userService) Save(user *models.User) (int, error) {
-	_, err := u.GetByUserName(user.Username)
+func (u *userService) Login(userName, password string) (string, string, error) {
+	user, err := u.GetByUserName(userName)
+	var id int
 
 	if err != nil {
 		u.logger.Info(err.Error())
-		return 0, err
+		id, err = u.Save(userName, password)
+
+		if err != nil {
+			u.logger.Info(err.Error())
+			return "", "", err
+		}
+	} else if user.Password != password {
+		return "", "", errors.New("username or password is wrong")
 	}
 
-	id, err := u.repo.SaveUser(user.Username, user.Password)
+	token, err := u.samad.GetAccessToken(userName, password)
+
+	if err != nil {
+		u.logger.Info(err.Error())
+		return "", "", err
+	}
+	userID := strconv.Itoa(id)
+	return userID, token, nil
+}
+
+func (u *userService) Save(userName, password string) (int, error) {
+
+	id, err := u.repo.SaveUser(userName, password)
 
 	if err != nil {
 		u.logger.Info(err.Error())

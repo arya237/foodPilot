@@ -24,10 +24,10 @@ func NewLoginHandler(expiry time.Duration, u services.UserService) *LoginHandler
 	}
 }
 
-//func RegisterRoutes(group *gin.RouterGroup) {
-//	h := NewLoginHandler(time.Hour)
-//	group.POST("/login", h.HandleLogin)
-//}
+func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
+	group.POST("/login", loginHandler.HandleLogin)
+}
+
 // ***************** methodes *********************************//
 
 func (h *LoginHandler) HandleLogin(c *gin.Context) {
@@ -37,15 +37,20 @@ func (h *LoginHandler) HandleLogin(c *gin.Context) {
 		return
 	}
 
-	// TODO:get use info ....
+	ID, token, err := h.UserService.Login(req.Username, req.Password)
 
-	token, err := auth.GenerateJWT("some id", "jwt token", h.TokenExpiry)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	jwtToken, err := auth.GenerateJWT(ID, token, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, LoginResponse{
-		Token: token,
-	})
+	c.JSON(http.StatusOK, gin.H{"loginResponse": LoginResponse{
+		Token: jwtToken,
+	}, "message": "login successful"})
 }

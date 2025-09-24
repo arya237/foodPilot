@@ -1,8 +1,8 @@
 package fakedb
 
 import (
-	"sync"
 	"github.com/arya237/foodPilot/internal/models"
+	"sync"
 )
 
 type FakeDb struct {
