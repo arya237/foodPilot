@@ -26,7 +26,7 @@ func NewLoginHandler(expiry time.Duration, u services.UserService) *LoginHandler
 
 func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
 	group.POST("/login", loginHandler.HandleLogin)
-	group.PUT("/autosave", loginHandler.AutoSave)
+	group.PUT("/autosave",auth.AuthMiddleware() , loginHandler.AutoSave)
 
 }
 
