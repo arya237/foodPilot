@@ -4,6 +4,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/arya237/foodPilot/internal/auth"
@@ -26,7 +27,7 @@ func NewLoginHandler(expiry time.Duration, u services.UserService) *LoginHandler
 
 func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
 	group.POST("/login", loginHandler.HandleLogin)
-	group.PUT("/autosave",auth.AuthMiddleware() , loginHandler.AutoSave)
+	group.PUT("/autosave", auth.AuthMiddleware(), loginHandler.AutoSave)
 
 }
 
@@ -68,9 +69,16 @@ func (h *LoginHandler) AutoSave(c *gin.Context) {
 	id, exist := c.Get("userID")
 	if !exist {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
 	}
+	userID, _ := strconv.Atoi(id.(string))
 
-	h.UserService.ToggleAutoSave(id.(int), req.AutoSave)
+	err := h.UserService.ToggleAutoSave(userID, *req.AutoSave)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error!"})
+		return
+	}
 
 	c.JSON(http.StatusOK, AutoSaveResponse{
 		Message: "Auto save updated",

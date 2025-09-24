@@ -10,7 +10,7 @@ type LoginResponse struct {
 }
 
 type AutoSaveRequest struct {
-	AutoSave bool `json:"autosave" binding:"required"`
+	AutoSave *bool `json:"autosave" binding:"required"`
 }
 
 type AutoSaveResponse struct {
