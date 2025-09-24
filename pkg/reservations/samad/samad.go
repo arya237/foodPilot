@@ -19,10 +19,10 @@ type TokenResponse struct {
 }
 
 type Samad struct {
-	Config
+	*Config
 }
 
-func NewSamad(conf Config) reservations.RequiredFunctions {
+func NewSamad(conf *Config) reservations.RequiredFunctions {
 	return &Samad{Config: conf}
 }
 

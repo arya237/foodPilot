@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/pkg/logger"
 	"net/http"
 	"time"
 
@@ -8,19 +10,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type LoginHandler struct {
 	TokenExpiry time.Duration
+	UserService services.UserService
+	logger      logger.Logger
 }
 
-func NewLoginHandler(expiry time.Duration) *LoginHandler {
-	return &LoginHandler{TokenExpiry: expiry}
+func NewLoginHandler(expiry time.Duration, u services.UserService) *LoginHandler {
+	return &LoginHandler{
+		TokenExpiry: expiry,
+		UserService: u,
+		logger:      logger.New("loginHandler"),
+	}
 }
 
-func RegisterRoutes(group *gin.RouterGroup) {
-	h := NewLoginHandler(time.Hour)
-	group.POST("/login", h.HandleLogin)
+func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
+	group.POST("/login", loginHandler.HandleLogin)
 }
+
 // ***************** methodes *********************************//
 
 func (h *LoginHandler) HandleLogin(c *gin.Context) {
@@ -30,17 +37,20 @@ func (h *LoginHandler) HandleLogin(c *gin.Context) {
 		return
 	}
 
-	
-	// TODO:get use info ....	
+	ID, token, err := h.UserService.Login(req.Username, req.Password)
 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	token, err := auth.GenerateJWT("some id", "jwt token", h.TokenExpiry)
+	jwtToken, err := auth.GenerateJWT(ID, token, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, LoginResponse{
-		Token: token,
-	})
+	c.JSON(http.StatusOK, gin.H{"loginResponse": LoginResponse{
+		Token: jwtToken,
+	}, "message": "login successful"})
 }

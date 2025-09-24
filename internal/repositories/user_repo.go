@@ -40,7 +40,7 @@ func (fdb *userRepo) SaveUser(username, password string) (int, error) {
 
 func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
 	fdb.db.UserMu.RLock()
-	defer fdb.db.UserMu.Unlock()
+	defer fdb.db.UserMu.RUnlock()
 	if _, find := fdb.db.Users[id]; !find {
 		return nil, ErrorInvalidUID
 	}
@@ -49,7 +49,7 @@ func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
 
 func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 	fdb.db.UserMu.RLock()
-	defer fdb.db.UserMu.Unlock()
+	defer fdb.db.UserMu.RUnlock()
 	for _, user := range fdb.db.Users {
 		if user.Username == username {
 			return user, nil
@@ -61,7 +61,7 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 
 func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
 	fdb.db.UserMu.RLock()
-	defer fdb.db.UserMu.Unlock()
+	defer fdb.db.UserMu.RUnlock()
 	var users []*models.User
 	for _, user := range fdb.db.Users {
 		users = append(users, user)

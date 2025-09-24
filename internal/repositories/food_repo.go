@@ -39,7 +39,7 @@ func (fdb *foodRepo) SaveFood(name string) (int, error) {
 
 func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
 	fdb.db.FoodMu.RLock()
-	defer fdb.db.FoodMu.Unlock()
+	defer fdb.db.FoodMu.RUnlock()
 	if _, find := fdb.db.Foods[id]; !find {
 		return nil, ErrorInvalidFID
 	}
@@ -48,7 +48,7 @@ func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
 
 func (fdb *foodRepo) GetAllFood() ([]*models.Food, error) {
 	fdb.db.FoodMu.RLock()
-	defer fdb.db.FoodMu.Unlock()
+	defer fdb.db.FoodMu.RUnlock()
 	var foods []*models.Food
 	for _, food := range fdb.db.Foods {
 		foods = append(foods, food)
