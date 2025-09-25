@@ -1,8 +1,8 @@
 package samad
 
 import (
-	"strconv"
 	"github.com/arya237/foodPilot/pkg/reservations"
+	"strconv"
 )
 
 func CreateWeekFood(ProgramWeekFoodList []interface{}) reservations.WeekFood {
@@ -30,22 +30,22 @@ func CreateWeekFood(ProgramWeekFoodList []interface{}) reservations.WeekFood {
 
 			var day reservations.Weekday
 			var m reservations.Meal
-			
+
 			switch new["dayTranslated"].(string) {
-				case "Saturday":
-					day = reservations.Saturday
-				case "Sunday":
-					day = reservations.Sunday
-				case "Monday":
-					day = reservations.Monday
-				case "Tuesday":
-					day = reservations.Tuesday
-				case "Wednesday":
-					day = reservations.Wednesday
-				case "Thursday":
-					day = reservations.Thursday
-				case "Friday":
-					day = reservations.Friday
+			case "Saturday":
+				day = reservations.Saturday
+			case "Sunday":
+				day = reservations.Sunday
+			case "Monday":
+				day = reservations.Monday
+			case "Tuesday":
+				day = reservations.Tuesday
+			case "Wednesday":
+				day = reservations.Wednesday
+			case "Thursday":
+				day = reservations.Thursday
+			case "Friday":
+				day = reservations.Friday
 			}
 
 			switch meal["mealTypeId"] {
@@ -57,6 +57,12 @@ func CreateWeekFood(ProgramWeekFoodList []interface{}) reservations.WeekFood {
 				Week.DailyFood[day][m] = append(Week.DailyFood[day][m], mealInfo)
 			case float64(5):
 				m = reservations.Dinner
+				if _, ok := Week.DailyFood[day]; !ok {
+					Week.DailyFood[day] = make(map[reservations.Meal][]reservations.ReserveModel)
+				}
+				Week.DailyFood[day][m] = append(Week.DailyFood[day][m], mealInfo)
+			case float64(3):
+				m = reservations.Breakfast
 				if _, ok := Week.DailyFood[day]; !ok {
 					Week.DailyFood[day] = make(map[reservations.Meal][]reservations.ReserveModel)
 				}
