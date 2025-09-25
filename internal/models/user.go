@@ -1,7 +1,8 @@
 package models
 
 type User struct {
-	Username string
 	Id       int
+	Username string
 	Password string
+	AutoSave bool
 }
