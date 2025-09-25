@@ -82,9 +82,11 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 	params := url.Values{}
 
 	params.Add("selfId", "1")
-	params.Add("weekStartDate", `2025-09-20 00:00:00`)
+	params.Add("weekStartDate", startDate.Format("2006-01-02 00:00:00"))
 
 	myurl := baseURL + "?" + params.Encode()
+
+	log.Println(myurl)
 
 	req, err := http.NewRequest("GET", myurl, nil)
 	if err != nil {

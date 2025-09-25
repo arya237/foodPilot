@@ -18,8 +18,9 @@ type FakeDb struct {
 
 func NewDb() *FakeDb {
 	return &FakeDb{
-		Users:       map[int]*models.User{},
-		Foods:       map[int]*models.Food{},
+		Users: map[int]*models.User{},
+		Foods: map[int]*models.Food{1: {Name: "چلو کباب کوبیده زعفرانی", Id: 1},
+			2: {Name: "چلو جوجه کباب", Id: 2}, 3: {Name: "خوراک گوشت چرخ‌کرده با سیب زمینی", Id: 3}},
 		Rates:       map[int]map[int]*models.Rate{},
 		FoodCounter: 0,
 		UserCounter: 0,

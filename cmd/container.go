@@ -6,6 +6,7 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 	"sync"
 	"time"
@@ -20,9 +21,11 @@ type Container struct {
 	RateRepo repositories.Rate
 
 	//service
-	UserService services.UserService
-	FoodService services.FoodService
-	RateService services.RateFoodService
+	UserService    services.UserService
+	FoodService    services.FoodService
+	RateService    services.RateFoodService
+	Samad          reservations.RequiredFunctions
+	ReserveService services.Reserve
 
 	mutex sync.RWMutex
 }
@@ -42,12 +45,14 @@ func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 	c.UserService = services.NewUserService(c.UserRepo, conf)
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
+	c.Samad = samad.NewSamad(conf)
+	c.ReserveService = services.NewReserveService(c.FoodService, c.UserService, c.RateService, c.Samad)
 }
 
 func (c *Container) GetFoodHandler() *food.FoodHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService)
+	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService, c.ReserveService)
 	return foodHandler
 }
 

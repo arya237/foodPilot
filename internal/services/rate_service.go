@@ -10,6 +10,7 @@ import (
 
 type RateFoodService interface {
 	SaveRate(userID string, foods map[string]int) (string, error)
+	GetRateByUser(userID int) ([]*models.Rate, error)
 }
 
 type rateFoodService struct {
@@ -43,6 +44,7 @@ func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string,
 			s.logger.Info(err.Error())
 			return "", err
 		}
+
 		userID, err := strconv.Atoi(userID)
 		if err != nil {
 			s.logger.Info(err.Error())
@@ -56,6 +58,10 @@ func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string,
 	}
 
 	return "all Rates save successfully", nil
+}
+
+func (s *rateFoodService) GetRateByUser(userID int) ([]*models.Rate, error) {
+	return s.RateRepo.GetRateByUser(userID)
 }
 
 func findFoodID(foods []*models.Food, foodName string) (int, error) {
