@@ -2,11 +2,12 @@ package services
 
 import (
 	"errors"
+	"log"
+	"time"
+
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
-	"log"
-	"time"
 )
 
 type Reserve interface {

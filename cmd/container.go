@@ -1,15 +1,17 @@
 package cmd
 
 import (
+	"sync"
+	"time"
+
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
+	"github.com/arya237/foodPilot/internal/handler/user"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
-	"sync"
-	"time"
 )
 
 type Container struct {
@@ -61,4 +63,11 @@ func (c *Container) GetLoginHandler() *auth.LoginHandler {
 	defer c.mutex.RUnlock()
 	loginHandler := auth.NewLoginHandler(time.Hour, c.UserService)
 	return loginHandler
+}
+
+func (c *Container) GetUserHandler() *user.UserHandler {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	userHandler := user.NewUserHandler(c.UserService)
+	return userHandler
 }
