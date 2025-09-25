@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/config"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
 	"github.com/arya237/foodPilot/internal/handler/user"
@@ -12,6 +13,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/gin-gonic/gin"
 )
 
 type Container struct {
@@ -70,4 +72,30 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 	defer c.mutex.RUnlock()
 	userHandler := user.NewUserHandler(c.UserService)
 	return userHandler
+}
+
+func NewApp() (*gin.Engine, error) {
+	engine := gin.Default()
+	db := fakedb.NewDb()
+	conf, err := config.New()
+	if err != nil {
+		return nil, err
+	}
+
+	container := NewContainer()
+	container.SetUp(db, conf.SamadConfig)
+
+	foodHandlers := container.GetFoodHandler()
+	authHandlers := container.GetLoginHandler()
+	userHandler := container.GetUserHandler()
+
+	authGroup := engine.Group("/auth")
+	foodGroup := engine.Group("/food")
+	userGroup := engine.Group("/user")
+
+	auth.RegisterRoutes(authGroup, authHandlers)
+	food.RegisterRoutes(foodGroup, foodHandlers)
+	user.RegisterRoutes(userGroup, userHandler)
+
+	return engine, nil
 }
