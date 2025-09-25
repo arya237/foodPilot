@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"log"
 
-func main(){
-	fmt.Println("I am alive")
+	"github.com/arya237/foodPilot/cmd"
+)
+
+func main() {
+
+	app, err := cmd.NewApp()
+	if err != nil {
+		log.Print(err.Error())
+	}
+
+	log.Print(app.Run("localhost:8080"))
 }
