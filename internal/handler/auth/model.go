@@ -8,11 +8,3 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
-
-type AutoSaveRequest struct {
-	AutoSave *bool `json:"autosave" binding:"required"`
-}
-
-type AutoSaveResponse struct {
-	Message string `json:"message"`
-}

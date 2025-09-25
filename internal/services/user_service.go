@@ -2,12 +2,13 @@ package services
 
 import (
 	"errors"
+	"strconv"
+
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
-	"strconv"
 )
 
 type UserService interface {
