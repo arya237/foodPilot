@@ -25,7 +25,7 @@ func NewRateRepo(db *fakedb.FakeDb) Rate {
 func (fdb *rateRepo) SaveRate(userID, foodID, score int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
-	if _, ok := fdb.db.Rates[userID]; !ok {
+	if _, ok := fdb.db.Users[userID]; !ok {
 		return ErrorInvalidUID
 	}
 	for _, rate := range fdb.db.Rates[userID] {
@@ -37,13 +37,16 @@ func (fdb *rateRepo) SaveRate(userID, foodID, score int) error {
 	if _, ok := fdb.db.Foods[foodID]; !ok {
 		return ErrorInvalidFID
 	}
+	if fdb.db.Rates[userID] == nil {
+		fdb.db.Rates[userID] = make(map[int]*models.Rate)
+	}
 	fdb.db.Rates[userID][foodID] = &models.Rate{UserID: userID, FoodID: foodID, Score: score}
 	return nil
 }
 
 func (fdb *rateRepo) GetRateByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
-	defer fdb.db.RateMu.Unlock()
+	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
 		return nil, ErrorInvalidUID
 	}

@@ -41,3 +41,13 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 		Message: message,
 	})
 }
+
+func (h *FoodHandler) reserveFood(c *gin.Context) {
+	message, err := h.ReserveService.ReserveFood()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": message})
+}
