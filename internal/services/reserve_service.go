@@ -66,11 +66,6 @@ func (r *reserve) ReserveFood() (string, error) {
 			for day, _ := range foodProgram.DailyFood {
 				for meal, _ := range foodProgram.DailyFood[day] {
 					var mealList []reservations.ReserveModel
-
-					//for _, food := range foodProgram.DailyFood[day][meal] {
-					//	mealList = append(mealList, food)
-					//}
-
 					mealList = foodProgram.DailyFood[day][meal]
 
 					bestFood, _ := findBestFood(mealList, rates, foods)

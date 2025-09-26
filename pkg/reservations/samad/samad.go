@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/pkg/reservations"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/arya237/foodPilot/pkg/reservations"
 )
 
 type TokenResponse struct {
@@ -20,10 +19,14 @@ type TokenResponse struct {
 
 type Samad struct {
 	*Config
+	logger logger.Logger
 }
 
 func NewSamad(conf *Config) reservations.RequiredFunctions {
-	return &Samad{Config: conf}
+	return &Samad{
+		Config: conf,
+		logger: logger.New("samadService"),
+	}
 }
 
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
@@ -86,11 +89,9 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	myurl := baseURL + "?" + params.Encode()
 
-	log.Println(myurl)
-
 	req, err := http.NewRequest("GET", myurl, nil)
 	if err != nil {
-		log.Println("line 90", err)
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -101,14 +102,14 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("line 101: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
 	datas, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("line 107: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -116,7 +117,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	err = json.Unmarshal(datas, &income)
 	if err != nil {
-		log.Println("line 114: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -138,7 +139,7 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 	req, err := http.NewRequest("PUT", url, bytes.NewBufferString(body))
 
 	if err != nil {
-		log.Println("line 133", err)
+		s.logger.Info(err.Error())
 		return "", nil
 	}
 
@@ -150,14 +151,14 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Println("line 144", err.Error())
+		s.logger.Info(err.Error())
 		return "", err
 	}
 
 	datas, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("line 150: ", err.Error())
+		s.logger.Info(err.Error())
 		return "", err
 	}
 
