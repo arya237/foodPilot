@@ -5,6 +5,9 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/ulule/limiter/v3"
+	"github.com/ulule/limiter/v3/drivers/store/memory"
+	"time"
 )
 
 type FoodHandler struct {
@@ -25,9 +28,17 @@ func NewFoodHandler(r services.RateFoodService, f services.FoodService, reserve 
 
 func RegisterRoutes(group *gin.RouterGroup, foodHandler *FoodHandler) {
 
-	group.Use(auth.AuthMiddleware())
+	rate := limiter.Rate{
+		Period: 3 * time.Second,
+		Limit:  2,
+	}
 
-	group.GET("/list", foodHandler.GetFoods)
-	group.POST("/rate", foodHandler.RateFoods)
+	store := memory.NewStore()
+	limiter := limiter.New(store, rate)
+
+	group.Use(auth.LimitMiddelware(limiter))
+
+	group.GET("/list", auth.AuthMiddleware(), foodHandler.GetFoods)
+	group.POST("/rate", auth.AuthMiddleware(), foodHandler.RateFoods)
 	group.POST("/reserve", foodHandler.reserveFood)
 }
