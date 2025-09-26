@@ -1,0 +1,227 @@
+definitions:
+  auth.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  auth.LoginRequest:
+    properties:
+      password:
+        example: your password
+        type: string
+      username:
+        example: your username
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.LoginResponse:
+    properties:
+      token:
+        example: generated token
+        type: string
+    type: object
+  food.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  food.GetFoodsResponse:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/models.Food'
+        type: array
+    type: object
+  food.MessageResponse:
+    properties:
+      message:
+        example: message
+        type: string
+    type: object
+  food.RateFoodsRequest:
+    properties:
+      foods:
+        additionalProperties:
+          type: integer
+        type: object
+    required:
+    - foods
+    type: object
+  food.RateFoodsResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.Food:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  user.AutoSaveRequest:
+    properties:
+      autosave:
+        type: boolean
+    required:
+    - autosave
+    type: object
+  user.AutoSaveResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+info:
+  contact:
+    name: FoodPilot Dev Team
+    url: https://github.com/arya237/foodPilot
+  description: Auto food reserve
+  termsOfService: http://swagger.io/terms/
+  title: FoodPilot
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user to app and generate code for it
+      parameters:
+      - description: Login info
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: login a user
+      tags:
+      - auth
+  /food/list:
+    get:
+      description: Return all the foods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/food.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/food.ErrorResponse'
+      summary: Get foods
+      tags:
+      - food
+  /food/rate:
+    post:
+      consumes:
+      - application/json
+      description: Rates all the foods
+      parameters:
+      - description: Rates info
+        in: body
+        name: rates
+        required: true
+        schema:
+          $ref: '#/definitions/food.RateFoodsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/food.RateFoodsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/food.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/food.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Rates foods
+      tags:
+      - food
+  /food/reserve:
+    post:
+      description: Reserve food for all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/food.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/food.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reserve food
+      tags:
+      - food
+  /user/autosave:
+    post:
+      consumes:
+      - application/json
+      description: Toggle user autosave attribute
+      parameters:
+      - description: Toggle info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.AutoSaveRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.AutoSaveResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Toggle user autosave
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by your JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
