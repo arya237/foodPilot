@@ -67,6 +67,11 @@ const docTemplate = `{
         },
         "/food/list": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Return all the foods",
                 "produces": [
                     "application/json"
@@ -131,37 +136,6 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/food/reserve": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Reserve food for all users",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Reserve food",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.MessageResponse"
                         }
                     },
                     "500": {
@@ -275,15 +249,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Food"
                     }
-                }
-            }
-        },
-        "food.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "message"
                 }
             }
         },

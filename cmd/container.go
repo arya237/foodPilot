@@ -90,7 +90,6 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 func NewApp() (*gin.Engine, error) {
 	engine := gin.Default()
 	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
-		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	)
 

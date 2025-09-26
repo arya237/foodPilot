@@ -10,6 +10,7 @@ import (
 // @Summary     Get foods
 // @Description Return all the foods
 // @Tags        Food
+// @Security    BearerAuth
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
@@ -62,15 +63,6 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 	})
 }
 
-// ReserveFood  godoc
-// @Summary     Reserve food
-// @Description Reserve food for all users
-// @Tags        Food
-// @Security    BearerAuth
-// @Produce     json
-// @Success     200 {object} MessageResponse
-// @Failure     500 {object} ErrorResponse
-// @Router      /food/reserve [POST]
 func (h *FoodHandler) reserveFood(c *gin.Context) {
 	message, err := h.ReserveService.ReserveFood()
 	if err != nil {
