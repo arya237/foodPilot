@@ -21,7 +21,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Auth"
                 ],
                 "summary": "login a user",
                 "parameters": [
@@ -64,7 +64,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Get foods",
                 "responses": {
@@ -98,7 +98,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Rates foods",
                 "parameters": [
@@ -146,7 +146,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Reserve food",
                 "responses": {
@@ -177,7 +177,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "User"
                 ],
                 "summary": "Toggle user autosave",
                 "parameters": [
@@ -289,6 +289,11 @@
                     "type": "object",
                     "additionalProperties": {
                         "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
                     }
                 }
             }
@@ -343,7 +348,7 @@
     },
     "securityDefinitions": {
         "BearerAuth": {
-            "description": "Type \"Bearer\" followed by your JWT token.",
+            "description": "Type `Bearer ` followed by your JWT token. example: \"Bearer abcde12345\"",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

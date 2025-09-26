@@ -29,7 +29,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Auth"
                 ],
                 "summary": "login a user",
                 "parameters": [
@@ -72,7 +72,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Get foods",
                 "responses": {
@@ -106,7 +106,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Rates foods",
                 "parameters": [
@@ -154,7 +154,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "food"
+                    "Food"
                 ],
                 "summary": "Reserve food",
                 "responses": {
@@ -185,7 +185,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "User"
                 ],
                 "summary": "Toggle user autosave",
                 "parameters": [
@@ -297,6 +297,11 @@ const docTemplate = `{
                     "type": "object",
                     "additionalProperties": {
                         "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
                     }
                 }
             }
@@ -351,7 +356,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "BearerAuth": {
-            "description": "Type \"Bearer\" followed by your JWT token.",
+            "description": "Type ` + "`" + `Bearer ` + "`" + ` followed by your JWT token. example: \"Bearer abcde12345\"",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

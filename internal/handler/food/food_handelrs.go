@@ -9,7 +9,7 @@ import (
 // GetFood      godoc
 // @Summary     Get foods
 // @Description Return all the foods
-// @Tags        food
+// @Tags        Food
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
@@ -29,7 +29,7 @@ func (h *FoodHandler) GetFoods(c *gin.Context) {
 // RateFood     godoc
 // @Summary     Rates foods
 // @Description Rates all the foods
-// @Tags        food
+// @Tags        Food
 // @Security    BearerAuth
 // @Accept      json
 // @Param       rates body RateFoodsRequest true "Rates info"
@@ -65,7 +65,7 @@ func (h *FoodHandler) RateFoods(c *gin.Context) {
 // ReserveFood  godoc
 // @Summary     Reserve food
 // @Description Reserve food for all users
-// @Tags        food
+// @Tags        Food
 // @Security    BearerAuth
 // @Produce     json
 // @Success     200 {object} MessageResponse
