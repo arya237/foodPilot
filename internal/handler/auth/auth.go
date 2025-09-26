@@ -34,7 +34,7 @@ func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
 // Login        godoc
 // @Summary     login a user
 // @Description Login a user to app and generate code for it
-// @Tags        auth
+// @Tags        Auth
 // @Accept      json
 // @Param       login body LoginRequest true "Login info"
 // @Produce     json

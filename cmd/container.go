@@ -83,14 +83,18 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 // @termsOfService             http://swagger.io/terms/
 // @contact.name               FoodPilot Dev Team
 // @contact.url                https://github.com/arya237/foodPilot
-
 // @securityDefinitions.apikey BearerAuth
 // @in                         header
 // @name                       Authorization
-// @description                Type "Bearer" followed by your JWT token.
+// @description                Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"
 func NewApp() (*gin.Engine, error) {
 	engine := gin.Default()
-	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
+		ginSwagger.DefaultModelsExpandDepth(-1),
+		ginSwagger.DocExpansion("none"),
+	)
+
+	engine.GET("/swagger/*any", swaggerHandler)
 
 	db := fakedb.NewDb()
 	conf, err := config.New()

@@ -9,7 +9,7 @@ type GetFoodsResponse struct {
 
 // RateFoodsRequest is the request body for rating multiple foods
 type RateFoodsRequest struct {
-	Foods map[string]int `json:"foods" binding:"required"`
+	Foods map[string]int `json:"foods" binding:"required" example:"foodName1:93,foodName2:74,foodName3:80"`
 }
 
 // RateFoodsResponse is the response returned after successfully rating foods

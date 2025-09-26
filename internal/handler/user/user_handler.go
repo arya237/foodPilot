@@ -10,7 +10,7 @@ import (
 // AutoSave     godoc
 // @Summary     Toggle user autosave
 // @Description Toggle user autosave attribute
-// @Tags        user
+// @Tags        User
 // @Accept      json
 // @Param user  body AutoSaveRequest true "Toggle info"
 // @Security    BearerAuth

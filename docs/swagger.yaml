@@ -47,6 +47,10 @@ definitions:
       foods:
         additionalProperties:
           type: integer
+        example:
+          foodName1: 93
+          foodName2: 74
+          foodName3: 80
         type: object
     required:
     - foods
@@ -119,7 +123,7 @@ paths:
             $ref: '#/definitions/auth.ErrorResponse'
       summary: login a user
       tags:
-      - auth
+      - Auth
   /food/list:
     get:
       description: Return all the foods
@@ -136,7 +140,7 @@ paths:
             $ref: '#/definitions/food.ErrorResponse'
       summary: Get foods
       tags:
-      - food
+      - Food
   /food/rate:
     post:
       consumes:
@@ -168,7 +172,7 @@ paths:
       - BearerAuth: []
       summary: Rates foods
       tags:
-      - food
+      - Food
   /food/reserve:
     post:
       description: Reserve food for all users
@@ -187,7 +191,7 @@ paths:
       - BearerAuth: []
       summary: Reserve food
       tags:
-      - food
+      - Food
   /user/autosave:
     post:
       consumes:
@@ -217,10 +221,10 @@ paths:
       - BearerAuth: []
       summary: Toggle user autosave
       tags:
-      - user
+      - User
 securityDefinitions:
   BearerAuth:
-    description: Type "Bearer" followed by your JWT token.
+    description: 'Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"'
     in: header
     name: Authorization
     type: apiKey
