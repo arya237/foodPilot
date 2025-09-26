@@ -59,11 +59,14 @@
         },
         "/food/list": {
             "get": {
+<<<<<<< HEAD
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
+=======
+>>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
                 "description": "Return all the foods",
                 "produces": [
                     "application/json"
@@ -139,6 +142,40 @@
                 }
             }
         },
+<<<<<<< HEAD
+=======
+        "/food/reserve": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Reserve food for all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Food"
+                ],
+                "summary": "Reserve food",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/food.MessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/food.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+>>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
         "/user/autosave": {
             "post": {
                 "security": [
@@ -244,6 +281,18 @@
                 }
             }
         },
+<<<<<<< HEAD
+=======
+        "food.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                }
+            }
+        },
+>>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
         "food.RateFoodsRequest": {
             "type": "object",
             "required": [
