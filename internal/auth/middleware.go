@@ -1,10 +1,9 @@
 package auth
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -30,7 +29,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-	
 		c.Set("userID", claims.UserID)
 		c.Set("token", claims.Token)
 

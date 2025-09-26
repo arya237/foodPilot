@@ -45,6 +45,10 @@ func (r *reserve) ReserveFood() (string, error) {
 
 	for _, user := range users {
 
+		if user.AutoSave == false {
+			continue
+		}
+
 		go func() {
 			token, _ := r.samad.GetAccessToken(user.Username, user.Password)
 			foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
