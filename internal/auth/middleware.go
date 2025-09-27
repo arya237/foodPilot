@@ -1,10 +1,10 @@
 package auth
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/ulule/limiter/v3"
 	"net/http"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -30,9 +30,28 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-	
 		c.Set("userID", claims.UserID)
 		c.Set("token", claims.Token)
+
+		c.Next()
+	}
+}
+
+func LimitMiddelware(limit *limiter.Limiter) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		context, err := limit.Get(c, clientIP)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		if context.Reached {
+			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":     "Too many requests, please try again later.",
+				"remaining": context.Remaining,
+			})
+		}
 
 		c.Next()
 	}

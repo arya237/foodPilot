@@ -5,6 +5,9 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/ulule/limiter/v3"
+	"github.com/ulule/limiter/v3/drivers/store/memory"
+	"time"
 )
 
 type UserHandler struct {
@@ -21,6 +24,14 @@ func NewUserHandler(u services.UserService) *UserHandler {
 
 func RegisterRoutes(group *gin.RouterGroup, userHandler *UserHandler) {
 
-	group.Use(auth.AuthMiddleware())
+	rate := limiter.Rate{
+		Period: 3 * time.Second,
+		Limit:  2,
+	}
+
+	store := memory.NewStore()
+	limiter := limiter.New(store, rate)
+
+	group.Use(auth.AuthMiddleware(), auth.LimitMiddelware(limiter))
 	group.POST("/autosave", userHandler.AutoSave)
 }
