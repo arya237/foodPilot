@@ -13,5 +13,5 @@ func main() {
 		log.Print(err.Error())
 	}
 
-	log.Print(app.Run("localhost:8080"))
+	log.Print(app.Run(":8080"))
 }
