@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
@@ -14,6 +15,8 @@ import (
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Container struct {
@@ -74,8 +77,24 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 	return userHandler
 }
 
+// @title                      FoodPilot
+// @version                    1.0
+// @description                Auto food reserve
+// @termsOfService             http://swagger.io/terms/
+// @contact.name               FoodPilot Dev Team
+// @contact.url                https://github.com/arya237/foodPilot
+// @securityDefinitions.apikey BearerAuth
+// @in                         header
+// @name                       Authorization
+// @description                Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"
 func NewApp() (*gin.Engine, error) {
 	engine := gin.Default()
+	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
+		ginSwagger.DocExpansion("none"),
+	)
+
+	engine.GET("/swagger/*any", swaggerHandler)
+
 	db := fakedb.NewDb()
 	conf, err := config.New()
 	if err != nil {
