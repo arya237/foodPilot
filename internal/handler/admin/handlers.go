@@ -6,7 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
+// GetFood      godoc
+// @Summary     Get users
+// @Description Return all the users
+// @Tags        Admin
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} GetUsersResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/users [GET]
 func (h *AdminHandler) GetUsers(c *gin.Context){
 	users , err := h.UserServise.GetAll()
 	if err != nil {
@@ -18,6 +26,15 @@ func (h *AdminHandler) GetUsers(c *gin.Context){
 	})
 }
 
+// GetFood      godoc
+// @Summary     Get food
+// @Description Return all the foods
+// @Tags        Admin
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} GetFoodsResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/foods [GET]
 func (h *AdminHandler) GetFood(c *gin.Context){
 	foodList, err := h.FoodService.GetAll()
 	if err != nil {
