@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"net/http"
+	"slices"
+	"strings"
+
+	"github.com/arya237/foodPilot/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
-	"net/http"
-	"strings"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -54,5 +57,25 @@ func LimitMiddelware(limit *limiter.Limiter) gin.HandlerFunc {
 		}
 
 		c.Next()
+	}
+}
+
+func AdminOnly() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			c.Abort()
+			return
+		}
+		
+		strID, _ := id.(string)
+		if slices.Contains(config.GetEnvAsSlice("ADMINS_STUDENT_NUMBER", []string{}, ","), strID) {
+			c.Next()
+			return
+		}
+
+		c.JSON(http.StatusForbidden, gin.H{"error": "admin only"})
+		c.Abort()
 	}
 }
