@@ -18,7 +18,9 @@ import (
 func (h *AdminHandler) GetUsers(c *gin.Context){
 	users , err := h.UserServise.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	c.JSON(http.StatusOK, GetUsersResponse{
@@ -38,7 +40,9 @@ func (h *AdminHandler) GetUsers(c *gin.Context){
 func (h *AdminHandler) GetFood(c *gin.Context){
 	foodList, err := h.FoodService.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	c.JSON(http.StatusOK, GetFoodsResponse{
