@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -27,6 +28,48 @@ func NewSamad(conf *Config) reservations.RequiredFunctions {
 		Config: conf,
 		logger: logger.New("samadService"),
 	}
+}
+
+func (s *Samad) GetProperSelfID(token string) (int, error) {
+	URL := s.GetSelfIDUrl
+
+	req, err := http.NewRequest("GET", URL, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	datas, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		s.logger.Info(err.Error())
+		return 0, err
+	}
+
+	var income map[string]any
+
+	err = json.Unmarshal(datas, &income)
+	if err != nil {
+		s.logger.Info(err.Error())
+		return 0, err
+	}
+
+	tmp, _ := income["payload"].([]interface{})
+
+	for _, key := range tmp {
+		new := key.(map[string]interface{})
+		return int(new["id"].(float64)), nil
+	}
+
+	return 0, reservations.ErrorInternal
 }
 
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
@@ -81,10 +124,18 @@ func (s *Samad) GetAccessToken(studentNumber string, password string) (string, e
 }
 
 func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations.WeekFood, error) {
+
+	selfID, err := s.GetProperSelfID(token)
+	if err != nil {
+		return nil, err
+	}
+
+	self := strconv.Itoa(selfID)
+
 	baseURL := s.GetProgramUrl
 	params := url.Values{}
 
-	params.Add("selfId", "1")
+	params.Add("selfId", self)
 	params.Add("weekStartDate", startDate.Format("2006-01-02 00:00:00"))
 
 	myurl := baseURL + "?" + params.Encode()

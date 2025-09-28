@@ -14,12 +14,12 @@ func TestSomething(t *testing.T) {
 		if studentNumber == "12345" && password == "pass" {
 			return "valid-token", nil
 		}
-		return "", reservations.ErorrInvalidToken // note: typo in your var name
+		return "", reservations.ErrorInvalidToken // note: typo in your var name
 	})
 
 	mock.SetReserveFood(func(token string, meal reservations.ReserveModel) (string, error) {
 		if token != "valid-token" {
-			return "", reservations.ErorrInvalidToken
+			return "", reservations.ErrorInvalidToken
 		}
 		return "reservation-success", nil
 	})
