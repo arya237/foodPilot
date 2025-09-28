@@ -1,8 +1,8 @@
 package models
 
 type User struct {
-	Id       int
-	Username string
-	Password string
-	AutoSave bool
+	Id       int    `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"-"`
+	AutoSave bool   `json:"auto_save"`
 }
