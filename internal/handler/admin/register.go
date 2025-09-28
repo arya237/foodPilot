@@ -36,6 +36,6 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	limiter := limiter.New(store, rate)
 
 	group.Use(auth.LimitMiddelware(limiter))
-
-	
+	group.GET("/users", adminHandler.GetUsers)
+	group.GET("/foods", adminHandler.GetFood)
 }
