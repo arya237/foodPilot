@@ -9,3 +9,7 @@ type GetFoodsResponse struct {
 type GetUsersResponse struct {
 	Users []*models.User `json:"users"`
 }
+
+type ErrorResponse struct {
+	Error string `json:"error" example:"error message"`
+}
