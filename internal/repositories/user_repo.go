@@ -62,14 +62,14 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
-	var users []*models.User
+	users := []*models.User{}
 	for _, user := range fdb.db.Users {
 		users = append(users, user)
 	}
 
-	if len(users) == 0 {
-		return nil, ErrorNoUser
-	}
+	// if len(users) == 0 {
+	// 	return nil, ErrorNoUser
+	// }
 
 	return users, nil
 }
