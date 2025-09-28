@@ -3,7 +3,6 @@ package samad
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
@@ -70,7 +69,7 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 		return int(new["id"].(float64)), nil
 	}
 
-	return 0, errors.New("internal error")
+	return 0, reservations.ErrorInternal
 }
 
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {

@@ -3,5 +3,6 @@ package reservations
 import "errors"
 
 var (
-	ErorrInvalidToken = errors.New("invalid token")
+	ErrorInvalidToken = errors.New("invalid token")
+	ErrorInternal     = errors.New("internal error")
 )
