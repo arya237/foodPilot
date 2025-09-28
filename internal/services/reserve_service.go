@@ -2,10 +2,12 @@ package services
 
 import (
 	"errors"
+	"sync"
+	"time"
+
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
-	"time"
 )
 
 type Reserve interface {
@@ -43,47 +45,30 @@ func (r *reserve) ReserveFood() (string, error) {
 		return "", err
 	}
 
-	for _, user := range users {
+	const workerCount = 10
+	jobs := make(chan *models.User, workerCount*2)
+	var wg sync.WaitGroup
 
-		if user.AutoSave == false {
-			continue
-		}
-
+	for range workerCount {
+		wg.Add(1)
 		go func() {
-			token, _ := r.samad.GetAccessToken(user.Username, user.Password)
-			foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
-
-			if err != nil {
-				r.logger.Info(err.Error())
-			}
-
-			if err != nil {
-				r.logger.Info(err.Error())
-			}
-
-			// for better performance rates should be map instaed of list
-			rates, err := r.rate.GetRateByUser(user.Id)
-			if err != nil {
-				r.logger.Info(err.Error())
-			}
-
-			for day, _ := range foodProgram.DailyFood {
-				for meal, _ := range foodProgram.DailyFood[day] {
-					var mealList []reservations.ReserveModel
-					mealList = foodProgram.DailyFood[day][meal]
-
-					bestFood, _ := findBestFood(mealList, rates, foods)
-					message, err := r.samad.ReserveFood(token, bestFood)
-					if err != nil {
-						r.logger.Info(err.Error())
-					} else {
-						r.logger.Info(message)
-					}
-				}
+			defer wg.Done()
+			for user := range jobs {
+				r.handleUserReservation(user, foods)
 			}
 		}()
 	}
 
+	go func() {
+		for _, user := range users {
+			if user.AutoSave {
+				jobs <- user
+			}
+		}
+		close(jobs)
+	}()
+
+	wg.Wait()
 	return "food reserved", nil
 }
 
@@ -120,4 +105,33 @@ func findBestFood(mealList []reservations.ReserveModel, rates []*models.Rate, fo
 		}
 	}
 	return bestFood, nil
+}
+
+func (r *reserve)handleUserReservation(user *models.User, foods []*models.Food) {
+	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
+	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
+
+	if err != nil {
+		r.logger.Info(err.Error())
+	}
+
+	// for better performance rates should be map instaed of list
+	rates, err := r.rate.GetRateByUser(user.Id)
+	if err != nil {
+		r.logger.Info(err.Error())
+	}
+
+	for day := range foodProgram.DailyFood {
+		for meal := range foodProgram.DailyFood[day] {
+			mealList := foodProgram.DailyFood[day][meal]
+
+			bestFood, _ := findBestFood(mealList, rates, foods)
+			message, err := r.samad.ReserveFood(token, bestFood)
+			if err != nil {
+				r.logger.Info(err.Error())
+			} else {
+				r.logger.Info(message)
+			}
+		}
+	}
 }
