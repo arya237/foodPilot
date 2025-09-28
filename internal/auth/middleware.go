@@ -1,11 +1,11 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"slices"
 	"strings"
 
-	"github.com/arya237/foodPilot/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
 )
@@ -68,9 +68,11 @@ func AdminOnly() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		strID, exist := id.(string)
+		log.Println(strID, exist)
 		
-		strID, _ := id.(string)
-		if slices.Contains(config.GetEnvAsSlice("ADMINS_STUDENT_NUMBER", []string{}, ","), strID) {
+		if  slices.Contains([]string{"1", "2", "3"}, strID) {
 			c.Next()
 			return
 		}

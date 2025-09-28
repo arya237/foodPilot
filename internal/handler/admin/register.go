@@ -35,7 +35,7 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	store := memory.NewStore()
 	limiter := limiter.New(store, rate)
 
-	group.Use(auth.LimitMiddelware(limiter))
+	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware(), auth.AdminOnly())
 	group.GET("/users", adminHandler.GetUsers)
 	group.GET("/foods", adminHandler.GetFood)
 }
