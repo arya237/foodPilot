@@ -50,6 +50,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/reserve": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Reserve food for all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reserve food",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.MessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -209,37 +240,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/food/reserve": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Reserve food for all users",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Reserve food",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.MessageResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/user/autosave": {
             "post": {
                 "security": [
@@ -321,6 +321,15 @@ const docTemplate = `{
                 }
             }
         },
+        "admin.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                }
+            }
+        },
         "auth.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -376,15 +385,6 @@ const docTemplate = `{
                 }
             }
         },
-        "food.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "message"
-                }
-            }
-        },
         "food.RateFoodsRequest": {
             "type": "object",
             "required": [
@@ -432,10 +432,24 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "role": {
+                    "$ref": "#/definitions/models.UserRole"
+                },
                 "username": {
                     "type": "string"
                 }
             }
+        },
+        "models.UserRole": {
+            "type": "string",
+            "enum": [
+                "user",
+                "admin"
+            ],
+            "x-enum-varnames": [
+                "RoleUser",
+                "RoleAdmin"
+            ]
         },
         "user.AutoSaveRequest": {
             "type": "object",

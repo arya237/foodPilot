@@ -72,7 +72,7 @@ func AdminOnly() gin.HandlerFunc {
 		strID, exist := id.(string)
 		log.Println(strID, exist)
 		
-		if  slices.Contains([]string{"1", "2", "3"}, strID) {
+		if  slices.Contains([]string{"0", "1", "2"}, strID) {
 			c.Next()
 			return
 		}
