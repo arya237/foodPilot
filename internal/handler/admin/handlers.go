@@ -59,7 +59,7 @@ func (h *AdminHandler) GetFood(c *gin.Context){
 // @Success     200 {object} MessageResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/reserve [POST]
-func (h *AdminHandler) reserveFood(c *gin.Context) {
+func (h *AdminHandler) ReserveFood(c *gin.Context) {
 	message, err := h.ReserveService.ReserveFood()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
