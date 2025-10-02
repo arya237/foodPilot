@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/handler/admin"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
 	"github.com/arya237/foodPilot/internal/handler/user"
@@ -77,6 +78,13 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 	return userHandler
 }
 
+func (c *Container) GetAdminHandler() *admin.AdminHandler {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	handler := admin.New(c.UserService, c.FoodService)
+	return handler
+}
+
 // @title                      FoodPilot
 // @version                    1.0
 // @description                Auto food reserve
@@ -107,14 +115,17 @@ func NewApp() (*gin.Engine, error) {
 	foodHandlers := container.GetFoodHandler()
 	authHandlers := container.GetLoginHandler()
 	userHandler := container.GetUserHandler()
+	adminHandler := container.GetAdminHandler()
 
 	authGroup := engine.Group("/auth")
 	foodGroup := engine.Group("/food")
 	userGroup := engine.Group("/user")
+	adminGroup := engine.Group("/admin")
 
 	auth.RegisterRoutes(authGroup, authHandlers)
 	food.RegisterRoutes(foodGroup, foodHandlers)
 	user.RegisterRoutes(userGroup, userHandler)
+	admin.RegisterRoutes(adminGroup, *adminHandler)
 
 	return engine, nil
 }

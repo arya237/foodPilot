@@ -52,6 +52,7 @@ func (u *userService) Login(userName, password string) (string, string, error) {
 		return "", "", errors.New("username or password is wrong")
 	}
 
+	//TODO: no need to generate  new token 
 	token, err := u.samad.GetAccessToken(userName, password)
 
 	if err != nil {
@@ -116,6 +117,7 @@ func (u *userService) Update(new *models.User) error {
 	return err
 }
 
+// change auto save is better
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 	user, err := u.repo.GetUserById(userID)
 	if err != nil {

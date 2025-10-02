@@ -11,6 +11,68 @@
         "version": "1.0"
     },
     "paths": {
+        "/admin/foods": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the foods",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get food",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.GetFoodsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.GetUsersResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
@@ -59,14 +121,11 @@
         },
         "/food/list": {
             "get": {
-<<<<<<< HEAD
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-=======
->>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
                 "description": "Return all the foods",
                 "produces": [
                     "application/json"
@@ -142,8 +201,6 @@
                 }
             }
         },
-<<<<<<< HEAD
-=======
         "/food/reserve": {
             "post": {
                 "security": [
@@ -175,7 +232,6 @@
                 }
             }
         },
->>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
         "/user/autosave": {
             "post": {
                 "security": [
@@ -226,6 +282,37 @@
         }
     },
     "definitions": {
+        "admin.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message"
+                }
+            }
+        },
+        "admin.GetFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Food"
+                    }
+                }
+            }
+        },
+        "admin.GetUsersResponse": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                }
+            }
+        },
         "auth.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -281,8 +368,6 @@
                 }
             }
         },
-<<<<<<< HEAD
-=======
         "food.MessageResponse": {
             "type": "object",
             "properties": {
@@ -292,7 +377,6 @@
                 }
             }
         },
->>>>>>> d09ef534f7c5a43a88260f5868ece8ad615dae8c
         "food.RateFoodsRequest": {
             "type": "object",
             "required": [
@@ -327,6 +411,20 @@
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "auto_save": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }
