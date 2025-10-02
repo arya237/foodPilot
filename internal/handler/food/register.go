@@ -12,16 +12,16 @@ import (
 )
 
 type FoodHandler struct {
-	RateService    services.RateFoodService
-	FoodService    services.FoodService
-	logger         logger.Logger
+	RateService services.RateFoodService
+	FoodService services.FoodService
+	logger      logger.Logger
 }
 
 func NewFoodHandler(r services.RateFoodService, f services.FoodService) *FoodHandler {
 	return &FoodHandler{
-		logger:         logger.New("foodHandler"),
-		FoodService:    f,
-		RateService:    r,
+		logger:      logger.New("foodHandler"),
+		FoodService: f,
+		RateService: r,
 	}
 }
 
@@ -36,7 +36,6 @@ func RegisterRoutes(group *gin.RouterGroup, foodHandler *FoodHandler) {
 	limiter := limiter.New(store, rate)
 
 	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware())
-
 	group.GET("/list", foodHandler.GetFoods)
 	group.POST("/rate", foodHandler.RateFoods)
 }

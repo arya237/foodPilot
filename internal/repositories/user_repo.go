@@ -54,7 +54,6 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 		if user.Username == username {
 			return user, nil
 		}
-		return nil, ErrorInvalidUName
 	}
 	return nil, ErrorNoUser
 }
