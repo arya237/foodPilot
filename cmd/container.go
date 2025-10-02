@@ -74,7 +74,7 @@ func (c *Container) GetLoginHandler() *auth.LoginHandler {
 func (c *Container) GetUserHandler() *user.UserHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	userHandler := user.NewUserHandler(c.UserService)
+	userHandler := user.NewUserHandler(c.UserService, c.RateService)
 	return userHandler
 }
 
