@@ -324,6 +324,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
       security:
       - BearerAuth: []
       summary: return user rates
