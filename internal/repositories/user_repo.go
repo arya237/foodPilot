@@ -55,7 +55,7 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 			return user, nil
 		}
 	}
-	return nil, ErrorNoUser
+	return nil, ErrorInvalidUName
 }
 
 func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
@@ -66,9 +66,9 @@ func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
 		users = append(users, user)
 	}
 
-	// if len(users) == 0 {
-	// 	return nil, ErrorNoUser
-	// }
+	if len(users) == 0 {
+		return nil, ErrorNoUser
+	}
 
 	return users, nil
 }
