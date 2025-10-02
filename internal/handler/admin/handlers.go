@@ -49,3 +49,22 @@ func (h *AdminHandler) GetFood(c *gin.Context){
 		foodList,
 	})
 }
+
+// ReserveFood  godoc
+// @Summary     Reserve food
+// @Description Reserve food for all users
+// @Tags        Admin
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} MessageResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/reserve [POST]
+func (h *AdminHandler) reserveFood(c *gin.Context) {
+	message, err := h.ReserveService.ReserveFood()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, MessageResponse{Message: message})
+}

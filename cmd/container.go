@@ -60,7 +60,7 @@ func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 func (c *Container) GetFoodHandler() *food.FoodHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService, c.ReserveService)
+	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService)
 	return foodHandler
 }
 
@@ -81,7 +81,7 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 func (c *Container) GetAdminHandler() *admin.AdminHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	handler := admin.New(c.UserService, c.FoodService)
+	handler := admin.New(c.UserService, c.FoodService, c.ReserveService)
 	return handler
 }
 

@@ -12,16 +12,18 @@ import (
 )
 
 type AdminHandler struct {
-	UserServise services.UserService
+	UserServise    services.UserService
 	FoodService    services.FoodService
+	ReserveService services.Reserve
 	Logger         logger.Logger
 }
 
-func New(userServise services.UserService, foodService services.FoodService) *AdminHandler{
+func New(userServise services.UserService, foodService services.FoodService, reserveService services.Reserve) *AdminHandler {
 	return &AdminHandler{
 		UserServise: userServise,
 		FoodService: foodService,
-		Logger: logger.New("Admin panel logger"),
+		ReserveService: reserveService,
+		Logger:      logger.New("Admin panel logger"),
 	}
 }
 
@@ -31,11 +33,12 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 		Period: 3 * time.Second,
 		Limit:  10,
 	}
-	
+
 	store := memory.NewStore()
 	limiter := limiter.New(store, rate)
 
 	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware(), auth.AdminOnly())
 	group.GET("/users", adminHandler.GetUsers)
 	group.GET("/foods", adminHandler.GetFood)
+	group.POST("/reserve", adminHandler.reserveFood)
 }
