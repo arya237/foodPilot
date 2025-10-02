@@ -15,6 +15,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -100,6 +101,14 @@ func NewApp() (*gin.Engine, error) {
 	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
 		ginSwagger.DocExpansion("none"),
 	)
+
+	corsConfig := cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}
+
+	engine.Use(cors.New(corsConfig))
 
 	engine.GET("/swagger/*any", swaggerHandler)
 
