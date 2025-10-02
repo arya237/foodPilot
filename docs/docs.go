@@ -287,6 +287,34 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/rates": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "return user rates",
+                "tags": [
+                    "User"
+                ],
+                "summary": "return user rates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.RatesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -476,6 +504,22 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "error message"
+                }
+            }
+        },
+        "user.RatesResponse": {
+            "type": "object",
+            "properties": {
+                "rates": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
+                    }
                 }
             }
         }

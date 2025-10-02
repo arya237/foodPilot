@@ -44,3 +44,29 @@ func (h *UserHandler) AutoSave(c *gin.Context) {
 		Message: "Auto save updated",
 	})
 }
+
+// GetRates     godoc
+// @Summary     return user rates
+// @Description return user rates
+// @Tags        User
+// @Security    BearerAuth
+// @Success     200 {object} RatesResponse
+// @Failure     400 {object} ErrorResponse
+// @Router      /user/rates [GET]
+func (h *UserHandler) GetRates(c *gin.Context) {
+	id, exist := c.Get("userID")
+	if !exist {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "user not found"})
+		return
+	}
+
+	userID, _ := strconv.Atoi(id.(string))
+
+	userRates, err := h.RateService.GetRateByUser(userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, RatesResponse{Rates: userRates})
+}
