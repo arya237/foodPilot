@@ -312,6 +312,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.ErrorResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
                     }
                 }
             }

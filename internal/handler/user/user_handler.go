@@ -52,6 +52,7 @@ func (h *UserHandler) AutoSave(c *gin.Context) {
 // @Security    BearerAuth
 // @Success     200 {object} RatesResponse
 // @Failure     400 {object} ErrorResponse
+// @Failure     500 {object} ErrorResponse
 // @Router      /user/rates [GET]
 func (h *UserHandler) GetRates(c *gin.Context) {
 	id, exist := c.Get("userID")
@@ -64,7 +65,7 @@ func (h *UserHandler) GetRates(c *gin.Context) {
 
 	userRates, err := h.RateService.GetRateByUser(userID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
