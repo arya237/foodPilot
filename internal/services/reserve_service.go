@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"sync"
 	"time"
 
@@ -15,16 +14,14 @@ type Reserve interface {
 }
 
 type reserve struct {
-	food   FoodService
 	user   UserService
 	rate   RateFoodService
 	samad  reservations.RequiredFunctions
 	logger logger.Logger
 }
 
-func NewReserveService(f FoodService, u UserService, r RateFoodService, s reservations.RequiredFunctions) Reserve {
+func NewReserveService(u UserService, r RateFoodService, s reservations.RequiredFunctions) Reserve {
 	return &reserve{
-		food:   f,
 		user:   u,
 		rate:   r,
 		samad:  s,
@@ -39,12 +36,6 @@ func (r *reserve) ReserveFood() (string, error) {
 		return "", err
 	}
 
-	foods, err := r.food.GetAll()
-	if err != nil {
-		r.logger.Info(err.Error())
-		return "", err
-	}
-
 	const workerCount = 10
 	jobs := make(chan *models.User, workerCount*2)
 	var wg sync.WaitGroup
@@ -54,7 +45,7 @@ func (r *reserve) ReserveFood() (string, error) {
 		go func() {
 			defer wg.Done()
 			for user := range jobs {
-				r.handleUserReservation(user, foods)
+				r.handleUserReservation(user)
 			}
 		}()
 	}
@@ -72,34 +63,16 @@ func (r *reserve) ReserveFood() (string, error) {
 	return "food reserved", nil
 }
 
-func findFoodWithId(foods []*models.Food, foodID int) (*models.Food, error) {
-	for _, food := range foods {
-		if food.Id == foodID {
-			return food, nil
-		}
-	}
-
-	return nil, errors.New("food not found")
-}
-
-func findBestFood(mealList []reservations.ReserveModel, rates []*models.Rate, foods []*models.Food) (reservations.ReserveModel, error) {
+func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (reservations.ReserveModel, error) {
 	bestFood := reservations.ReserveModel{}
 	bestScore := 0
-	logger := logger.New("findBestFoodFunction")
 
 	for _, meal := range mealList {
-		for _, rate := range rates {
-
-			food, err := findFoodWithId(foods, rate.FoodID)
-			if err != nil {
-				logger.Info(err.Error())
-				break
-			}
-
-			if meal.FoodName == food.Name {
-				if rate.Score > bestScore {
+		for foodName, rate := range rates {
+			if meal.FoodName == foodName {
+				if rate > bestScore {
 					bestFood = meal
-					bestScore = rate.Score
+					bestScore = rate
 				}
 			}
 		}
@@ -107,7 +80,7 @@ func findBestFood(mealList []reservations.ReserveModel, rates []*models.Rate, fo
 	return bestFood, nil
 }
 
-func (r *reserve)handleUserReservation(user *models.User, foods []*models.Food) {
+func (r *reserve) handleUserReservation(user *models.User) {
 	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
 
@@ -115,7 +88,6 @@ func (r *reserve)handleUserReservation(user *models.User, foods []*models.Food) 
 		r.logger.Info(err.Error())
 	}
 
-	// for better performance rates should be map instaed of list
 	rates, err := r.rate.GetRateByUser(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
@@ -125,7 +97,7 @@ func (r *reserve)handleUserReservation(user *models.User, foods []*models.Food) 
 		for meal := range foodProgram.DailyFood[day] {
 			mealList := foodProgram.DailyFood[day][meal]
 
-			bestFood, _ := findBestFood(mealList, rates, foods)
+			bestFood, _ := findBestFood(mealList, rates)
 			message, err := r.samad.ReserveFood(token, bestFood)
 			if err != nil {
 				r.logger.Info(err.Error())

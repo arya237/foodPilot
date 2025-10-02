@@ -54,7 +54,7 @@ func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
 	c.Samad = samad.NewSamad(conf)
-	c.ReserveService = services.NewReserveService(c.FoodService, c.UserService, c.RateService, c.Samad)
+	c.ReserveService = services.NewReserveService(c.UserService, c.RateService, c.Samad)
 }
 
 func (c *Container) GetFoodHandler() *food.FoodHandler {

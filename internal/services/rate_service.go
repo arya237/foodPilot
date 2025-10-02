@@ -11,7 +11,7 @@ import (
 
 type RateFoodService interface {
 	SaveRate(userID string, foods map[string]int) (string, error)
-	GetRateByUser(userID int) ([]*models.Rate, error)
+	GetRateByUser(userID int) (map[string]int, error)
 }
 
 type rateFoodService struct {
@@ -61,8 +61,19 @@ func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string,
 	return "all Rates save successfully", nil
 }
 
-func (s *rateFoodService) GetRateByUser(userID int) ([]*models.Rate, error) {
-	return s.RateRepo.GetRateByUser(userID)
+func (s *rateFoodService) GetRateByUser(userID int) (map[string]int, error) {
+	rates, err :=  s.RateRepo.GetRateByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userRates := make(map[string]int, len(rates))
+	for _, rate := range rates {
+		food, _ := s.FoodRepo.GetFoodById(rate.FoodID)
+		userRates[food.Name] = rate.Score
+	}
+
+	return  userRates, nil
 }
 
 func findFoodID(foods []*models.Food, foodName string) (int, error) {
