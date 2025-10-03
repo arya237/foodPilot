@@ -37,6 +37,7 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 }
 
 func (u *userService) Login(userName, password string) (string, string, error) {
+
 	user, err := u.GetByUserName(userName)
 	var id int
 
@@ -50,9 +51,9 @@ func (u *userService) Login(userName, password string) (string, string, error) {
 		}
 	} else if user.Password != password {
 		return "", "", errors.New("username or password is wrong")
+
 	}
 
-	//TODO: no need to generate  new token 
 	token, err := u.samad.GetAccessToken(userName, password)
 
 	if err != nil {

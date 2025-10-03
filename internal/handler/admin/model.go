@@ -21,3 +21,20 @@ type ErrorResponse struct {
 type MessageResponse struct {
 	Message string `json:"message" example:"message"`
 }
+
+type AddNewFoodRequest struct {
+	FoodName string `json:"food"`
+}
+
+type AddNewFoodResponse struct {
+	Message string `json:"message" example:"message"`
+	Error   string `json:"error" example:"error message"`
+}
+
+type DeleteFoodRequest struct {
+	FoodID int `json:"foodId"`
+}
+type DeleteFoodResponse struct {
+	Message string `json:"message" example:"message"`
+	Error   string `json:"error" example:"error message"`
+}

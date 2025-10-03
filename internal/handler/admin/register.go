@@ -20,10 +20,10 @@ type AdminHandler struct {
 
 func New(userServise services.UserService, foodService services.FoodService, reserveService services.Reserve) *AdminHandler {
 	return &AdminHandler{
-		UserServise: userServise,
-		FoodService: foodService,
+		UserServise:    userServise,
+		FoodService:    foodService,
 		ReserveService: reserveService,
-		Logger:      logger.New("Admin panel logger"),
+		Logger:         logger.New("Admin panel logger"),
 	}
 }
 
@@ -40,5 +40,7 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware(), auth.AdminOnly())
 	group.GET("/users", adminHandler.GetUsers)
 	group.GET("/foods", adminHandler.GetFood)
+	group.POST("/foods", adminHandler.AddNewFood)
+	group.DELETE("/foods", adminHandler)
 	group.POST("/reserve", adminHandler.ReserveFood)
 }

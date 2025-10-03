@@ -15,8 +15,8 @@ import (
 // @Success     200 {object} GetUsersResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/users [GET]
-func (h *AdminHandler) GetUsers(c *gin.Context){
-	users , err := h.UserServise.GetAll()
+func (h *AdminHandler) GetUsers(c *gin.Context) {
+	users, err := h.UserServise.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Error: err.Error(),
@@ -37,7 +37,7 @@ func (h *AdminHandler) GetUsers(c *gin.Context){
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/foods [GET]
-func (h *AdminHandler) GetFood(c *gin.Context){
+func (h *AdminHandler) GetFood(c *gin.Context) {
 	foodList, err := h.FoodService.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -48,6 +48,40 @@ func (h *AdminHandler) GetFood(c *gin.Context){
 	c.JSON(http.StatusOK, GetFoodsResponse{
 		foodList,
 	})
+}
+
+func (h *AdminHandler) AddNewFood(c *gin.Context) {
+	var arrived AddNewFoodRequest
+
+	if err := c.BindJSON(&arrived); err != nil {
+		c.JSON(http.StatusBadRequest, AddNewFoodResponse{Error: err.Error(), Message: ""})
+		return
+	}
+
+	message, err := h.FoodService.Save(arrived.FoodName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, AddNewFoodResponse{Error: err.Error(), Message: message})
+		return
+	}
+
+	c.JSON(http.StatusCreated, AddNewFoodResponse{Error: "", Message: message})
+}
+
+func (h *AdminHandler) DeleteFood(c *gin.Context) {
+	var arrived DeleteFoodRequest
+	if err := c.BindJSON(&arrived); err != nil {
+		c.JSON(http.StatusBadRequest, DeleteFoodResponse{Error: err.Error(), Message: ""})
+		return
+	}
+
+	message, err := h.FoodService.Delete(arrived.FoodID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, DeleteFoodResponse{Error: err.Error(), Message: message})
+		return
+	}
+
+	c.JSON(http.StatusOK, DeleteFoodResponse{Error: "", Message: message})
 }
 
 // ReserveFood  godoc
