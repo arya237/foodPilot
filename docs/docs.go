@@ -19,6 +19,99 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/foods": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the foods",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get food",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.GetFoodsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/reserve": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Reserve food for all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reserve food",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.MessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.GetUsersResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
@@ -194,9 +287,83 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/rates": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "return user rates",
+                "tags": [
+                    "User"
+                ],
+                "summary": "return user rates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.RatesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "admin.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message"
+                }
+            }
+        },
+        "admin.GetFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Food"
+                    }
+                }
+            }
+        },
+        "admin.GetUsersResponse": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                }
+            }
+        },
+        "admin.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                }
+            }
+        },
         "auth.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -290,6 +457,34 @@ const docTemplate = `{
                 }
             }
         },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "auto_save": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "role": {
+                    "$ref": "#/definitions/models.UserRole"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserRole": {
+            "type": "string",
+            "enum": [
+                "user",
+                "admin"
+            ],
+            "x-enum-varnames": [
+                "RoleUser",
+                "RoleAdmin"
+            ]
+        },
         "user.AutoSaveRequest": {
             "type": "object",
             "required": [
@@ -315,6 +510,22 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "error message"
+                }
+            }
+        },
+        "user.RatesResponse": {
+            "type": "object",
+            "properties": {
+                "rates": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
+                    }
                 }
             }
         }

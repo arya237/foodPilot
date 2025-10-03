@@ -10,6 +10,7 @@ func New() (*Config, error) {
 	config.SamadConfig.GetProgramUrl = GetEnv("GETPROGRAMURL", "")
 	config.SamadConfig.GetTokenUrl = GetEnv("GETTOKENURL", "")
 	config.SamadConfig.ReserveUrl = GetEnv("RESERVEURL", "")
+	config.SamadConfig.GetSelfIDUrl = GetEnv("GETSELFIDURL", "")
 
 	return &config, nil
 }

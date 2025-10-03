@@ -28,11 +28,12 @@ func (fdb *rateRepo) SaveRate(userID, foodID, score int) error {
 	if _, ok := fdb.db.Users[userID]; !ok {
 		return ErrorInvalidUID
 	}
-	for _, rate := range fdb.db.Rates[userID] {
-		if rate.FoodID == foodID {
-			return ErrorDuplicateFood
-		}
-	}
+
+	//for _, rate := range fdb.db.Rates[userID] {
+	//	if rate.FoodID == foodID {
+	//		return ErrorDuplicateFood
+	//	}
+	//}
 
 	if _, ok := fdb.db.Foods[foodID]; !ok {
 		return ErrorInvalidFID
@@ -48,7 +49,7 @@ func (fdb *rateRepo) GetRateByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
-		return nil, ErrorInvalidUID
+		return nil, ErrorNorate
 	}
 
 	var rates []*models.Rate

@@ -1,4 +1,30 @@
 definitions:
+  admin.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  admin.GetFoodsResponse:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/models.Food'
+        type: array
+    type: object
+  admin.GetUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
+  admin.MessageResponse:
+    properties:
+      message:
+        example: message
+        type: string
+    type: object
   auth.ErrorResponse:
     properties:
       error:
@@ -61,6 +87,25 @@ definitions:
       name:
         type: string
     type: object
+  models.User:
+    properties:
+      auto_save:
+        type: boolean
+      id:
+        type: integer
+      role:
+        $ref: '#/definitions/models.UserRole'
+      username:
+        type: string
+    type: object
+  models.UserRole:
+    enum:
+    - user
+    - admin
+    type: string
+    x-enum-varnames:
+    - RoleUser
+    - RoleAdmin
   user.AutoSaveRequest:
     properties:
       autosave:
@@ -79,6 +124,17 @@ definitions:
         example: error message
         type: string
     type: object
+  user.RatesResponse:
+    properties:
+      rates:
+        additionalProperties:
+          type: integer
+        example:
+          foodName1: 93
+          foodName2: 74
+          foodName3: 80
+        type: object
+    type: object
 info:
   contact:
     name: FoodPilot Dev Team
@@ -88,6 +144,63 @@ info:
   title: FoodPilot
   version: "1.0"
 paths:
+  /admin/foods:
+    get:
+      description: Return all the foods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get food
+      tags:
+      - Admin
+  /admin/reserve:
+    post:
+      description: Reserve food for all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reserve food
+      tags:
+      - Admin
+  /admin/users:
+    get:
+      description: Return all the users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.GetUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get users
+      tags:
+      - Admin
   /auth/login:
     post:
       consumes:
@@ -197,6 +310,27 @@ paths:
       security:
       - BearerAuth: []
       summary: Toggle user autosave
+      tags:
+      - User
+  /user/rates:
+    get:
+      description: return user rates
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.RatesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: return user rates
       tags:
       - User
 securityDefinitions:

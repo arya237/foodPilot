@@ -33,7 +33,7 @@ func (fdb *userRepo) SaveUser(username, password string) (int, error) {
 		}
 	}
 
-	fdb.db.Users[fdb.db.UserCounter] = &models.User{Username: username, Password: password, Id: fdb.db.UserCounter, AutoSave: true}
+	fdb.db.Users[fdb.db.UserCounter] = &models.User{Username: username, Password: password, Id: fdb.db.UserCounter, AutoSave: true, Role: models.RoleUser}
 	fdb.db.UserCounter++
 	return fdb.db.UserCounter - 1, nil
 }
@@ -54,15 +54,14 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 		if user.Username == username {
 			return user, nil
 		}
-		return nil, ErrorInvalidUName
 	}
-	return nil, ErrorNoUser
+	return nil, ErrorInvalidUName
 }
 
 func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
-	var users []*models.User
+	users := []*models.User{}
 	for _, user := range fdb.db.Users {
 		users = append(users, user)
 	}

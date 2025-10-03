@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/handler/admin"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
 	"github.com/arya237/foodPilot/internal/handler/user"
@@ -14,6 +15,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -53,13 +55,13 @@ func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
 	c.Samad = samad.NewSamad(conf)
-	c.ReserveService = services.NewReserveService(c.FoodService, c.UserService, c.RateService, c.Samad)
+	c.ReserveService = services.NewReserveService(c.UserService, c.RateService, c.Samad)
 }
 
 func (c *Container) GetFoodHandler() *food.FoodHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService, c.ReserveService)
+	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService)
 	return foodHandler
 }
 
@@ -73,8 +75,15 @@ func (c *Container) GetLoginHandler() *auth.LoginHandler {
 func (c *Container) GetUserHandler() *user.UserHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	userHandler := user.NewUserHandler(c.UserService)
+	userHandler := user.NewUserHandler(c.UserService, c.RateService)
 	return userHandler
+}
+
+func (c *Container) GetAdminHandler() *admin.AdminHandler {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	handler := admin.New(c.UserService, c.FoodService, c.ReserveService)
+	return handler
 }
 
 // @title                      FoodPilot
@@ -93,6 +102,14 @@ func NewApp() (*gin.Engine, error) {
 		ginSwagger.DocExpansion("none"),
 	)
 
+	corsConfig := cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}
+
+	engine.Use(cors.New(corsConfig))
+
 	engine.GET("/swagger/*any", swaggerHandler)
 
 	db := fakedb.NewDb()
@@ -107,14 +124,17 @@ func NewApp() (*gin.Engine, error) {
 	foodHandlers := container.GetFoodHandler()
 	authHandlers := container.GetLoginHandler()
 	userHandler := container.GetUserHandler()
+	adminHandler := container.GetAdminHandler()
 
 	authGroup := engine.Group("/auth")
 	foodGroup := engine.Group("/food")
 	userGroup := engine.Group("/user")
+	adminGroup := engine.Group("/admin")
 
 	auth.RegisterRoutes(authGroup, authHandlers)
 	food.RegisterRoutes(foodGroup, foodHandlers)
 	user.RegisterRoutes(userGroup, userHandler)
+	admin.RegisterRoutes(adminGroup, *adminHandler)
 
 	return engine, nil
 }

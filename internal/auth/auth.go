@@ -4,15 +4,17 @@ import (
 	"errors"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-//TODO: fix this
-var jwtSecret = []byte("supersecretkey")
+var jwtSecret = []byte(config.GetEnv("JWT_SECRET", "lkfdlkjb;lkj;lkj"))
 
 type Claims struct {
-	UserID string `json:"userid"`
-	Token  string `json:"token"`
+	UserID string          `json:"userid"`
+	Token  string          `json:"token"`
+	Role   models.UserRole `json:"role"`
 	jwt.RegisteredClaims
 }
 

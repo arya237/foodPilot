@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"log"
+	"net/http"
+	"slices"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
-	"net/http"
-	"strings"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -54,5 +57,27 @@ func LimitMiddelware(limit *limiter.Limiter) gin.HandlerFunc {
 		}
 
 		c.Next()
+	}
+}
+
+func AdminOnly() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			c.Abort()
+			return
+		}
+
+		strID, exist := id.(string)
+		log.Println(strID, exist)
+		
+		if  slices.Contains([]string{"0", "1", "2"}, strID) {
+			c.Next()
+			return
+		}
+
+		c.JSON(http.StatusForbidden, gin.H{"error": "admin only"})
+		c.Abort()
 	}
 }
