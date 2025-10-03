@@ -142,7 +142,6 @@ info:
   description: Auto food reserve
   termsOfService: http://swagger.io/terms/
   title: FoodPilot
-  version: "1.0"
 paths:
   /admin/foods:
     get:
