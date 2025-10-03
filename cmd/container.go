@@ -86,7 +86,6 @@ func (c *Container) GetAdminHandler() *admin.AdminHandler {
 }
 
 // @title                      FoodPilot
-// @version                    1.0
 // @description                Auto food reserve
 // @termsOfService             http://swagger.io/terms/
 // @contact.name               FoodPilot Dev Team
