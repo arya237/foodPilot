@@ -35,6 +35,8 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 		samad:  samad.NewSamad(config),
 	}
 }
+
+//this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	// Check if user already exists
 	existingUser, err := u.GetByUserName(userName)
@@ -42,16 +44,23 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		return nil, ErrUserAlreadyExists
 	}
 
-	// Create new user with default role
-	user := &models.User{
-		Username: userName,
-		Password: password,
-		Role:     models.RoleUser, // Default role is user
-		AutoSave: false,
-	}
+	// // Create new user with default role
+	// user := &models.User{
+	// 	Username: userName,
+	// 	Password: password,
+	// 	Role:     models.RoleUser, // Default role is user
+	// 	AutoSave: false,
+	// }
 
 	// Save user to database
 	id, err := u.repo.SaveUser(userName, password)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrUserRegistration
+	}
+
+	// this stage must rewrite 
+	user, err := u.repo.GetUserById(id)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserRegistration
@@ -66,7 +75,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 	user.Token = token
 	
-	user.Id = id
 	return user, nil
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
