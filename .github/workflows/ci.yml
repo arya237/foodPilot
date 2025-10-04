@@ -54,3 +54,4 @@ jobs:
         push: true
         tags: 
           ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.VERSION }}
+          ${{ env.REGISTRY }}/${{ env.REPO }}:latest
