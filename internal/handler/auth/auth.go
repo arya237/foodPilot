@@ -44,27 +44,22 @@ func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
 // @Failure     500 {object} ErrorResponse
 // @Router      /auth/login [POST]
 func (h *LoginHandler) HandleLogin(c *gin.Context) {
+	// Get request  information
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid request"})
 		return
 	}
 
-	ID, token, err := h.UserService.Login(req.Username, req.Password)
-
+	//login with user
+	user, err := h.UserService.Login(req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	// Get user to retrieve role
-	user, err := h.UserService.GetByUserName(req.Username)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "could not retrieve user information"})
-		return
-	}
-
-	jwtToken, err := auth.GenerateJWT(ID, token, user.Role, h.TokenExpiry)
+	// generate token for this user
+	jwtToken, err := auth.GenerateJWT(user, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "could not generate token"})
 		return
@@ -85,6 +80,7 @@ func (h *LoginHandler) HandleLogin(c *gin.Context) {
 // @Failure     500 {object} ErrorResponse
 // @Router      /auth/signup [POST]
 func (h *LoginHandler) HandleSignUp(c *gin.Context) {
+	// Bind request info
 	var req SignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid request"})
@@ -98,15 +94,8 @@ func (h *LoginHandler) HandleSignUp(c *gin.Context) {
 		return
 	}
 
-	// Generate access token for the new user
-	userID, samadToken, err := h.UserService.Login(req.Username, req.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "user registered but could not generate token"})
-		return
-	}
-
-	// Generate JWT with user role
-	jwtToken, err := auth.GenerateJWT(userID, samadToken, user.Role, h.TokenExpiry)
+	// generate token for this user
+	jwtToken, err := auth.GenerateJWT(user, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "could not generate token"})
 		return
