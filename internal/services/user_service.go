@@ -36,7 +36,7 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 	}
 }
 
-//this functio need a huge refactoring.... in package repo
+// this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	// Check if user already exists
 	existingUser, err := u.repo.GetUserByUserName(userName)
@@ -44,37 +44,30 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		return nil, ErrUserAlreadyExists
 	}
 
-	// // Create new user with default role
-	// user := &models.User{
-	// 	Username: userName,
-	// 	Password: password,
-	// 	Role:     models.RoleUser, // Default role is user
-	// 	AutoSave: false,
-	// }
-
-	// Save user to database
-	id, err := u.repo.SaveUser(userName, password)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, ErrUserRegistration
-	}
-
-	// this stage must rewrite 
-	user, err := u.repo.GetUserById(id)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, ErrUserRegistration
-	}
-
-	// Generate access token if Needed 
+	// Generate access token if Needed
 	// TODO: fucking arya see this line.................
 	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrTokenGeneration
 	}
-	user.Token = token
-	
+
+	// Create new user with default role
+	user := &models.User{
+		Username: userName,
+		Password: password,
+		Role:     models.RoleUser, // Default role is user
+		AutoSave: true,
+		Token:    token,
+	}
+
+	// Save user to database
+	user, err = u.repo.SaveUser(user)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrUserRegistration
+	}
+
 	return user, nil
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
@@ -90,8 +83,8 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		return nil, ErrInvalidCredentials
 	}
 
-	// Generate access token if Needed 
-	// TODO: fucking arya see this line.................
+	// Generate access token if Needed
+	// TODO: fucking arya see this line ......... remeber you should save it to db also after you change token
 	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
@@ -103,14 +96,21 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 }
 
 func (u *userService) Save(userName, password string) (int, error) {
-
-	id, err := u.repo.SaveUser(userName, password)
-
+	user := &models.User{
+		Username: userName,
+		Password: password,
+		Role:     models.RoleUser, // Default role is user
+		AutoSave: true,
+		Token:    "empthy",
+	}
+	
+	SaveUser, err := u.repo.SaveUser(user)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return 0, err
 	}
-	return id, nil
+
+	return SaveUser.Id, nil
 }
 
 func (u *userService) GetById(id int) (*models.User, error) {
