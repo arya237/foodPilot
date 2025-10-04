@@ -39,7 +39,7 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 //this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	// Check if user already exists
-	existingUser, err := u.GetByUserName(userName)
+	existingUser, err := u.repo.GetUserByUserName(userName)
 	if err == nil && existingUser != nil {
 		return nil, ErrUserAlreadyExists
 	}
@@ -79,7 +79,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
 	// Get user by username
-	user, err := u.GetByUserName(userName)
+	user, err := u.repo.GetUserByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
