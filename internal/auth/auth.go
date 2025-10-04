@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/arya237/foodPilot/internal/config"
@@ -18,11 +19,11 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID, token string, role models.UserRole, duration time.Duration) (string, error) {
+func GenerateJWT(user *models.User, duration time.Duration) (string, error) {
 	claims := &Claims{
-		UserID: userID,
-		Token:  token,
-		Role:   role,
+		UserID: strconv.Itoa(user.Id),
+		Token:  user.Token,
+		Role:   user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
