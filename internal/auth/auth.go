@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte(config.GetEnv("JWT_SECRET", "lkfdlkjb;lkj;lkj"))
+var jwtSecret = []byte(config.GetEnv("JWT_SECRET", "I just want you to know that i love you"))
 
 type Claims struct {
 	UserID string          `json:"userid"`
