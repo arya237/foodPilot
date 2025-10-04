@@ -18,10 +18,11 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID, token string, duration time.Duration) (string, error) {
+func GenerateJWT(userID, token string, role models.UserRole, duration time.Duration) (string, error) {
 	claims := &Claims{
 		UserID: userID,
 		Token:  token,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

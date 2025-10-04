@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/arya237/foodPilot/internal/models"
@@ -12,6 +11,7 @@ import (
 )
 
 type UserService interface {
+	SignUp(userName, password string) (*models.User, error)
 	Login(userName, password string) (string, string, error)
 	Save(username, password string) (int, error)
 	GetById(id int) (*models.User, error)
@@ -35,31 +35,52 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 		samad:  samad.NewSamad(config),
 	}
 }
+func (u *userService) SignUp(userName, password string) (*models.User, error) {
+	// Check if user already exists
+	existingUser, err := u.GetByUserName(userName)
+	if err == nil && existingUser != nil {
+		return nil, ErrUserAlreadyExists
+	}
 
+	// Create new user with default role
+	user := &models.User{
+		Username: userName,
+		Password: password,
+		Role:     models.RoleUser, // Default role is user
+		AutoSave: false,
+	}
+
+	// Save user to database
+	id, err := u.repo.SaveUser(userName, password)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrUserRegistration
+	}
+
+	user.Id = id
+	return user, nil
+}
 func (u *userService) Login(userName, password string) (string, string, error) {
+	// Get user by username
 	user, err := u.GetByUserName(userName)
-	var id int
-
 	if err != nil {
 		u.logger.Info(err.Error())
-		id, err = u.Save(userName, password)
-
-		if err != nil {
-			u.logger.Info(err.Error())
-			return "", "", err
-		}
-	} else if user.Password != password {
-		return "", "", errors.New("username or password is wrong")
+		return "", "", ErrUserNotRegistered
 	}
 
-	//TODO: no need to generate  new token 
+	// Validate password
+	if user.Password != password {
+		return "", "", ErrInvalidCredentials
+	}
+
+	// Generate access token
 	token, err := u.samad.GetAccessToken(userName, password)
-
 	if err != nil {
 		u.logger.Info(err.Error())
-		return "", "", err
+		return "", "", ErrTokenGeneration
 	}
-	userID := strconv.Itoa(id)
+
+	userID := strconv.Itoa(user.Id)
 	return userID, token, nil
 }
 
