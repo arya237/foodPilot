@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/arya237/foodPilot/internal/models"
@@ -13,14 +12,16 @@ import (
 
 type UserService interface {
 	SignUp(userName, password string) (*models.User, error)
-	Login(userName, password string) (string, string, error)
+	Login(userName, password string) (*models.User, error)
 	Save(username, password string) (int, error)
+	ToggleAutoSave(userID int, autoSave bool) error
+
+	// IDEA: repo like functions -> i think it is better to delete them all :)
 	GetById(id int) (*models.User, error)
 	GetByUserName(username string) (*models.User, error)
 	GetAll() ([]*models.User, error)
 	Delete(id int) error
 	Update(new *models.User) error
-	ToggleAutoSave(userID int, autoSave bool) error
 }
 
 type userService struct {
@@ -58,31 +59,41 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		return nil, ErrUserRegistration
 	}
 
+	// Generate access token if Needed
+	// TODO: fucking arya see this line.................
+	token, err := u.samad.GetAccessToken(userName, password)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrTokenGeneration
+	}
+	user.Token = token
+
 	user.Id = id
 	return user, nil
 }
-func (u *userService) Login(userName, password string) (string, string, error) {
+func (u *userService) Login(userName, password string) (*models.User, error) {
 	// Get user by username
 	user, err := u.GetByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
-		return "", "", ErrUserNotRegistered
+		return nil, ErrUserNotRegistered
 	}
 
 	// Validate password
 	if user.Password != password {
-		return "", "", ErrInvalidCredentials
+		return nil, ErrInvalidCredentials
 	}
 
-	// Generate access token
+	// Generate access token if Needed
+	// TODO: fucking arya see this line.................
 	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
-		return "", "", ErrTokenGeneration
+		return nil, ErrTokenGeneration
 	}
+	user.Token = token
 
-	userID := strconv.Itoa(user.Id)
-	return userID, token, nil
+	return user, nil
 }
 
 func (u *userService) Save(userName, password string) (int, error) {
