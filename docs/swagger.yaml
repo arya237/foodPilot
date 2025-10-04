@@ -49,6 +49,27 @@ definitions:
         example: generated token
         type: string
     type: object
+  auth.SignUpRequest:
+    properties:
+      password:
+        example: your password
+        type: string
+      username:
+        example: your username
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.SignUpResponse:
+    properties:
+      message:
+        example: User registered successfully
+        type: string
+      token:
+        example: generated token
+        type: string
+    type: object
   food.ErrorResponse:
     properties:
       error:
@@ -228,6 +249,36 @@ paths:
           schema:
             $ref: '#/definitions/auth.ErrorResponse'
       summary: login a user
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user and generate token for it
+      parameters:
+      - description: Signup info
+        in: body
+        name: signup
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: signup a new user
       tags:
       - Auth
   /food/list:

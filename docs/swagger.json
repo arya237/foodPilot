@@ -149,6 +149,52 @@
                 }
             }
         },
+        "/auth/signup": {
+            "post": {
+                "description": "Register a new user and generate token for it",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signup a new user",
+                "parameters": [
+                    {
+                        "description": "Signup info",
+                        "name": "signup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/auth.SignUpResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/food/list": {
             "get": {
                 "security": [
@@ -384,6 +430,36 @@
         "auth.LoginResponse": {
             "type": "object",
             "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "generated token"
+                }
+            }
+        },
+        "auth.SignUpRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "your password"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "your username"
+                }
+            }
+        },
+        "auth.SignUpResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "User registered successfully"
+                },
                 "token": {
                     "type": "string",
                     "example": "generated token"
