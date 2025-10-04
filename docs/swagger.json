@@ -7,8 +7,7 @@
         "contact": {
             "name": "FoodPilot Dev Team",
             "url": "https://github.com/arya237/foodPilot"
-        },
-        "version": "1.0"
+        }
     },
     "paths": {
         "/admin/foods": {
