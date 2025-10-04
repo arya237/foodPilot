@@ -24,6 +24,7 @@ func NewUserRepo(db *fakedb.FakeDb) User {
 	}
 }
 
+//TODO: I think it is better to have --> func (fdb *userRepo) SaveUser(*user) (int, error)
 func (fdb *userRepo) SaveUser(username, password string) (int, error) {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()

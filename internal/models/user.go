@@ -6,6 +6,7 @@ type User struct {
 	Password string   `json:"-"`
 	AutoSave bool     `json:"auto_save"`
 	Role     UserRole `json:"role"`
+	Token    string   `json:"token"`
 }
 
 type UserRole string
