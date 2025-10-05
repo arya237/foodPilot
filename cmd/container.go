@@ -111,12 +111,13 @@ func NewApp() (*gin.Engine, error) {
 
 	engine.GET("/swagger/*any", swaggerHandler)
 
-	db := fakedb.NewDb()
+	
 	conf, err := config.New()
 	if err != nil {
 		return nil, err
 	}
 
+	db := fakedb.NewDb(conf.DBConfig)
 	container := NewContainer()
 	container.SetUp(db, conf.SamadConfig)
 
