@@ -3,9 +3,9 @@ package auth
 import (
 	"log"
 	"net/http"
-	"slices"
 	"strings"
 
+	"github.com/arya237/foodPilot/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
 )
@@ -35,6 +35,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		c.Set("userID", claims.UserID)
 		c.Set("token", claims.Token)
+		c.Set("role", claims.Role)
 
 		c.Next()
 	}
@@ -62,17 +63,16 @@ func LimitMiddelware(limit *limiter.Limiter) gin.HandlerFunc {
 
 func AdminOnly() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, exists := c.Get("userID")
+		roleVal, exists := c.Get("role")
 		if !exists {
 			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 			c.Abort()
 			return
 		}
 
-		strID, exist := id.(string)
-		log.Println(strID, exist)
-		
-		if  slices.Contains([]string{"0", "1", "2"}, strID) {
+		role, ok := roleVal.(models.UserRole)
+		log.Println(role, ok)
+		if ok && role == models.RoleAdmin {
 			c.Next()
 			return
 		}
