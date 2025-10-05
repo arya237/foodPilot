@@ -1,9 +1,11 @@
 package config
 
-import("github.com/arya237/foodPilot/pkg/reservations/samad")
+import (
+	"github.com/arya237/foodPilot/internal/repositories/fakedb"
+	"github.com/arya237/foodPilot/pkg/reservations/samad"
+)
 
 type Config struct {
 	SamadConfig *samad.Config
+	DBConfig    *fakedb.Config
 }
-
-
