@@ -1,6 +1,9 @@
 package admin
 
-import "github.com/arya237/foodPilot/internal/models"
+import (
+	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/services"
+)
 
 // GetFoodsResponse is the response containing a list of available foods
 type GetFoodsResponse struct {
@@ -22,19 +25,7 @@ type MessageResponse struct {
 	Message string `json:"message" example:"message"`
 }
 
-type AddNewFoodRequest struct {
-	FoodName string `json:"food"`
-}
-
-type AddNewFoodResponse struct {
-	Message string `json:"message" example:"message"`
-	Error   string `json:"error" example:"error message"`
-}
-
-type DeleteFoodRequest struct {
-	FoodID int `json:"foodId"`
-}
-type DeleteFoodResponse struct {
-	Message string `json:"message" example:"message"`
-	Error   string `json:"error" example:"error message"`
+// ReserveFoodResponse wraps reserve results from the service layer
+type ReserveFoodResponse struct {
+	Results []services.UserReserveResult `json:"results"`
 }

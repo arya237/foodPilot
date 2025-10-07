@@ -94,11 +94,11 @@ func (h *AdminHandler) DeleteFood(c *gin.Context) {
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/reserve [POST]
 func (h *AdminHandler) ReserveFood(c *gin.Context) {
-	message, err := h.ReserveService.ReserveFood()
+	results, err := h.ReserveService.ReserveFood()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, MessageResponse{Message: message})
+	c.JSON(http.StatusOK, ReserveFoodResponse{Results: results})
 }
