@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -45,7 +46,17 @@ func (r *reserve) ReserveFood() (string, error) {
 		go func() {
 			defer wg.Done()
 			for user := range jobs {
-				r.handleUserReservation(user)
+				mmap, err := r.handleUserReservation(user)
+				r.logger.Info("geting user info -> "+user.Username,
+					logger.Field{
+						Key:   "map",
+						Value: mmap,
+					},
+					logger.Field{
+						Key:   "error",
+						Value: err,
+					},
+				)
 			}
 		}()
 	}
@@ -80,41 +91,47 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 	return bestFood, nil
 }
 
-func (r *reserve) handleUserReservation(user *models.User) {
+func (r *reserve) handleUserReservation(user *models.User) (reservation map[string]map[string]string, err error) {
 	// TODO: check if token is valid or not
 	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
 
+	// Get Samad food program
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
-
 	if err != nil {
 		r.logger.Info(err.Error())
-	}
-
-	rates, err := r.rate.GetRateByUser(user.Id)
-	if err != nil {
-		r.logger.Info(err.Error())
+		return nil, err
 	}
 
 	if foodProgram == nil {
-		r.logger.Warn("this user food program is nil", 
+		r.logger.Warn("this user food program is nil",
 			logger.Field{Key: "User", Value: user},
 		)
-		return
+		return nil, fmt.Errorf("user %s has get nil from samad", user.Username)
 	}
 
-	r.logger.Trace("see map info", logger.Field{Key: "map", Value: foodProgram})
-	for day := range foodProgram.DailyFood {
-		r.logger.Trace("checking day", logger.Field{Key: "day", Value: day}, logger.Field{Key: "information", Value: foodProgram.DailyFood[day]})
-		for meal := range foodProgram.DailyFood[day] {
-			mealList := foodProgram.DailyFood[day][meal]
+	// Get user rates
+	rates, err := r.rate.GetRateByUser(user.Id)
+	if err != nil {
+		r.logger.Info(err.Error())
+		return nil, err
+	}
 
+	// collect per-day reservation errors while continuing other days
+	dayErrors := make(map[string]map[string]string)
+	for day := range foodProgram.DailyFood {
+		for meal := range foodProgram.DailyFood[day] {
+
+			mealList := foodProgram.DailyFood[day][meal]
 			bestFood, _ := findBestFood(mealList, rates)
 			message, err := r.samad.ReserveFood(token, bestFood)
+
 			if err != nil {
-				r.logger.Info(err.Error())
-			} else {
-				r.logger.Info(message)
+				message = err.Error()
 			}
+
+			dayErrors[day.String()][meal.String()] = message
 		}
 	}
+
+	return dayErrors, nil
 }
