@@ -15,8 +15,8 @@ import (
 // @Success     200 {object} GetUsersResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/users [GET]
-func (h *AdminHandler) GetUsers(c *gin.Context){
-	users , err := h.UserServise.GetAll()
+func (h *AdminHandler) GetUsers(c *gin.Context) {
+	users, err := h.UserServise.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Error: err.Error(),
@@ -37,7 +37,7 @@ func (h *AdminHandler) GetUsers(c *gin.Context){
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/foods [GET]
-func (h *AdminHandler) GetFood(c *gin.Context){
+func (h *AdminHandler) GetFood(c *gin.Context) {
 	foodList, err := h.FoodService.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -60,11 +60,11 @@ func (h *AdminHandler) GetFood(c *gin.Context){
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/reserve [POST]
 func (h *AdminHandler) ReserveFood(c *gin.Context) {
-	message, err := h.ReserveService.ReserveFood()
+	results, err := h.ReserveService.ReserveFood()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, MessageResponse{Message: message})
+	c.JSON(http.StatusOK, ReserveFoodResponse{Results: results})
 }
