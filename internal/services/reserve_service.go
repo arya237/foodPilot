@@ -11,8 +11,27 @@ import (
 )
 
 type Reserve interface {
-	ReserveFood() (string, error)
+	ReserveFood() ([]UserReserveResult, error)
 }
+
+// Structured reservation results
+type MealResult struct {
+	Meal    reservations.Meal `json:"meal"`
+	Message string            `json:"message"`
+	Ok      bool              `json:"ok"`
+}
+
+type DayResult struct {
+	Day   reservations.Weekday `json:"day"`
+	Meals []MealResult         `json:"meals,omitempty"`
+}
+
+type UserReserveResult struct {
+	UserID   int         `json:"user_id"`
+	Username string      `json:"username"`
+	Days     []DayResult `json:"days,omitempty"`
+}
+//******************************************************************************
 
 type reserve struct {
 	user   UserService
@@ -30,15 +49,16 @@ func NewReserveService(u UserService, r RateFoodService, s reservations.Required
 	}
 }
 
-func (r *reserve) ReserveFood() (string, error) {
+func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 	users, err := r.user.GetAll()
 	if err != nil {
 		r.logger.Info(err.Error())
-		return "", err
+		return nil, err
 	}
 
 	const workerCount = 10
 	jobs := make(chan *models.User, workerCount*2)
+	results := make(chan UserReserveResult, workerCount*2)
 	var wg sync.WaitGroup
 
 	for range workerCount {
@@ -46,17 +66,11 @@ func (r *reserve) ReserveFood() (string, error) {
 		go func() {
 			defer wg.Done()
 			for user := range jobs {
-				mmap, err := r.handleUserReservation(user)
-				r.logger.Info("geting user info -> "+user.Username,
-					logger.Field{
-						Key:   "map",
-						Value: mmap,
-					},
-					logger.Field{
-						Key:   "error",
-						Value: err,
-					},
-				)
+				res, err := r.handleUserReservation(user)
+				if err != nil {
+					r.logger.Info(err.Error())
+				}
+				results <- res
 			}
 		}()
 	}
@@ -70,8 +84,19 @@ func (r *reserve) ReserveFood() (string, error) {
 		close(jobs)
 	}()
 
-	wg.Wait()
-	return "food reserved", nil
+	// collect results after workers finish
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// Add all ansers togheter
+	aggregated := make([]UserReserveResult, 0, len(users))
+	for res := range results {
+		aggregated = append(aggregated, res)
+	}
+
+	return aggregated, nil
 }
 
 func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (reservations.ReserveModel, error) {
@@ -91,7 +116,7 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 	return bestFood, nil
 }
 
-func (r *reserve) handleUserReservation(user *models.User) (reservation map[string]map[string]string, err error) {
+func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, error) {
 	// TODO: check if token is valid or not
 	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
 
@@ -99,39 +124,43 @@ func (r *reserve) handleUserReservation(user *models.User) (reservation map[stri
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
 	if err != nil {
 		r.logger.Info(err.Error())
-		return nil, err
+		return UserReserveResult{UserID: user.Id, Username: user.Username}, err
 	}
 
 	if foodProgram == nil {
 		r.logger.Warn("this user food program is nil",
 			logger.Field{Key: "User", Value: user},
 		)
-		return nil, fmt.Errorf("user %s has get nil from samad", user.Username)
+		return UserReserveResult{UserID: user.Id, Username: user.Username}, fmt.Errorf("user %s has get nil from samad", user.Username)
 	}
 
 	// Get user rates
 	rates, err := r.rate.GetRateByUser(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return nil, err
+		return UserReserveResult{UserID: user.Id, Username: user.Username}, err
 	}
 
-	// collect per-day reservation errors while continuing other days
-	dayErrors := make(map[string]map[string]string)
+	// build structured per-day results while continuing on errors
+	dayResults := make([]DayResult, 0, 7/*food count*/)
 	for day := range foodProgram.DailyFood {
-		for meal := range foodProgram.DailyFood[day] {
+		meals := make([]MealResult, 0, 3/*meals count*/)
 
+		for meal := range foodProgram.DailyFood[day] {
 			mealList := foodProgram.DailyFood[day][meal]
 			bestFood, _ := findBestFood(mealList, rates)
 			message, err := r.samad.ReserveFood(token, bestFood)
 
 			if err != nil {
-				message = err.Error()
+				meals = append(meals, MealResult{Meal: meal, Message: err.Error(), Ok: false})
+				continue
 			}
 
-			dayErrors[day.String()][meal.String()] = message
+			meals = append(meals, MealResult{Meal: meal, Message: message, Ok: true})
 		}
+
+		dayResults = append(dayResults, DayResult{Day: day, Meals: meals})
 	}
 
-	return dayErrors, nil
+	return UserReserveResult{UserID: user.Id, Username: user.Username, Days: dayResults}, nil
 }
