@@ -14,7 +14,8 @@ type Reserve interface {
 	ReserveFood() ([]UserReserveResult, error)
 }
 
-// Structured reservation results
+//**********************    Structured reservation results    ***********************************
+
 type MealResult struct {
 	Meal    reservations.Meal `json:"meal"`
 	Message string            `json:"message"`
@@ -29,8 +30,10 @@ type DayResult struct {
 type UserReserveResult struct {
 	UserID   int         `json:"user_id"`
 	Username string      `json:"username"`
+	Error    string      `json:"error,omitempty"`
 	Days     []DayResult `json:"days,omitempty"`
 }
+
 //******************************************************************************
 
 type reserve struct {
@@ -68,7 +71,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 			for user := range jobs {
 				res, err := r.handleUserReservation(user)
 				if err != nil {
-					r.logger.Info(err.Error())
+					r.logger.Warn(err.Error())
 				}
 				results <- res
 			}
@@ -124,27 +127,28 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
 	if err != nil {
 		r.logger.Info(err.Error())
-		return UserReserveResult{UserID: user.Id, Username: user.Username}, err
+		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	if foodProgram == nil {
 		r.logger.Warn("this user food program is nil",
 			logger.Field{Key: "User", Value: user},
 		)
-		return UserReserveResult{UserID: user.Id, Username: user.Username}, fmt.Errorf("user %s has get nil from samad", user.Username)
+		err := fmt.Errorf("user %s has get nil from samad", user.Username)
+		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	// Get user rates
 	rates, err := r.rate.GetRateByUser(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return UserReserveResult{UserID: user.Id, Username: user.Username}, err
+		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	// build structured per-day results while continuing on errors
-	dayResults := make([]DayResult, 0, 7/*food count*/)
+	dayResults := make([]DayResult, 0, 7 /*food count*/)
 	for day := range foodProgram.DailyFood {
-		meals := make([]MealResult, 0, 3/*meals count*/)
+		meals := make([]MealResult, 0, 3 /*meals count*/)
 
 		for meal := range foodProgram.DailyFood[day] {
 			mealList := foodProgram.DailyFood[day][meal]
