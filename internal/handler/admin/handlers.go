@@ -56,7 +56,7 @@ func (h *AdminHandler) GetFood(c *gin.Context) {
 // @Tags        Admin
 // @Security    BearerAuth
 // @Produce     json
-// @Success     200 {object} MessageResponse
+// @Success     200 {object} ReserveFoodResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/reserve [POST]
 func (h *AdminHandler) ReserveFood(c *gin.Context) {
