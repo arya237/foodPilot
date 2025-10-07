@@ -81,7 +81,9 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 }
 
 func (r *reserve) handleUserReservation(user *models.User) {
+	// TODO: check if token is valid or not
 	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
+
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
 
 	if err != nil {
@@ -93,7 +95,16 @@ func (r *reserve) handleUserReservation(user *models.User) {
 		r.logger.Info(err.Error())
 	}
 
+	if foodProgram == nil {
+		r.logger.Warn("this user food program is nil", 
+			logger.Field{Key: "User", Value: user},
+		)
+		return
+	}
+
+	r.logger.Trace("see map info", logger.Field{Key: "map", Value: foodProgram})
 	for day := range foodProgram.DailyFood {
+		r.logger.Trace("checking day", logger.Field{Key: "day", Value: day}, logger.Field{Key: "information", Value: foodProgram.DailyFood[day]})
 		for meal := range foodProgram.DailyFood[day] {
 			mealList := foodProgram.DailyFood[day][meal]
 
