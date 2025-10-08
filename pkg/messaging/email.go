@@ -36,8 +36,7 @@ func (e *emailMessenger) Send(to string, message string) error {
 	if err := dialer.DialAndSend(msg); err != nil {
 		log.Println(err)
 		return errors.New("can't this error")
-	} else {
-		log.Println("Email sent successfully!")
 	}
+	
 	return nil
 }
