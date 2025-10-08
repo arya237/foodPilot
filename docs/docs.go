@@ -69,7 +69,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.MessageResponse"
+                            "$ref": "#/definitions/admin.ReserveFoodResponse"
                         }
                     },
                     "500": {
@@ -401,12 +401,14 @@ const docTemplate = `{
                 }
             }
         },
-        "admin.MessageResponse": {
+        "admin.ReserveFoodResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "message"
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.UserReserveResult"
+                    }
                 }
             }
         },
@@ -545,6 +547,9 @@ const docTemplate = `{
                 "role": {
                     "$ref": "#/definitions/models.UserRole"
                 },
+                "token": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -560,6 +565,90 @@ const docTemplate = `{
                 "RoleUser",
                 "RoleAdmin"
             ]
+        },
+        "reservations.Meal": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Lunch",
+                "Dinner",
+                "Breakfast"
+            ]
+        },
+        "reservations.Weekday": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ],
+            "x-enum-varnames": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ]
+        },
+        "services.DayResult": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "$ref": "#/definitions/reservations.Weekday"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.MealResult"
+                    }
+                }
+            }
+        },
+        "services.MealResult": {
+            "type": "object",
+            "properties": {
+                "meal": {
+                    "$ref": "#/definitions/reservations.Meal"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "services.UserReserveResult": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.DayResult"
+                    }
+                },
+                "error": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         },
         "user.AutoSaveRequest": {
             "type": "object",
