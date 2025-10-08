@@ -2,9 +2,8 @@ name: Go CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
   REGISTRY: ghcr.io
@@ -24,7 +23,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.23'
+        go-version: '1.24'
 
     - name: Build
       run: go build -v ./...
@@ -45,6 +44,7 @@ jobs:
     - name: log lowercase repo name
       run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >>${GITHUB_ENV}
 
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
@@ -52,4 +52,6 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.REPO }}:latest 
+        tags: 
+          ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.VERSION }}
+          ${{ env.REGISTRY }}/${{ env.REPO }}:latest

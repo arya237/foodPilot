@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/pkg/reservations"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
-
-	"github.com/arya237/foodPilot/pkg/reservations"
-
 )
 
 type TokenResponse struct {
@@ -20,14 +19,60 @@ type TokenResponse struct {
 }
 
 type Samad struct {
-	Config
+	*Config
+	logger logger.Logger
 }
 
-func NewSamad(conf Config) reservations.RequiredFunctions {
-	return &Samad{Config: conf}
+func NewSamad(conf *Config) reservations.RequiredFunctions {
+	return &Samad{
+		Config: conf,
+		logger: logger.New("samadService"),
+	}
 }
 
-func (s Samad) GetAccessToken(studentNumber string, password string) (string, error) {
+func (s *Samad) GetProperSelfID(token string) (int, error) {
+	URL := s.GetSelfIDUrl
+
+	req, err := http.NewRequest("GET", URL, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	datas, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		s.logger.Info(err.Error())
+		return 0, err
+	}
+
+	var income map[string]any
+
+	err = json.Unmarshal(datas, &income)
+	if err != nil {
+		s.logger.Info(err.Error())
+		return 0, err
+	}
+
+	tmp, _ := income["payload"].([]interface{})
+
+	for _, key := range tmp {
+		new := key.(map[string]interface{})
+		return int(new["id"].(float64)), nil
+	}
+
+	return 0, reservations.ErrorInternal
+}
+
+func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
 
 	baseUrl := s.GetTokenUrl
 	const authHeader = "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ="
@@ -79,17 +124,25 @@ func (s Samad) GetAccessToken(studentNumber string, password string) (string, er
 }
 
 func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations.WeekFood, error) {
+
+	selfID, err := s.GetProperSelfID(token)
+	if err != nil {
+		return nil, err
+	}
+
+	self := strconv.Itoa(selfID)
+
 	baseURL := s.GetProgramUrl
 	params := url.Values{}
 
-	params.Add("selfId", "1")
-	params.Add("weekStartDate", `2025-09-20 00:00:00`)
+	params.Add("selfId", self)
+	params.Add("weekStartDate", startDate.Format("2006-01-02 00:00:00"))
 
 	myurl := baseURL + "?" + params.Encode()
 
 	req, err := http.NewRequest("GET", myurl, nil)
 	if err != nil {
-		log.Println("line 90", err)
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -100,14 +153,14 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("line 101: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
 	datas, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("line 107: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -115,7 +168,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	err = json.Unmarshal(datas, &income)
 	if err != nil {
-		log.Println("line 114: ", err.Error())
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -137,7 +190,7 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 	req, err := http.NewRequest("PUT", url, bytes.NewBufferString(body))
 
 	if err != nil {
-		log.Println("line 133", err)
+		s.logger.Info(err.Error())
 		return "", nil
 	}
 
@@ -149,14 +202,14 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Println("line 144", err.Error())
+		s.logger.Info(err.Error())
 		return "", err
 	}
 
 	datas, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println("line 150: ", err.Error())
+		s.logger.Info(err.Error())
 		return "", err
 	}
 

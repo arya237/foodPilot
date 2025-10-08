@@ -2,24 +2,28 @@ package auth
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-//TODO: fix this
-var jwtSecret = []byte("supersecretkey")
+var jwtSecret = []byte(config.GetEnv("JWT_SECRET", "I just want you to know that i love you"))
 
 type Claims struct {
-	UserID string `json:"userid"`
-	Token  string `json:"token"`
+	UserID string          `json:"userid"`
+	Token  string          `json:"token"`
+	Role   models.UserRole `json:"role"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID, token string, duration time.Duration) (string, error) {
+func GenerateJWT(user *models.User, duration time.Duration) (string, error) {
 	claims := &Claims{
-		UserID: userID,
-		Token:  token,
+		UserID: strconv.Itoa(user.Id),
+		Token:  user.Token,
+		Role:   user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

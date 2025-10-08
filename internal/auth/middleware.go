@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
+	"github.com/arya237/foodPilot/internal/models"
 	"github.com/gin-gonic/gin"
+	"github.com/ulule/limiter/v3"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -30,10 +33,51 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-	
 		c.Set("userID", claims.UserID)
 		c.Set("token", claims.Token)
+		c.Set("role", claims.Role)
 
 		c.Next()
+	}
+}
+
+func LimitMiddelware(limit *limiter.Limiter) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		context, err := limit.Get(c, clientIP)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		if context.Reached {
+			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":     "Too many requests, please try again later.",
+				"remaining": context.Remaining,
+			})
+		}
+
+		c.Next()
+	}
+}
+
+func AdminOnly() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		roleVal, exists := c.Get("role")
+		if !exists {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			c.Abort()
+			return
+		}
+
+		role, ok := roleVal.(models.UserRole)
+		log.Println(role, ok)
+		if ok && role == models.RoleAdmin {
+			c.Next()
+			return
+		}
+
+		c.JSON(http.StatusForbidden, gin.H{"error": "admin only"})
+		c.Abort()
 	}
 }
