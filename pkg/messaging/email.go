@@ -12,14 +12,14 @@ type emailMessenger struct {
 	Key  string
 }
 
-func New(from, key string) Sender {
-	if key == "" || from == "" {
+func New(cfg Config) Sender {
+	if cfg.Key == "" || cfg.From == "" {
 		log.Fatal("key or from is empty")
 	}
 
 	return &emailMessenger{
-		From: from,
-		Key:  key,
+		From: cfg.From,
+		Key:  cfg.Key,
 	}
 }
 
@@ -37,6 +37,6 @@ func (e *emailMessenger) Send(to string, message string) error {
 		log.Println(err)
 		return errors.New("can't this error")
 	}
-	
+
 	return nil
 }

@@ -1,9 +1,11 @@
 package config
 
-import("github.com/arya237/foodPilot/pkg/reservations/samad")
+import (
+	"github.com/arya237/foodPilot/pkg/messaging"
+	"github.com/arya237/foodPilot/pkg/reservations/samad"
+)
 
 type Config struct {
-	SamadConfig *samad.Config
+	SamadConfig    *samad.Config
+	MessagingConfig *messaging.Config
 }
-
-
