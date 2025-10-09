@@ -2,10 +2,12 @@ package config
 
 import (
 	"github.com/arya237/foodPilot/internal/repositories/fakedb"
+	"github.com/arya237/foodPilot/pkg/messaging"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 )
 
 type Config struct {
-	SamadConfig *samad.Config
-	DBConfig    *fakedb.Config
+	SamadConfig     *samad.Config
+	MessagingConfig *messaging.Config
+	DBConfig        *fakedb.Config
 }

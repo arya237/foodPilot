@@ -53,6 +53,10 @@ Run:
 
 ---
 
+### Send Mail
+You can learn how to use [This Readme](./pkg/messaging/ReadMe.md)
+
+---
 ### Contributing
 
 Contributions are welcome! 
