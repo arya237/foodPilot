@@ -13,12 +13,12 @@ type UserService interface {
 	Login(userName, password string) (*models.User, error)
 	Save(user *models.User) (int, error)
 	ToggleAutoSave(userID int, autoSave bool) error
+	Delete(id int) error
+	GetAll() ([]*models.User, error)
 
 	// IDEA: repo like functions -> i think it is better to delete them all :)
 	GetById(id int) (*models.User, error)
 	GetByUserName(username string) (*models.User, error)
-	GetAll() ([]*models.User, error)
-	Delete(id int) error
 	Update(new *models.User) error
 }
 

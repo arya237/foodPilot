@@ -31,7 +31,7 @@ func (f *foodService) GetAll() ([]*models.Food, error) {
 func (f *foodService) Save(foodName string) (int, error) {
 	id, err := f.repo.SaveFood(foodName)
 	if err != nil {
-		return -1, err
+		return id, err
 	}
 
 	return id, nil

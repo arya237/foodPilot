@@ -39,9 +39,10 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	group.GET("/user", adminHandler.GetUsers)
 	group.POST("/user", adminHandler.AddNewUser)
 	group.DELETE("/user", adminHandler.DeleteUser)
-	//group.POST("/users", adminHandler.UpdateUser)
+
 	group.GET("/food", adminHandler.GetFood)
 	group.POST("/food", adminHandler.AddNewFood)
 	group.DELETE("/food", adminHandler.DeleteFood)
+
 	group.POST("/reserve", adminHandler.ReserveFood)
 }
