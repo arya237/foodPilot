@@ -26,6 +26,7 @@ func NewFoodRepo(db *fakedb.FakeDb) Food {
 func (fdb *foodRepo) SaveFood(name string) (int, error) {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
+
 	for _, food := range fdb.db.Foods {
 		if food.Name == name {
 			return 0, ErrorDuplicateFood

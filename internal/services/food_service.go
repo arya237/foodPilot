@@ -8,8 +8,8 @@ import (
 
 type FoodService interface {
 	GetAll() ([]*models.Food, error)
-	Save(string) (string, error)
-	Delete(id int) (string, error)
+	Save(foodName string) (int, error)
+	Delete(foodID int) error
 }
 
 type foodService struct {
@@ -28,19 +28,20 @@ func (f *foodService) GetAll() ([]*models.Food, error) {
 	return f.repo.GetAllFood()
 }
 
-func (f *foodService) Save(foodName string) (string, error) {
-	if _, err := f.repo.SaveFood(foodName); err != nil {
-		f.logger.Info(err.Error())
-		return "", err
+func (f *foodService) Save(foodName string) (int, error) {
+	id, err := f.repo.SaveFood(foodName)
+	if err != nil {
+		return -1, err
 	}
 
-	return "food saved successfully", nil
+	return id, nil
 }
 
-func (f *foodService) Delete(id int) (string, error) {
-	if err := f.repo.DeleteFood(id); err != nil {
-		f.logger.Info(err.Error())
-		return "", err
+func (f *foodService) Delete(foodID int) error {
+	err := f.repo.DeleteFood(foodID)
+	if err != nil {
+		return err
 	}
-	return "food deleted successfully", nil
+
+	return nil
 }

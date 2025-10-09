@@ -11,7 +11,7 @@ import (
 type UserService interface {
 	SignUp(userName, password string) (*models.User, error)
 	Login(userName, password string) (*models.User, error)
-	Save(username, password string) (int, error)
+	Save(user *models.User) (int, error)
 	ToggleAutoSave(userID int, autoSave bool) error
 
 	// IDEA: repo like functions -> i think it is better to delete them all :)
@@ -95,19 +95,12 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 	return user, nil
 }
 
-func (u *userService) Save(userName, password string) (int, error) {
-	user := &models.User{
-		Username: userName,
-		Password: password,
-		Role:     models.RoleUser, // Default role is user
-		AutoSave: true,
-		Token:    "empthy",
-	}
-	
+func (u *userService) Save(user *models.User) (int, error) {
+
 	SaveUser, err := u.repo.SaveUser(user)
 	if err != nil {
 		u.logger.Info(err.Error())
-		return 0, err
+		return -1, err
 	}
 
 	return SaveUser.Id, nil

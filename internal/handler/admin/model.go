@@ -25,7 +25,34 @@ type MessageResponse struct {
 	Message string `json:"message" example:"message"`
 }
 
-// ReserveFoodResponse wraps reserve results from the service layer
 type ReserveFoodResponse struct {
 	Results []services.UserReserveResult `json:"results"`
+}
+
+type AddNewFoodRequest struct {
+	FoodName string `json:"food"`
+}
+
+type DeleteFoodRequest struct {
+	FoodID int `json:"foodId"`
+}
+
+type AddNewUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
+}
+
+type AddNewUserResponse struct {
+	ID int `json:"ID"`
+}
+
+type DeleteUserRequest struct {
+	UserID int `json:"userID"`
+}
+
+type UpdateUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Updated  string `json:"updated"`
 }
