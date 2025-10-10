@@ -124,7 +124,7 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
 
 	// Get Samad food program
-	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*24))
+	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*72))
 	if err != nil {
 		r.logger.Info(err.Error())
 		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
