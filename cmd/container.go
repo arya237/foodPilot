@@ -114,6 +114,7 @@ func NewApp() (*gin.Engine, error) {
 
 	engine.GET("/swagger/*any", swaggerHandler)
 
+	
 	conf, err := config.New()
 	if err != nil {
 		return nil, err
