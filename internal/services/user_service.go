@@ -1,11 +1,14 @@
 package services
 
 import (
+	"fmt"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
 
 type UserService interface {
@@ -52,6 +55,10 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		return nil, ErrTokenGeneration
 	}
 
+	if ok := checkToken(token); !ok {
+		return nil, ErrTokenGeneration
+	}
+
 	// Create new user with default role
 	user := &models.User{
 		Username: userName,
@@ -83,14 +90,9 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		return nil, ErrInvalidCredentials
 	}
 
-	// Generate access token if Needed
-	// TODO: fucking arya see this line ......... remeber you should save it to db also after you change token
-	token, err := u.samad.GetAccessToken(userName, password)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, ErrTokenGeneration
+	if ok := checkToken(user.Token); !ok {
+		return nil, ErrInvalidCredentials
 	}
-	user.Token = token
 
 	return user, nil
 }
@@ -162,4 +164,36 @@ func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 		return err
 	}
 	return nil
+}
+
+func checkToken(samadToken string) bool {
+
+	log := logger.New("check")
+
+	token, _, err := jwt.NewParser().ParseUnverified(samadToken, jwt.MapClaims{})
+	if err != nil {
+		log.Info("Error parsing token (even unverified): " + err.Error())
+		return false
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if expFloat, ok := claims["exp"].(float64); ok {
+			expTime := time.Unix(int64(expFloat), 0)
+			now := time.Now()
+
+			if now.Before(expTime) {
+				log.Info(fmt.Sprintf("exp: %v \ntoken is valid", expTime))
+				return true
+			}
+
+		} else {
+			log.Info("No 'exp' claim found or it's not a number")
+			return false
+		}
+	} else {
+		log.Info("Failed to parse claims")
+		return false
+	}
+
+	return false
 }
