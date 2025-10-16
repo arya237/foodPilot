@@ -90,6 +90,10 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		return nil, ErrInvalidCredentials
 	}
 
+	if ok := checkToken(user.Token); !ok {
+		return nil, ErrInvalidCredentials
+	}
+
 	return user, nil
 }
 
