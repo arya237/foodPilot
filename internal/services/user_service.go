@@ -91,7 +91,18 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 	}
 
 	if ok := checkToken(user.Token); !ok {
-		return nil, ErrInvalidCredentials
+		token, err := u.samad.GetAccessToken(user.Username, user.Password)
+		if err != nil {
+			u.logger.Info(err.Error())
+			return nil, ErrTokenGeneration
+		}
+
+		user.Token = token
+		err = u.Update(user)
+		if err != nil {
+			u.logger.Info(err.Error())
+			return nil, err
+		}
 	}
 
 	return user, nil
