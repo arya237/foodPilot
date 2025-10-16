@@ -121,7 +121,8 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 
 func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, error) {
 	// TODO: check if token is valid or not
-	token, _ := r.samad.GetAccessToken(user.Username, user.Password)
+	//token, _ := r.samad.GetAccessToken(user.Username, user.Password)
+	token := user.Token
 
 	// Get Samad food program
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*72))
