@@ -33,6 +33,7 @@ type Container struct {
 	UserService    services.UserService
 	FoodService    services.FoodService
 	RateService    services.RateFoodService
+	AdminService   services.AdminService
 	Samad          reservations.RequiredFunctions
 	ReserveService services.Reserve
 
@@ -54,6 +55,8 @@ func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
 	c.UserService = services.NewUserService(c.UserRepo, conf)
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
+	c.AdminService = services.NewAdminService(c.UserService, c.FoodService)
+
 	c.Samad = samad.NewSamad(conf)
 	c.ReserveService = services.NewReserveService(c.UserService, c.RateService, c.Samad)
 }
@@ -82,12 +85,11 @@ func (c *Container) GetUserHandler() *user.UserHandler {
 func (c *Container) GetAdminHandler() *admin.AdminHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	handler := admin.New(c.UserService, c.FoodService, c.ReserveService)
+	handler := admin.New(c.AdminService, c.ReserveService)
 	return handler
 }
 
 // @title                      FoodPilot
-// @version                    1.0
 // @description                Auto food reserve
 // @termsOfService             http://swagger.io/terms/
 // @contact.name               FoodPilot Dev Team
@@ -112,12 +114,13 @@ func NewApp() (*gin.Engine, error) {
 
 	engine.GET("/swagger/*any", swaggerHandler)
 
-	db := fakedb.NewDb()
+	
 	conf, err := config.New()
 	if err != nil {
 		return nil, err
 	}
 
+	db := fakedb.NewDb(conf.DBConfig)
 	container := NewContainer()
 	container.SetUp(db, conf.SamadConfig)
 

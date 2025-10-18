@@ -6,7 +6,7 @@ import (
 )
 
 type User interface {
-	SaveUser(username, password string) (int, error)
+	SaveUser(newUser *models.User) (*models.User, error)
 	GetUserById(id int) (*models.User, error)
 	GetUserByUserName(username string) (*models.User, error)
 	GetAllUsers() ([]*models.User, error)
@@ -24,18 +24,21 @@ func NewUserRepo(db *fakedb.FakeDb) User {
 	}
 }
 
-func (fdb *userRepo) SaveUser(username, password string) (int, error) {
+//TODO: I think it is better to have --> func (fdb *userRepo) SaveUser(*user) (int, error)
+func (fdb *userRepo) SaveUser(newUser *models.User) (*models.User, error) {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	for _, user := range fdb.db.Users {
-		if user.Username == username {
-			return 0, ErrorDuplicateUser
+		if user.Username == newUser.Username {
+			return nil, ErrorDuplicateUser
 		}
 	}
-
-	fdb.db.Users[fdb.db.UserCounter] = &models.User{Username: username, Password: password, Id: fdb.db.UserCounter, AutoSave: true, Role: models.RoleUser}
+	
+	newUser.Id = fdb.db.UserCounter
+	fdb.db.Users[fdb.db.UserCounter] = newUser
 	fdb.db.UserCounter++
-	return fdb.db.UserCounter - 1, nil
+
+	return newUser, nil
 }
 
 func (fdb *userRepo) GetUserById(id int) (*models.User, error) {

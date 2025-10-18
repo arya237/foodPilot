@@ -3,6 +3,7 @@ package samad
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
@@ -94,12 +95,11 @@ func (s *Samad) GetAccessToken(studentNumber string, password string) (string, e
 
 	req.Header.Set("Authorization", authHeader)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	resp, err := client.Do(req)
 
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("error sending request: %v", err)
 	}
-
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
@@ -127,6 +127,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	selfID, err := s.GetProperSelfID(token)
 	if err != nil {
+		s.logger.Info(err.Error())
 		return nil, err
 	}
 
@@ -162,6 +163,11 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 	if err != nil {
 		s.logger.Info(err.Error())
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		s.logger.Info(string(datas))
+		return nil, errors.New(string(datas))
 	}
 
 	var income map[string]any

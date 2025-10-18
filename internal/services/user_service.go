@@ -1,25 +1,28 @@
 package services
 
 import (
-	"errors"
-	"strconv"
-
+	"fmt"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
 
 type UserService interface {
-	Login(userName, password string) (string, string, error)
-	Save(username, password string) (int, error)
+	SignUp(userName, password string) (*models.User, error)
+	Login(userName, password string) (*models.User, error)
+	Save(user *models.User) (int, error)
+	ToggleAutoSave(userID int, autoSave bool) error
+	Delete(id int) error
+	GetAll() ([]*models.User, error)
+
+	// IDEA: repo like functions -> i think it is better to delete them all :)
 	GetById(id int) (*models.User, error)
 	GetByUserName(username string) (*models.User, error)
-	GetAll() ([]*models.User, error)
-	Delete(id int) error
 	Update(new *models.User) error
-	ToggleAutoSave(userID int, autoSave bool) error
 }
 
 type userService struct {
@@ -36,42 +39,84 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 	}
 }
 
-func (u *userService) Login(userName, password string) (string, string, error) {
-	user, err := u.GetByUserName(userName)
-	var id int
+// this functio need a huge refactoring.... in package repo
+func (u *userService) SignUp(userName, password string) (*models.User, error) {
+	// Check if user already exists
+	existingUser, err := u.repo.GetUserByUserName(userName)
+	if err == nil && existingUser != nil {
+		return nil, ErrUserAlreadyExists
+	}
 
+	// Generate access token if Needed
+	// TODO: fucking arya see this line.................
+	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
-		id, err = u.Save(userName, password)
+		return nil, ErrTokenGeneration
+	}
 
+	if ok := checkToken(token); !ok {
+		return nil, ErrTokenGeneration
+	}
+
+	// Create new user with default role
+	user := &models.User{
+		Username: userName,
+		Password: password,
+		Role:     models.RoleUser, // Default role is user
+		AutoSave: true,
+		Token:    token,
+	}
+
+	// Save user to database
+	user, err = u.repo.SaveUser(user)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrUserRegistration
+	}
+
+	return user, nil
+}
+func (u *userService) Login(userName, password string) (*models.User, error) {
+	// Get user by username
+	user, err := u.repo.GetUserByUserName(userName)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, ErrUserNotRegistered
+	}
+
+	// Validate password
+	if user.Password != password {
+		return nil, ErrInvalidCredentials
+	}
+
+	if ok := checkToken(user.Token); !ok {
+		token, err := u.samad.GetAccessToken(user.Username, user.Password)
 		if err != nil {
 			u.logger.Info(err.Error())
-			return "", "", err
+			return nil, ErrTokenGeneration
 		}
-	} else if user.Password != password {
-		return "", "", errors.New("username or password is wrong")
+
+		user.Token = token
+		err = u.Update(user)
+		if err != nil {
+			u.logger.Info(err.Error())
+			return nil, err
+		}
 	}
 
-	//TODO: no need to generate  new token 
-	token, err := u.samad.GetAccessToken(userName, password)
-
-	if err != nil {
-		u.logger.Info(err.Error())
-		return "", "", err
-	}
-	userID := strconv.Itoa(id)
-	return userID, token, nil
+	return user, nil
 }
 
-func (u *userService) Save(userName, password string) (int, error) {
+func (u *userService) Save(user *models.User) (int, error) {
 
-	id, err := u.repo.SaveUser(userName, password)
-
+	SaveUser, err := u.repo.SaveUser(user)
 	if err != nil {
 		u.logger.Info(err.Error())
-		return 0, err
+		return -1, err
 	}
-	return id, nil
+
+	return SaveUser.Id, nil
 }
 
 func (u *userService) GetById(id int) (*models.User, error) {
@@ -130,4 +175,36 @@ func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 		return err
 	}
 	return nil
+}
+
+func checkToken(samadToken string) bool {
+
+	log := logger.New("check")
+
+	token, _, err := jwt.NewParser().ParseUnverified(samadToken, jwt.MapClaims{})
+	if err != nil {
+		log.Info("Error parsing token (even unverified): " + err.Error())
+		return false
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if expFloat, ok := claims["exp"].(float64); ok {
+			expTime := time.Unix(int64(expFloat), 0)
+			now := time.Now()
+
+			if now.Before(expTime) {
+				log.Info(fmt.Sprintf("exp: %v \ntoken is valid", expTime))
+				return true
+			}
+
+		} else {
+			log.Info("No 'exp' claim found or it's not a number")
+			return false
+		}
+	} else {
+		log.Info("Failed to parse claims")
+		return false
+	}
+
+	return false
 }

@@ -19,11 +19,12 @@ definitions:
           $ref: '#/definitions/models.User'
         type: array
     type: object
-  admin.MessageResponse:
+  admin.ReserveFoodResponse:
     properties:
-      message:
-        example: message
-        type: string
+      results:
+        items:
+          $ref: '#/definitions/services.UserReserveResult'
+        type: array
     type: object
   auth.ErrorResponse:
     properties:
@@ -45,6 +46,27 @@ definitions:
     type: object
   auth.LoginResponse:
     properties:
+      token:
+        example: generated token
+        type: string
+    type: object
+  auth.SignUpRequest:
+    properties:
+      password:
+        example: your password
+        type: string
+      username:
+        example: your username
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.SignUpResponse:
+    properties:
+      message:
+        example: User registered successfully
+        type: string
       token:
         example: generated token
         type: string
@@ -95,6 +117,8 @@ definitions:
         type: integer
       role:
         $ref: '#/definitions/models.UserRole'
+      token:
+        type: string
       username:
         type: string
     type: object
@@ -106,6 +130,67 @@ definitions:
     x-enum-varnames:
     - RoleUser
     - RoleAdmin
+  reservations.Meal:
+    enum:
+    - 1
+    - 2
+    - 3
+    format: int32
+    type: integer
+    x-enum-varnames:
+    - Lunch
+    - Dinner
+    - Breakfast
+  reservations.Weekday:
+    enum:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    format: int32
+    type: integer
+    x-enum-varnames:
+    - Sunday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+  services.DayResult:
+    properties:
+      day:
+        $ref: '#/definitions/reservations.Weekday'
+      meals:
+        items:
+          $ref: '#/definitions/services.MealResult'
+        type: array
+    type: object
+  services.MealResult:
+    properties:
+      meal:
+        $ref: '#/definitions/reservations.Meal'
+      message:
+        type: string
+      ok:
+        type: boolean
+    type: object
+  services.UserReserveResult:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/services.DayResult'
+        type: array
+      error:
+        type: string
+      user_id:
+        type: integer
+      username:
+        type: string
+    type: object
   user.AutoSaveRequest:
     properties:
       autosave:
@@ -142,7 +227,6 @@ info:
   description: Auto food reserve
   termsOfService: http://swagger.io/terms/
   title: FoodPilot
-  version: "1.0"
 paths:
   /admin/foods:
     get:
@@ -172,7 +256,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.MessageResponse'
+            $ref: '#/definitions/admin.ReserveFoodResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -229,6 +313,36 @@ paths:
           schema:
             $ref: '#/definitions/auth.ErrorResponse'
       summary: login a user
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user and generate token for it
+      parameters:
+      - description: Signup info
+        in: body
+        name: signup
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: signup a new user
       tags:
       - Auth
   /food/list:

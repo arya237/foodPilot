@@ -69,7 +69,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.MessageResponse"
+                            "$ref": "#/definitions/admin.ReserveFoodResponse"
                         }
                     },
                     "500": {
@@ -141,6 +141,52 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/auth.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/auth.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "description": "Register a new user and generate token for it",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signup a new user",
+                "parameters": [
+                    {
+                        "description": "Signup info",
+                        "name": "signup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/auth.SignUpResponse"
                         }
                     },
                     "400": {
@@ -355,12 +401,14 @@ const docTemplate = `{
                 }
             }
         },
-        "admin.MessageResponse": {
+        "admin.ReserveFoodResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "message"
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.UserReserveResult"
+                    }
                 }
             }
         },
@@ -393,6 +441,36 @@ const docTemplate = `{
         "auth.LoginResponse": {
             "type": "object",
             "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "generated token"
+                }
+            }
+        },
+        "auth.SignUpRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "your password"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "your username"
+                }
+            }
+        },
+        "auth.SignUpResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "User registered successfully"
+                },
                 "token": {
                     "type": "string",
                     "example": "generated token"
@@ -469,6 +547,9 @@ const docTemplate = `{
                 "role": {
                     "$ref": "#/definitions/models.UserRole"
                 },
+                "token": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -484,6 +565,90 @@ const docTemplate = `{
                 "RoleUser",
                 "RoleAdmin"
             ]
+        },
+        "reservations.Meal": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Lunch",
+                "Dinner",
+                "Breakfast"
+            ]
+        },
+        "reservations.Weekday": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ],
+            "x-enum-varnames": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ]
+        },
+        "services.DayResult": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "$ref": "#/definitions/reservations.Weekday"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.MealResult"
+                    }
+                }
+            }
+        },
+        "services.MealResult": {
+            "type": "object",
+            "properties": {
+                "meal": {
+                    "$ref": "#/definitions/reservations.Meal"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "services.UserReserveResult": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.DayResult"
+                    }
+                },
+                "error": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         },
         "user.AutoSaveRequest": {
             "type": "object",
@@ -542,7 +707,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
