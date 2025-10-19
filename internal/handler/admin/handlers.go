@@ -16,8 +16,7 @@ import (
 // @Produce     json
 // @Success     200 {object} GetUsersResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/users [GET]
-
+// @Router      /admin/user [GET]
 func (h *AdminHandler) GetUsers(c *gin.Context) {
 	users, err := h.AdminService.GetUsers()
 	if err != nil {
@@ -31,6 +30,18 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 	})
 }
 
+// GetFood      godoc
+// @Summary     Add new user
+// @Description Register new user
+// @Tags        Admin
+// @Security    BearerAuth
+// @Accept      json
+// @Param       newUser body AddNewUserRequest true "User info"
+// @Produce     json
+// @Success     200 {object} AddNewUserResponse
+// @Failure     500 {object} ErrorResponse
+// @Failure     400 {object} ErrorResponse
+// @Router      /admin/user [POST]
 func (h *AdminHandler) AddNewUser(c *gin.Context) {
 	var arrived AddNewUserRequest
 	if err := c.ShouldBindJSON(&arrived); err != nil {
@@ -53,6 +64,17 @@ func (h *AdminHandler) AddNewUser(c *gin.Context) {
 	})
 }
 
+// GetFood      godoc
+// @Summary     Delete user
+// @Description Delete user
+// @Tags        Admin
+// @Param       userID path int true "User ID"
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} MessageResponse
+// @Failure     500 {object} ErrorResponse
+// @Failure     400 {object} ErrorResponse
+// @Router      /admin/user/{userID} [DELETE]
 func (h *AdminHandler) DeleteUser(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Param("userID"))
 	if err != nil {
@@ -105,8 +127,7 @@ func (h *AdminHandler) DeleteUser(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/foods [GET]
-
+// @Router      /admin/food [GET]
 func (h *AdminHandler) GetFood(c *gin.Context) {
 	foodList, err := h.AdminService.GetFoods()
 	if err != nil {
@@ -121,6 +142,18 @@ func (h *AdminHandler) GetFood(c *gin.Context) {
 	})
 }
 
+// GetFood      godoc
+// @Summary     Add new food
+// @Description Register new food
+// @Tags        Admin
+// @Security    BearerAuth
+// @Accept      json
+// @Param       newFood body AddNewFoodRequest true "Food info"
+// @Produce     json
+// @Success     200 {object} MessageResponse
+// @Failure     400 {object} ErrorResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/food [POST]
 func (h *AdminHandler) AddNewFood(c *gin.Context) {
 	var arrived AddNewFoodRequest
 
@@ -140,6 +173,17 @@ func (h *AdminHandler) AddNewFood(c *gin.Context) {
 	})
 }
 
+// GetFood      godoc
+// @Summary     Delete food
+// @Description Delete food
+// @Tags        Admin
+// @Param       foodID path int true "Food ID"
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} MessageResponse
+// @Failure     400 {object} ErrorResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/food/{foodID} [DELETE]
 func (h *AdminHandler) DeleteFood(c *gin.Context) {
 	foodID, err := strconv.Atoi(c.Param("foodID"))
 	if err != nil {
