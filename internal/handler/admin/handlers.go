@@ -3,6 +3,7 @@ package admin
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,16 +54,15 @@ func (h *AdminHandler) AddNewUser(c *gin.Context) {
 }
 
 func (h *AdminHandler) DeleteUser(c *gin.Context) {
-	var arrived DeleteUserRequest
-
-	if err := c.ShouldBindJSON(&arrived); err != nil {
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
 
-	err := h.AdminService.DeleteUser(arrived.UserID)
+	err = h.AdminService.DeleteUser(userID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -141,15 +141,15 @@ func (h *AdminHandler) AddNewFood(c *gin.Context) {
 }
 
 func (h *AdminHandler) DeleteFood(c *gin.Context) {
-	var arrived DeleteFoodRequest
-	if err := c.BindJSON(&arrived); err != nil {
-		c.JSON(http.StatusBadRequest, ErrorResponse{
+	foodID, err := strconv.Atoi(c.Param("foodID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest,  ErrorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
 
-	err := h.AdminService.DeleteFood(arrived.FoodID)
+	err = h.AdminService.DeleteFood(foodID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
