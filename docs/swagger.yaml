@@ -9,7 +9,7 @@ definitions:
       password:
         type: string
       role:
-        type: string
+        $ref: '#/definitions/models.UserRole'
       username:
         type: string
     type: object
@@ -50,6 +50,21 @@ definitions:
         items:
           $ref: '#/definitions/services.UserReserveResult'
         type: array
+    type: object
+  admin.UpdateUserRequest:
+    properties:
+      autosave:
+        type: boolean
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+      token:
+        type: string
+      userid:
+        type: integer
+      username:
+        type: string
     type: object
   auth.ErrorResponse:
     properties:
@@ -286,8 +301,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/admin.MessageResponse'
         "400":
@@ -384,8 +399,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/admin.AddNewUserResponse'
         "400":
@@ -399,6 +414,33 @@ paths:
       security:
       - BearerAuth: []
       summary: Add new user
+      tags:
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: user info
+        in: body
+        name: userInfo
+        required: true
+        schema:
+          $ref: '#/definitions/admin.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/admin.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user
       tags:
       - Admin
   /admin/user/{userID}:

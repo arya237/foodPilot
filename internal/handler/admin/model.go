@@ -38,9 +38,9 @@ type DeleteFoodRequest struct {
 }
 
 type AddNewUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	Username string          `json:"username"`
+	Password string          `json:"password"`
+	Role     models.UserRole `json:"role"`
 }
 
 type AddNewUserResponse struct {
@@ -52,7 +52,10 @@ type DeleteUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Updated  string `json:"updated"`
+	Id       int             `json:"userid"`
+	Username string          `json:"username"`
+	Password string          `json:"password"`
+	Autosave bool            `json:"autosave"`
+	Role     models.UserRole `json:"role"`
+	Token    string          `json:"token"`
 }

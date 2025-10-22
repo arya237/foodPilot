@@ -38,7 +38,7 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 // @Accept      json
 // @Param       newUser body AddNewUserRequest true "User info"
 // @Produce     json
-// @Success     200 {object} AddNewUserResponse
+// @Success     201 {object} AddNewUserResponse
 // @Failure     500 {object} ErrorResponse
 // @Failure     400 {object} ErrorResponse
 // @Router      /admin/user [POST]
@@ -98,26 +98,38 @@ func (h *AdminHandler) DeleteUser(c *gin.Context) {
 	})
 }
 
-//func (h *AdminHandler) UpdateUser(c *gin.Context) {
-//	var arrived UpdateUserRequest
-//	if err := c.ShouldBindJSON(&arrived); err != nil {
-//		c.JSON(http.StatusBadRequest, ErrorResponse{
-//			Error: err.Error(),
-//		})
-//	}
-//
-//	message, err := h.UserServise.Update(arrived.Username, arrived.Password, arrived.Updated)
-//	if err != nil {
-//		c.JSON(http.StatusInternalServerError, ErrorResponse{
-//			Error: err.Error(),
-//		})
-//	}
-//
-//	c.JSON(http.StatusAccepted, UpdateUserResponse{
-//		Error:   "",
-//		Message: message,
-//	})
-//}
+// GetFood      godoc
+// @Summary     Update user
+// @Description Update user
+// @Tags        Admin
+// @Security    BearerAuth
+// @Accept      json
+// @Param       userInfo body UpdateUserRequest true "user info"
+// @Produce     json
+// @Success     202 {object} GetFoodsResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /admin/user [PUT]
+func (h *AdminHandler) UpdateUser(c *gin.Context) {
+	var arrived UpdateUserRequest
+	if err := c.ShouldBindJSON(&arrived); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	err := h.AdminService.UpdateUser(arrived.Id, arrived.Username, arrived.Password, arrived.Autosave,arrived.Role, arrived.Token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, MessageResponse{
+		Message: "User updated successfully",
+	})
+}
 
 // GetFood      godoc
 // @Summary     Get food
@@ -150,7 +162,7 @@ func (h *AdminHandler) GetFood(c *gin.Context) {
 // @Accept      json
 // @Param       newFood body AddNewFoodRequest true "Food info"
 // @Produce     json
-// @Success     200 {object} MessageResponse
+// @Success     201 {object} MessageResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /admin/food [POST]
