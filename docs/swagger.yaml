@@ -1,4 +1,23 @@
 definitions:
+  admin.AddNewFoodRequest:
+    properties:
+      food:
+        type: string
+    type: object
+  admin.AddNewUserRequest:
+    properties:
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+      username:
+        type: string
+    type: object
+  admin.AddNewUserResponse:
+    properties:
+      ID:
+        type: integer
+    type: object
   admin.ErrorResponse:
     properties:
       error:
@@ -19,12 +38,33 @@ definitions:
           $ref: '#/definitions/models.User'
         type: array
     type: object
+  admin.MessageResponse:
+    properties:
+      message:
+        example: message
+        type: string
+    type: object
   admin.ReserveFoodResponse:
     properties:
       results:
         items:
           $ref: '#/definitions/services.UserReserveResult'
         type: array
+    type: object
+  admin.UpdateUserRequest:
+    properties:
+      autosave:
+        type: boolean
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+      token:
+        type: string
+      userid:
+        type: integer
+      username:
+        type: string
     type: object
   auth.ErrorResponse:
     properties:
@@ -228,7 +268,7 @@ info:
   termsOfService: http://swagger.io/terms/
   title: FoodPilot
 paths:
-  /admin/foods:
+  /admin/food:
     get:
       description: Return all the foods
       produces:
@@ -245,6 +285,66 @@ paths:
       security:
       - BearerAuth: []
       summary: Get food
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: Register new food
+      parameters:
+      - description: Food info
+        in: body
+        name: newFood
+        required: true
+        schema:
+          $ref: '#/definitions/admin.AddNewFoodRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/admin.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add new food
+      tags:
+      - Admin
+  /admin/food/{foodID}:
+    delete:
+      description: Delete food
+      parameters:
+      - description: Food ID
+        in: path
+        name: foodID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete food
       tags:
       - Admin
   /admin/reserve:
@@ -266,7 +366,7 @@ paths:
       summary: Reserve food
       tags:
       - Admin
-  /admin/users:
+  /admin/user:
     get:
       description: Return all the users
       produces:
@@ -283,6 +383,93 @@ paths:
       security:
       - BearerAuth: []
       summary: Get users
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: Register new user
+      parameters:
+      - description: User info
+        in: body
+        name: newUser
+        required: true
+        schema:
+          $ref: '#/definitions/admin.AddNewUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/admin.AddNewUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add new user
+      tags:
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: user info
+        in: body
+        name: userInfo
+        required: true
+        schema:
+          $ref: '#/definitions/admin.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/admin.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - Admin
+  /admin/user/{userID}:
+    delete:
+      description: Delete user
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/admin.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete user
       tags:
       - Admin
   /auth/login:

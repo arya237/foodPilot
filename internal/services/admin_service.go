@@ -5,11 +5,10 @@ import (
 	"github.com/arya237/foodPilot/pkg/logger"
 )
 
-import "errors"
-
 type AdminService interface {
-	AddUser(userName, password, role string) (int, error)
+	AddUser(userName, password string, role models.UserRole) (int, error)
 	DeleteUser(id int) error
+	UpdateUser(id int, userName, password string, autosave bool, role models.UserRole, token string) error
 	GetUsers() ([]*models.User, error)
 	GetFoods() ([]*models.Food, error)
 	AddFood(foodName string) (int, error)
@@ -30,23 +29,12 @@ func NewAdminService(user UserService, food FoodService) AdminService {
 	}
 }
 
-func (s *adminService) AddUser(userName, password, role string) (int, error) {
-
-	var userRole models.UserRole
-
-	if role == "user" {
-		userRole = models.RoleUser
-	} else if role == "admin" {
-		userRole = models.RoleAdmin
-	} else {
-		s.logger.Info("role is invalid")
-		return -1, errors.New("invalid role")
-	}
+func (s *adminService) AddUser(userName, password string, role models.UserRole) (int, error) {
 
 	user := &models.User{
 		Username: userName,
 		Password: password,
-		Role:     userRole,
+		Role:     role,
 		AutoSave: true,
 		Token:    "empty",
 	}
@@ -77,6 +65,16 @@ func (s *adminService) GetUsers() ([]*models.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (s *adminService) UpdateUser(id int, userName, password string, autosave bool, role models.UserRole, token string) error {
+	newUser := models.User{Id: id, Username: userName, Password: password, AutoSave: autosave, Role: role, Token: token}
+	err := s.user.Update(&newUser)
+	if err != nil {
+		s.logger.Info(err.Error())
+		return err
+	}
+	return nil
 }
 
 func (s *adminService) GetFoods() ([]*models.Food, error) {

@@ -38,11 +38,12 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware(), auth.AdminOnly())
 	group.GET("/user", adminHandler.GetUsers)
 	group.POST("/user", adminHandler.AddNewUser)
-	group.DELETE("/user", adminHandler.DeleteUser)
+	group.DELETE("/user/:userID", adminHandler.DeleteUser)
+	group.PUT("/user", adminHandler.UpdateUser)
 
 	group.GET("/food", adminHandler.GetFood)
 	group.POST("/food", adminHandler.AddNewFood)
-	group.DELETE("/food", adminHandler.DeleteFood)
+	group.DELETE("/food/:foodID", adminHandler.DeleteFood)
 
 	group.POST("/reserve", adminHandler.ReserveFood)
 }
