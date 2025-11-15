@@ -437,57 +437,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/food/rate": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Rates all the foods",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Rates foods",
-                "parameters": [
-                    {
-                        "description": "Rates info",
-                        "name": "rates",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/user/autosave": {
             "post": {
                 "security": [
@@ -523,6 +472,57 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/rate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Rates all the foods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Rates foods",
+                "parameters": [
+                    {
+                        "description": "Rates info",
+                        "name": "rates",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/user.ErrorResponse"
                         }
@@ -772,42 +772,6 @@ const docTemplate = `{
                 }
             }
         },
-        "food.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "error message"
-                }
-            }
-        },
-        "food.RateFoodsRequest": {
-            "type": "object",
-            "required": [
-                "foods"
-            ],
-            "properties": {
-                "foods": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    },
-                    "example": {
-                        "foodName1": 93,
-                        "foodName2": 74,
-                        "foodName3": 80
-                    }
-                }
-            }
-        },
-        "food.RateFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Food": {
             "type": "object",
             "properties": {
@@ -970,6 +934,33 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Food"
                     }
+                }
+            }
+        },
+        "user.RateFoodsRequest": {
+            "type": "object",
+            "required": [
+                "foods"
+            ],
+            "properties": {
+                "foods": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
+                    }
+                }
+            }
+        },
+        "user.RateFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         },
