@@ -42,7 +42,7 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 // this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	// Check if user already exists
-	existingUser, err := u.repo.GetUserByUserName(userName)
+	existingUser, err := u.repo.GetByUserName(userName)
 	if err == nil && existingUser != nil {
 		return nil, ErrUserAlreadyExists
 	}
@@ -69,7 +69,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 
 	// Save user to database
-	user, err = u.repo.SaveUser(user)
+	user, err = u.repo.Save(user)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserRegistration
@@ -79,7 +79,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
 	// Get user by username
-	user, err := u.repo.GetUserByUserName(userName)
+	user, err := u.repo.GetByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
@@ -110,7 +110,7 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 
 func (u *userService) Save(user *models.User) (int, error) {
 
-	SaveUser, err := u.repo.SaveUser(user)
+	SaveUser, err := u.repo.Save(user)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return -1, err
@@ -120,7 +120,7 @@ func (u *userService) Save(user *models.User) (int, error) {
 }
 
 func (u *userService) GetById(id int) (*models.User, error) {
-	user, err := u.repo.GetUserById(id)
+	user, err := u.repo.GetById(id)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, err
@@ -129,7 +129,7 @@ func (u *userService) GetById(id int) (*models.User, error) {
 }
 
 func (u *userService) GetByUserName(username string) (*models.User, error) {
-	user, err := u.repo.GetUserByUserName(username)
+	user, err := u.repo.GetByUserName(username)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, err
@@ -138,7 +138,7 @@ func (u *userService) GetByUserName(username string) (*models.User, error) {
 }
 
 func (u *userService) GetAll() ([]*models.User, error) {
-	users, err := u.repo.GetAllUsers()
+	users, err := u.repo.GetAll()
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, err
@@ -147,7 +147,7 @@ func (u *userService) GetAll() ([]*models.User, error) {
 }
 
 func (u *userService) Delete(id int) error {
-	err := u.repo.DeleteUser(id)
+	err := u.repo.Delete(id)
 	if err != nil {
 		u.logger.Info(err.Error())
 	}
@@ -155,7 +155,7 @@ func (u *userService) Delete(id int) error {
 }
 
 func (u *userService) Update(new *models.User) error {
-	err := u.repo.UpdateUser(new)
+	err := u.repo.Update(new)
 	if err != nil {
 		u.logger.Info(err.Error())
 	}
@@ -164,13 +164,13 @@ func (u *userService) Update(new *models.User) error {
 
 // change auto save is better
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
-	user, err := u.repo.GetUserById(userID)
+	user, err := u.repo.GetById(userID)
 	if err != nil {
 		return err
 	}
 
 	user.AutoSave = autoSave
-	err = u.repo.UpdateUser(user)
+	err = u.repo.Update(user)
 	if err != nil {
 		return err
 	}

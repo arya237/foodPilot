@@ -25,11 +25,11 @@ func NewFoodService(repo repositories.Food) FoodService {
 }
 
 func (f *foodService) GetAll() ([]*models.Food, error) {
-	return f.repo.GetAllFood()
+	return f.repo.GetAll()
 }
 
 func (f *foodService) Save(foodName string) (int, error) {
-	id, err := f.repo.SaveFood(foodName)
+	id, err := f.repo.Save(foodName)
 	if err != nil {
 		return id, err
 	}
@@ -38,7 +38,7 @@ func (f *foodService) Save(foodName string) (int, error) {
 }
 
 func (f *foodService) Delete(foodID int) error {
-	err := f.repo.DeleteFood(foodID)
+	err := f.repo.Delete(foodID)
 	if err != nil {
 		return err
 	}

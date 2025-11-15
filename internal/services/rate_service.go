@@ -30,7 +30,7 @@ func NewRateFoodService(r repositories.Rate, f repositories.Food) RateFoodServic
 
 func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string, error) {
 
-	foodList, err := s.FoodRepo.GetAllFood()
+	foodList, err := s.FoodRepo.GetAll()
 
 	if err != nil {
 		s.logger.Info(err.Error())
@@ -69,7 +69,7 @@ func (s *rateFoodService) GetRateByUser(userID int) (map[string]int, error) {
 
 	userRates := make(map[string]int, len(rates))
 	for _, rate := range rates {
-		food, _ := s.FoodRepo.GetFoodById(rate.FoodID)
+		food, _ := s.FoodRepo.GetById(rate.FoodID)
 		userRates[food.Name] = rate.Score
 	}
 
