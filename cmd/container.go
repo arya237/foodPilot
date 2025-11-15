@@ -30,7 +30,6 @@ type Container struct {
 
 	//service
 	UserService    services.UserService
-	FoodService    services.FoodService
 	RateService    services.RateFoodService
 	AdminService   services.AdminService
 	Samad          reservations.RequiredFunctions
@@ -52,7 +51,6 @@ func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.RateRepo = repositories.NewRateRepo(c.db)
 
 	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
-	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
 	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
 
