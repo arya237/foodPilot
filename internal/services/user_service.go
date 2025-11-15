@@ -1,7 +1,10 @@
 package services
 
 import (
+	"errors"
 	"fmt"
+	"log"
+	"strconv"
 	"time"
 
 	"github.com/arya237/foodPilot/internal/models"
@@ -17,19 +20,23 @@ type UserService interface {
 	Login(userName, password string) (*models.User, error)
 	ToggleAutoSave(userID int, autoSave bool) error
 	ViewFoods() ([]*models.Food, error)
+	RateFoods(ID string, foods map[string]int) (string, error)
 }
 
 type userService struct {
 	userStorage repositories.User
 	foodStorge  repositories.Food
+	rateStorage repositories.Rate
 	samad       reservations.RequiredFunctions
 	logger      logger.Logger
 }
 
-func NewUserService(userRepo repositories.User, foodRepo repositories.Food, config *samad.Config) UserService {
+func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
+	rateRepo repositories.Rate, config *samad.Config) UserService {
 	return &userService{
 		userStorage: userRepo,
 		foodStorge:  foodRepo,
+		rateStorage: rateRepo,
 		logger:      logger.New("userService"),
 		samad:       samad.NewSamad(config),
 	}
@@ -146,4 +153,45 @@ func checkToken(samadToken string) bool {
 
 func (u *userService) ViewFoods() ([]*models.Food, error) {
 	return u.foodStorge.GetAll()
+}
+
+func (u *userService) RateFoods(userID string, foods map[string]int) (string, error) {
+
+	foodList, err := u.foodStorge.GetAll()
+
+	if err != nil {
+		return "", err
+	}
+
+	for key, value := range foods {
+
+		foodID, err := findFoodID(foodList, key)
+
+		if err != nil {
+			return "", err
+		}
+
+		userID, err := strconv.Atoi(userID)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = u.rateStorage.Save(userID, foodID, value)
+
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return "all Rates save successfully", nil
+}
+
+func findFoodID(foods []*models.Food, foodName string) (int, error) {
+	for _, food := range foods {
+		if food.Name == foodName {
+			return food.Id, nil
+		}
+	}
+
+	return 0, errors.New("food not found")
 }
