@@ -90,7 +90,7 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		}
 
 		user.Token = token
-		err = u.Update(user)
+		err = u.repo.Update(user)
 		if err != nil {
 			u.logger.Info(err.Error())
 			return nil, err
@@ -100,49 +100,6 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 	return user, nil
 }
 
-
-func (u *userService) GetById(id int) (*models.User, error) {
-	user, err := u.repo.GetById(id)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *userService) GetByUserName(username string) (*models.User, error) {
-	user, err := u.repo.GetByUserName(username)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *userService) GetAll() ([]*models.User, error) {
-	users, err := u.repo.GetAll()
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return users, nil
-}
-
-func (u *userService) Delete(id int) error {
-	err := u.repo.Delete(id)
-	if err != nil {
-		u.logger.Info(err.Error())
-	}
-	return err
-}
-
-func (u *userService) Update(new *models.User) error {
-	err := u.repo.Update(new)
-	if err != nil {
-		u.logger.Info(err.Error())
-	}
-	return err
-}
 
 // change auto save is better
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
