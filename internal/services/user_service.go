@@ -31,16 +31,12 @@ func NewUserService(repo repositories.User, config *samad.Config) UserService {
 	}
 }
 
-// this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
-	// Check if user already exists
 	existingUser, err := u.repo.GetByUserName(userName)
 	if err == nil && existingUser != nil {
 		return nil, ErrUserAlreadyExists
 	}
 
-	// Generate access token if Needed
-	// TODO: fucking arya see this line.................
 	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
@@ -60,7 +56,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		Token:    token,
 	}
 
-	// Save user to database
 	user, err = u.repo.Save(user)
 	if err != nil {
 		u.logger.Info(err.Error())
@@ -70,14 +65,13 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	return user, nil
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
-	// Get user by username
+
 	user, err := u.repo.GetByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
 	}
 
-	// Validate password
 	if user.Password != password {
 		return nil, ErrInvalidCredentials
 	}
@@ -100,8 +94,6 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 	return user, nil
 }
 
-
-// change auto save is better
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 	user, err := u.repo.GetById(userID)
 	if err != nil {
