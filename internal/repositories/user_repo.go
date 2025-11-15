@@ -6,12 +6,12 @@ import (
 )
 
 type User interface {
-	SaveUser(newUser *models.User) (*models.User, error)
-	GetUserById(id int) (*models.User, error)
-	GetUserByUserName(username string) (*models.User, error)
-	GetAllUsers() ([]*models.User, error)
-	DeleteUser(id int) error
-	UpdateUser(new *models.User) error
+	Save(newUser *models.User) (*models.User, error)
+	GetById(id int) (*models.User, error)
+	GetByUserName(username string) (*models.User, error)
+	GetAll() ([]*models.User, error)
+	Delete(id int) error
+	Update(new *models.User) error
 }
 
 type userRepo struct {
@@ -25,7 +25,7 @@ func NewUserRepo(db *db.FakeDb) User {
 }
 
 //TODO: I think it is better to have --> func (fdb *userRepo) SaveUser(*user) (int, error)
-func (fdb *userRepo) SaveUser(newUser *models.User) (*models.User, error) {
+func (fdb *userRepo) Save(newUser *models.User) (*models.User, error) {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	for _, user := range fdb.db.Users {
@@ -41,7 +41,7 @@ func (fdb *userRepo) SaveUser(newUser *models.User) (*models.User, error) {
 	return newUser, nil
 }
 
-func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
+func (fdb *userRepo) GetById(id int) (*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
 	if _, find := fdb.db.Users[id]; !find {
@@ -50,7 +50,7 @@ func (fdb *userRepo) GetUserById(id int) (*models.User, error) {
 	return fdb.db.Users[id], nil
 }
 
-func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
+func (fdb *userRepo) GetByUserName(username string) (*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
 	for _, user := range fdb.db.Users {
@@ -61,7 +61,7 @@ func (fdb *userRepo) GetUserByUserName(username string) (*models.User, error) {
 	return nil, ErrorInvalidUName
 }
 
-func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
+func (fdb *userRepo) GetAll() ([]*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
 	users := []*models.User{}
@@ -76,7 +76,7 @@ func (fdb *userRepo) GetAllUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func (fdb *userRepo) DeleteUser(id int) error {
+func (fdb *userRepo) Delete(id int) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[id]; !find {
@@ -87,7 +87,7 @@ func (fdb *userRepo) DeleteUser(id int) error {
 	return nil
 }
 
-func (fdb *userRepo) UpdateUser(new *models.User) error {
+func (fdb *userRepo) Update(new *models.User) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[new.Id]; !find {
