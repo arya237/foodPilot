@@ -2,37 +2,41 @@ package services
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
 )
 
 type UserService interface {
 	SignUp(userName, password string) (*models.User, error)
 	Login(userName, password string) (*models.User, error)
 	ToggleAutoSave(userID int, autoSave bool) error
+	ViewFoods() ([]*models.Food, error)
 }
 
 type userService struct {
-	repo   repositories.User
-	samad  reservations.RequiredFunctions
-	logger logger.Logger
+	userStorage repositories.User
+	foodStorge  repositories.Food
+	samad       reservations.RequiredFunctions
+	logger      logger.Logger
 }
 
-func NewUserService(repo repositories.User, config *samad.Config) UserService {
+func NewUserService(userRepo repositories.User, foodRepo repositories.Food, config *samad.Config) UserService {
 	return &userService{
-		repo:   repo,
-		logger: logger.New("userService"),
-		samad:  samad.NewSamad(config),
+		userStorage: userRepo,
+		foodStorge:  foodRepo,
+		logger:      logger.New("userService"),
+		samad:       samad.NewSamad(config),
 	}
 }
 
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
-	existingUser, err := u.repo.GetByUserName(userName)
+	existingUser, err := u.userStorage.GetByUserName(userName)
 	if err == nil && existingUser != nil {
 		return nil, ErrUserAlreadyExists
 	}
@@ -56,7 +60,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		Token:    token,
 	}
 
-	user, err = u.repo.Save(user)
+	user, err = u.userStorage.Save(user)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserRegistration
@@ -66,7 +70,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
 
-	user, err := u.repo.GetByUserName(userName)
+	user, err := u.userStorage.GetByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
@@ -84,7 +88,7 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		}
 
 		user.Token = token
-		err = u.repo.Update(user)
+		err = u.userStorage.Update(user)
 		if err != nil {
 			u.logger.Info(err.Error())
 			return nil, err
@@ -95,13 +99,13 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 }
 
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
-	user, err := u.repo.GetById(userID)
+	user, err := u.userStorage.GetById(userID)
 	if err != nil {
 		return err
 	}
 
 	user.AutoSave = autoSave
-	err = u.repo.Update(user)
+	err = u.userStorage.Update(user)
 	if err != nil {
 		return err
 	}
@@ -138,4 +142,8 @@ func checkToken(samadToken string) bool {
 	}
 
 	return false
+}
+
+func (u *userService) ViewFoods() ([]*models.Food, error) {
+	return u.foodStorge.GetAll()
 }
