@@ -52,7 +52,7 @@ func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.FoodRepo = repositories.NewFoodRepo(c.db)
 	c.RateRepo = repositories.NewRateRepo(c.db)
 
-	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, conf)
+	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
 	c.FoodService = services.NewFoodService(c.FoodRepo)
 	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
 	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
