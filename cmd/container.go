@@ -9,7 +9,6 @@ import (
 	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/handler/admin"
 	"github.com/arya237/foodPilot/internal/handler/auth"
-	"github.com/arya237/foodPilot/internal/handler/food"
 	"github.com/arya237/foodPilot/internal/handler/user"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/services"
@@ -61,12 +60,6 @@ func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.ReserveService = services.NewReserveService(c.UserRepo, c.RateService, c.Samad)
 }
 
-func (c *Container) GetFoodHandler() *food.FoodHandler {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	foodHandler := food.NewFoodHandler(c.RateService, c.FoodService)
-	return foodHandler
-}
 
 func (c *Container) GetLoginHandler() *auth.LoginHandler {
 	c.mutex.RLock()
@@ -123,18 +116,15 @@ func NewApp() (*gin.Engine, error) {
 	container := NewContainer()
 	container.SetUp(db, conf.SamadConfig)
 
-	foodHandlers := container.GetFoodHandler()
 	authHandlers := container.GetLoginHandler()
 	userHandler := container.GetUserHandler()
 	adminHandler := container.GetAdminHandler()
 
 	authGroup := engine.Group("/auth")
-	foodGroup := engine.Group("/food")
 	userGroup := engine.Group("/user")
 	adminGroup := engine.Group("/admin")
 
 	auth.RegisterRoutes(authGroup, authHandlers)
-	food.RegisterRoutes(foodGroup, foodHandlers)
 	user.RegisterRoutes(userGroup, userHandler)
 	admin.RegisterRoutes(adminGroup, *adminHandler)
 
