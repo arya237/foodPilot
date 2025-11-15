@@ -6,11 +6,11 @@ import (
 )
 
 type Food interface {
-	SaveFood(name string) (int, error)
-	GetFoodById(id int) (*models.Food, error)
-	GetAllFood() ([]*models.Food, error)
-	DeleteFood(id int) error
-	UpdateFood(new *models.Food) error
+	Save(name string) (int, error)
+	GetById(id int) (*models.Food, error)
+	GetAll() ([]*models.Food, error)
+	Delete(id int) error
+	Update(new *models.Food) error
 }
 
 type foodRepo struct {
@@ -23,7 +23,7 @@ func NewFoodRepo(db *db.FakeDb) Food {
 	}
 }
 
-func (fdb *foodRepo) SaveFood(name string) (int, error) {
+func (fdb *foodRepo) Save(name string) (int, error) {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
 
@@ -38,7 +38,7 @@ func (fdb *foodRepo) SaveFood(name string) (int, error) {
 	return fdb.db.FoodCounter - 1, nil
 }
 
-func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
+func (fdb *foodRepo) GetById(id int) (*models.Food, error) {
 	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.RUnlock()
 	if _, find := fdb.db.Foods[id]; !find {
@@ -47,7 +47,7 @@ func (fdb *foodRepo) GetFoodById(id int) (*models.Food, error) {
 	return fdb.db.Foods[id], nil
 }
 
-func (fdb *foodRepo) GetAllFood() ([]*models.Food, error) {
+func (fdb *foodRepo) GetAll() ([]*models.Food, error) {
 	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.RUnlock()
 	var foods []*models.Food
@@ -62,7 +62,7 @@ func (fdb *foodRepo) GetAllFood() ([]*models.Food, error) {
 	return foods, nil
 }
 
-func (fdb *foodRepo) DeleteFood(id int) error {
+func (fdb *foodRepo) Delete(id int) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
 	if _, find := fdb.db.Foods[id]; !find {
@@ -73,7 +73,7 @@ func (fdb *foodRepo) DeleteFood(id int) error {
 	return nil
 }
 
-func (fdb *foodRepo) UpdateFood(new *models.Food) error {
+func (fdb *foodRepo) Update(new *models.Food) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
 	if _, find := fdb.db.Foods[new.Id]; !find {
