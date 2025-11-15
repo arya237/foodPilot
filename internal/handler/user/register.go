@@ -13,14 +13,12 @@ import (
 
 type UserHandler struct {
 	UserService services.UserService
-	RateService services.RateFoodService
 	Logger      logger.Logger
 }
 
-func NewUserHandler(u services.UserService, r services.RateFoodService) *UserHandler {
+func NewUserHandler(u services.UserService) *UserHandler {
 	return &UserHandler{
 		UserService: u,
-		RateService: r,
 		Logger:      logger.New("userHandler"),
 	}
 }

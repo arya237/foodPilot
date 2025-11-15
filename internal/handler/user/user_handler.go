@@ -63,7 +63,7 @@ func (h *UserHandler) GetRates(c *gin.Context) {
 
 	userID, _ := strconv.Atoi(id.(string))
 
-	userRates, err := h.RateService.GetRateByUser(userID)
+	userRates, err := h.UserService.ViewRating(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return

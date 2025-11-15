@@ -30,7 +30,6 @@ type Container struct {
 
 	//service
 	UserService    services.UserService
-	RateService    services.RateFoodService
 	AdminService   services.AdminService
 	Samad          reservations.RequiredFunctions
 	ReserveService services.Reserve
@@ -51,7 +50,7 @@ func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.RateRepo = repositories.NewRateRepo(c.db)
 
 	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
-	c.RateService = services.NewRateFoodService(c.RateRepo, c.FoodRepo)
+
 	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
 
 	c.Samad = samad.NewSamad(conf)
@@ -69,7 +68,7 @@ func (c *Container) GetLoginHandler() *auth.LoginHandler {
 func (c *Container) GetUserHandler() *user.UserHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	userHandler := user.NewUserHandler(c.UserService, c.RateService)
+	userHandler := user.NewUserHandler(c.UserService)
 	return userHandler
 }
 
