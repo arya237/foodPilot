@@ -1,4 +1,4 @@
-package fakedb
+package db
 
 import (
 	"sync"

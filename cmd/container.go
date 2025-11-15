@@ -6,12 +6,12 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
+	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/handler/admin"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/food"
 	"github.com/arya237/foodPilot/internal/handler/user"
 	"github.com/arya237/foodPilot/internal/repositories"
-	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
@@ -22,7 +22,7 @@ import (
 )
 
 type Container struct {
-	db *fakedb.FakeDb
+	db *db.FakeDb
 
 	//repositories
 	UserRepo repositories.User
@@ -44,7 +44,7 @@ func NewContainer() *Container {
 	return &Container{}
 }
 
-func (c *Container) SetUp(db *fakedb.FakeDb, conf *samad.Config) {
+func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.db = db
@@ -114,13 +114,12 @@ func NewApp() (*gin.Engine, error) {
 
 	engine.GET("/swagger/*any", swaggerHandler)
 
-	
 	conf, err := config.New()
 	if err != nil {
 		return nil, err
 	}
 
-	db := fakedb.NewDb(conf.DBConfig)
+	db := db.NewDb(conf.DBConfig)
 	container := NewContainer()
 	container.SetUp(db, conf.SamadConfig)
 

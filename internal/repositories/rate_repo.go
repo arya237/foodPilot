@@ -1,8 +1,8 @@
 package repositories
 
 import (
+	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
-	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
 type Rate interface {
@@ -13,10 +13,10 @@ type Rate interface {
 }
 
 type rateRepo struct {
-	db *fakedb.FakeDb
+	db *db.FakeDb
 }
 
-func NewRateRepo(db *fakedb.FakeDb) Rate {
+func NewRateRepo(db *db.FakeDb) Rate {
 	return &rateRepo{
 		db: db,
 	}

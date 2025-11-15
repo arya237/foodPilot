@@ -1,8 +1,8 @@
 package repositories
 
 import (
+	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
-	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
 type User interface {
@@ -15,10 +15,10 @@ type User interface {
 }
 
 type userRepo struct {
-	db *fakedb.FakeDb
+	db *db.FakeDb
 }
 
-func NewUserRepo(db *fakedb.FakeDb) User {
+func NewUserRepo(db *db.FakeDb) User {
 	return &userRepo{
 		db: db,
 	}

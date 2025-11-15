@@ -1,8 +1,8 @@
 package repositories
 
 import (
+	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
-	"github.com/arya237/foodPilot/internal/repositories/fakedb"
 )
 
 type Food interface {
@@ -14,10 +14,10 @@ type Food interface {
 }
 
 type foodRepo struct {
-	db *fakedb.FakeDb
+	db *db.FakeDb
 }
 
-func NewFoodRepo(db *fakedb.FakeDb) Food {
+func NewFoodRepo(db *db.FakeDb) Food {
 	return &foodRepo{
 		db: db,
 	}

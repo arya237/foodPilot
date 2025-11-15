@@ -1,4 +1,4 @@
-package fakedb
+package db
 
 type Config struct{
 	Username string
