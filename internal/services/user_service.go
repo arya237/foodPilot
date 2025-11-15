@@ -21,6 +21,7 @@ type UserService interface {
 	ToggleAutoSave(userID int, autoSave bool) error
 	ViewFoods() ([]*models.Food, error)
 	RateFoods(ID string, foods map[string]int) (string, error)
+	ViewRating(ID int) (map[string]int, error)
 }
 
 type userService struct {
@@ -119,38 +120,6 @@ func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 	return nil
 }
 
-func checkToken(samadToken string) bool {
-
-	log := logger.New("check")
-
-	token, _, err := jwt.NewParser().ParseUnverified(samadToken, jwt.MapClaims{})
-	if err != nil {
-		log.Info("Error parsing token (even unverified): " + err.Error())
-		return false
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		if expFloat, ok := claims["exp"].(float64); ok {
-			expTime := time.Unix(int64(expFloat), 0)
-			now := time.Now()
-
-			if now.Before(expTime) {
-				log.Info(fmt.Sprintf("exp: %v \ntoken is valid", expTime))
-				return true
-			}
-
-		} else {
-			log.Info("No 'exp' claim found or it's not a number")
-			return false
-		}
-	} else {
-		log.Info("Failed to parse claims")
-		return false
-	}
-
-	return false
-}
-
 func (u *userService) ViewFoods() ([]*models.Food, error) {
 	return u.foodStorge.GetAll()
 }
@@ -186,6 +155,22 @@ func (u *userService) RateFoods(userID string, foods map[string]int) (string, er
 	return "all Rates save successfully", nil
 }
 
+func (u *userService) ViewRating(ID int) (map[string]int, error){
+	rates, err := u.rateStorage.GetByUser(ID)
+	if err != nil {
+		return nil, err
+	}
+
+	userRates := make(map[string]int, len(rates))
+	for _, rate := range rates {
+		food, _ := u.foodStorge.GetById(rate.FoodID)
+		userRates[food.Name] = rate.Score
+	}
+
+	return userRates, nil
+}
+// ------------------------ HELPERS ----------------------------------------
+
 func findFoodID(foods []*models.Food, foodName string) (int, error) {
 	for _, food := range foods {
 		if food.Name == foodName {
@@ -195,3 +180,36 @@ func findFoodID(foods []*models.Food, foodName string) (int, error) {
 
 	return 0, errors.New("food not found")
 }
+
+func checkToken(samadToken string) bool {
+
+	log := logger.New("check")
+
+	token, _, err := jwt.NewParser().ParseUnverified(samadToken, jwt.MapClaims{})
+	if err != nil {
+		log.Info("Error parsing token (even unverified): " + err.Error())
+		return false
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if expFloat, ok := claims["exp"].(float64); ok {
+			expTime := time.Unix(int64(expFloat), 0)
+			now := time.Now()
+
+			if now.Before(expTime) {
+				log.Info(fmt.Sprintf("exp: %v \ntoken is valid", expTime))
+				return true
+			}
+
+		} else {
+			log.Info("No 'exp' claim found or it's not a number")
+			return false
+		}
+	} else {
+		log.Info("Failed to parse claims")
+		return false
+	}
+
+	return false
+}
+

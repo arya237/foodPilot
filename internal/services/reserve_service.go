@@ -38,18 +38,18 @@ type UserReserveResult struct {
 //******************************************************************************
 
 type reserve struct {
-	user   repositories.User
-	rate   RateFoodService
-	samad  reservations.RequiredFunctions
-	logger logger.Logger
+	user       repositories.User
+	userSevise UserService
+	samad      reservations.RequiredFunctions
+	logger     logger.Logger
 }
 
-func NewReserveService(u repositories.User, r RateFoodService, s reservations.RequiredFunctions) Reserve {
+func NewReserveService(u repositories.User, userService UserService, s reservations.RequiredFunctions) Reserve {
 	return &reserve{
-		user:   u,
-		rate:   r,
-		samad:  s,
-		logger: logger.New("reserve"),
+		user:       u,
+		userSevise: userService,
+		samad:      s,
+		logger:     logger.New("reserve"),
 	}
 }
 
@@ -141,7 +141,7 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 	}
 
 	// Get user rates
-	rates, err := r.rate.GetRateByUser(user.Id)
+	rates, err := r.userSevise.ViewRating(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
 		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
