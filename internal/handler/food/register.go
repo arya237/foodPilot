@@ -36,5 +36,5 @@ func RegisterRoutes(group *gin.RouterGroup, foodHandler *FoodHandler) {
 	limiter := limiter.New(store, rate)
 
 	group.Use(auth.LimitMiddelware(limiter), auth.AuthMiddleware())
-	group.POST("/rate", foodHandler.RateFoods)
+	//group.POST("/rate", foodHandler.RateFoods)
 }

@@ -92,3 +92,39 @@ func (h *UserHandler) GetFoods(c *gin.Context) {
 		foodList,
 	})
 }
+
+// RateFood     godoc
+// @Summary     Rates foods
+// @Description Rates all the foods
+// @Tags        User
+// @Security    BearerAuth
+// @Accept      json
+// @Param       rates body RateFoodsRequest true "Rates info"
+// @Produce     json
+// @Success     200 {object} RateFoodsResponse
+// @Failure     400 {object} ErrorResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /user/rate [POST]
+func (h *UserHandler) RateFoods(c *gin.Context) {
+	rates := RateFoodsRequest{}
+	if err := c.ShouldBindJSON(&rates); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid request"})
+		return
+	}
+
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "userNotFound"})
+		return
+	}
+
+	message, err := h.UserService.RateFoods(userID.(string), rates.Foods)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, RateFoodsResponse{
+		Message: message,
+	})
+}
