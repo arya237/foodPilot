@@ -38,4 +38,5 @@ func RegisterRoutes(group *gin.RouterGroup, userHandler *UserHandler) {
 	group.Use(auth.AuthMiddleware(), auth.LimitMiddelware(limiter))
 	group.POST("/autosave", userHandler.AutoSave)
 	group.GET("/rates", userHandler.GetRates)
+	group.GET("/view-foods", userHandler.GetFoods)
 }

@@ -1,5 +1,7 @@
 package user
 
+import "github.com/arya237/foodPilot/internal/models"
+
 // AutoSaveRequest is the request body for enabling or disabling autosave
 type AutoSaveRequest struct {
 	AutoSave *bool `json:"autosave" binding:"required"`
@@ -18,4 +20,9 @@ type RatesResponse struct {
 // ErrorResponse is returned when an error occurs
 type ErrorResponse struct {
 	Error string `json:"error" example:"error message"`
+}
+
+// GetFoodsResponse is the response containing a list of available foods
+type GetFoodsResponse struct {
+	Foods []*models.Food `json:"foods"`
 }

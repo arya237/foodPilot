@@ -71,3 +71,24 @@ func (h *UserHandler) GetRates(c *gin.Context) {
 
 	c.JSON(http.StatusOK, RatesResponse{Rates: userRates})
 }
+
+// GetFood      godoc
+// @Summary     Get foods
+// @Description Return all the foods
+// @Tags        Food
+// @Security    BearerAuth
+// @Produce     json
+// @Success     200 {object} GetFoodsResponse
+// @Failure     500 {object} ErrorResponse
+// @Router      /food/list [GET]
+func (h *UserHandler) GetFoods(c *gin.Context) {
+
+	foodList, err := h.UserService.ViewFoods()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, GetFoodsResponse{
+		foodList,
+	})
+}

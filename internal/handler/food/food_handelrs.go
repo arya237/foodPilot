@@ -6,26 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetFood      godoc
-// @Summary     Get foods
-// @Description Return all the foods
-// @Tags        Food
-// @Security    BearerAuth
-// @Produce     json
-// @Success     200 {object} GetFoodsResponse
-// @Failure     500 {object} ErrorResponse
-// @Router      /food/list [GET]
-func (h *FoodHandler) GetFoods(c *gin.Context) {
 
-	foodList, err := h.FoodService.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	}
-
-	c.JSON(http.StatusOK, GetFoodsResponse{
-		foodList,
-	})
-}
 
 // RateFood     godoc
 // @Summary     Rates foods

@@ -1,12 +1,5 @@
 package food
 
-import "github.com/arya237/foodPilot/internal/models"
-
-// GetFoodsResponse is the response containing a list of available foods
-type GetFoodsResponse struct {
-	Foods []*models.Food `json:"foods"`
-}
-
 // RateFoodsRequest is the request body for rating multiple foods
 type RateFoodsRequest struct {
 	Foods map[string]int `json:"foods" binding:"required" example:"foodName1:93,foodName2:74,foodName3:80"`
