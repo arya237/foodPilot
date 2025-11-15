@@ -50,7 +50,7 @@ func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string,
 		if err != nil {
 			s.logger.Info(err.Error())
 		}
-		err = s.RateRepo.SaveRate(userID, foodID, value)
+		err = s.RateRepo.Save(userID, foodID, value)
 
 		if err != nil {
 			s.logger.Info(err.Error())
@@ -62,7 +62,7 @@ func (s *rateFoodService) SaveRate(userID string, foods map[string]int) (string,
 }
 
 func (s *rateFoodService) GetRateByUser(userID int) (map[string]int, error) {
-	rates, err :=  s.RateRepo.GetRateByUser(userID)
+	rates, err :=  s.RateRepo.GetByUser(userID)
 	if err != nil {
 		return nil, err
 	}

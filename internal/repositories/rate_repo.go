@@ -6,10 +6,10 @@ import (
 )
 
 type Rate interface {
-	SaveRate(userID, foodID, score int) error
-	GetRateByUser(userID int) ([]*models.Rate, error)
-	DeleteRate(userID, foodID int) error
-	UpdateRate(userID int, new *models.Rate) error
+	Save(userID, foodID, score int) error
+	GetByUser(userID int) ([]*models.Rate, error)
+	Delete(userID, foodID int) error
+	Update(userID int, new *models.Rate) error
 }
 
 type rateRepo struct {
@@ -22,7 +22,7 @@ func NewRateRepo(db *db.FakeDb) Rate {
 	}
 }
 
-func (fdb *rateRepo) SaveRate(userID, foodID, score int) error {
+func (fdb *rateRepo) Save(userID, foodID, score int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 	if _, ok := fdb.db.Users[userID]; !ok {
@@ -45,7 +45,7 @@ func (fdb *rateRepo) SaveRate(userID, foodID, score int) error {
 	return nil
 }
 
-func (fdb *rateRepo) GetRateByUser(userID int) ([]*models.Rate, error) {
+func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
@@ -63,7 +63,7 @@ func (fdb *rateRepo) GetRateByUser(userID int) ([]*models.Rate, error) {
 	return rates, nil
 }
 
-func (fdb *rateRepo) DeleteRate(userID, foodID int) error {
+func (fdb *rateRepo) Delete(userID, foodID int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 	if rates, ok := fdb.db.Rates[userID]; ok {
@@ -78,7 +78,7 @@ func (fdb *rateRepo) DeleteRate(userID, foodID int) error {
 	}
 }
 
-func (fdb *rateRepo) UpdateRate(userID int, new *models.Rate) error {
+func (fdb *rateRepo) Update(userID int, new *models.Rate) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 
