@@ -437,37 +437,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/food/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Return all the foods",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Get foods",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.GetFoodsResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/food/rate": {
             "post": {
                 "security": [
@@ -590,6 +559,37 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/view-foods": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the foods",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get foods",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.GetFoodsResponse"
                         }
                     },
                     "500": {
@@ -781,17 +781,6 @@ const docTemplate = `{
                 }
             }
         },
-        "food.GetFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "foods": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Food"
-                    }
-                }
-            }
-        },
         "food.RateFoodsRequest": {
             "type": "object",
             "required": [
@@ -970,6 +959,17 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "error message"
+                }
+            }
+        },
+        "user.GetFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Food"
+                    }
                 }
             }
         },

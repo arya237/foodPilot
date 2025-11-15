@@ -75,12 +75,12 @@ func (h *UserHandler) GetRates(c *gin.Context) {
 // GetFood      godoc
 // @Summary     Get foods
 // @Description Return all the foods
-// @Tags        Food
+// @Tags        User
 // @Security    BearerAuth
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /food/list [GET]
+// @Router      /user/view-foods [GET]
 func (h *UserHandler) GetFoods(c *gin.Context) {
 
 	foodList, err := h.UserService.ViewFoods()

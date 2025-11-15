@@ -117,13 +117,6 @@ definitions:
         example: error message
         type: string
     type: object
-  food.GetFoodsResponse:
-    properties:
-      foods:
-        items:
-          $ref: '#/definitions/models.Food'
-        type: array
-    type: object
   food.RateFoodsRequest:
     properties:
       foods:
@@ -248,6 +241,13 @@ definitions:
       error:
         example: error message
         type: string
+    type: object
+  user.GetFoodsResponse:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/models.Food'
+        type: array
     type: object
   user.RatesResponse:
     properties:
@@ -532,25 +532,6 @@ paths:
       summary: signup a new user
       tags:
       - Auth
-  /food/list:
-    get:
-      description: Return all the foods
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/food.GetFoodsResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/food.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get foods
-      tags:
-      - Food
   /food/rate:
     post:
       consumes:
@@ -632,6 +613,25 @@ paths:
       security:
       - BearerAuth: []
       summary: return user rates
+      tags:
+      - User
+  /user/view-foods:
+    get:
+      description: Return all the foods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get foods
       tags:
       - User
 securityDefinitions:
