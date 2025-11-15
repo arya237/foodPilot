@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 )
@@ -37,13 +38,13 @@ type UserReserveResult struct {
 //******************************************************************************
 
 type reserve struct {
-	user   UserService
+	user   repositories.User
 	rate   RateFoodService
 	samad  reservations.RequiredFunctions
 	logger logger.Logger
 }
 
-func NewReserveService(u UserService, r RateFoodService, s reservations.RequiredFunctions) Reserve {
+func NewReserveService(u repositories.User, r RateFoodService, s reservations.RequiredFunctions) Reserve {
 	return &reserve{
 		user:   u,
 		rate:   r,
