@@ -46,7 +46,15 @@ pull: ## Pull current branch from origin
 # lint: ## Lint the project (requires golangci-lint)
 # 	golangci-lint run ./...
 
-info: ## Show build info
+db: ## make db up
+	@echo "try to turn on database..."
+	@docker compose up -d    
+
+db_off: 
+	@echo "try to turn off database..."
+	@docker compose up -d                                  
+
+info: ## Show Current branch
 	@echo "Branch:   $(BRANCH)"
 
 help: ## Show this help
