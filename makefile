@@ -50,9 +50,9 @@ db: ## make db up
 	@echo "try to turn on database..."
 	@docker compose up -d    
 
-db_off: 
+db_off: ## make db down
 	@echo "try to turn off database..."
-	@docker compose up -d                                  
+	@docker compose down                                  
 
 info: ## Show Current branch
 	@echo "Branch:   $(BRANCH)"
