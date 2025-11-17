@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
-	"github.com/arya237/foodPilot/internal/db"
+	"github.com/arya237/foodPilot/internal/db/tempdb"
 	"github.com/arya237/foodPilot/internal/handler/admin"
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/user"
@@ -22,7 +22,7 @@ import (
 )
 
 type Container struct {
-	db *db.FakeDb
+	db *tempdb.FakeDb
 
 	//repositories
 	UserRepo repositories.User
@@ -42,7 +42,7 @@ func NewContainer() *Container {
 	return &Container{}
 }
 
-func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
+func (c *Container) SetUp(db *tempdb.FakeDb, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.db = db
@@ -110,7 +110,7 @@ func NewApp() (*gin.Engine, error) {
 		return nil, err
 	}
 
-	db := db.NewDb(conf.DBConfig)
+	db := tempdb.NewDb(conf.DBConfig)
 	container := NewContainer()
 	container.SetUp(db, conf.SamadConfig)
 

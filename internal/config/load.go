@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/arya237/foodPilot/internal/db"
+	"github.com/arya237/foodPilot/internal/db/tempdb"
 	"github.com/arya237/foodPilot/pkg/messaging"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 )
@@ -9,7 +9,7 @@ import (
 func New() (*Config, error) {
 	config := Config{
 		SamadConfig:     &samad.Config{},
-		DBConfig:        &db.Config{},
+		DBConfig:        &tempdb.Config{},
 		MessagingConfig: &messaging.Config{},
 	}
 

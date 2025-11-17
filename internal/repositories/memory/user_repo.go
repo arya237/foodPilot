@@ -1,16 +1,16 @@
 package memory
 
 import (
-	"github.com/arya237/foodPilot/internal/db"
+	"github.com/arya237/foodPilot/internal/db/tempdb"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 )
 
 type userRepo struct {
-	db *db.FakeDb
+	db *tempdb.FakeDb
 }
 
-func NewUserRepo(db *db.FakeDb) repositories.User {
+func NewUserRepo(db *tempdb.FakeDb) repositories.User {
 	return &userRepo{
 		db: db,
 	}
