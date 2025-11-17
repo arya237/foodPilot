@@ -20,8 +20,8 @@ func New() (*Config, error) {
 	config.SamadConfig.GetSelfIDUrl = GetEnv("GETSELFIDURL", "")
 
 	// Reading fack db config
-	config.DBConfig.Username = GetEnv("ADMIN_USERNAME", "admin")
-	config.DBConfig.Password = GetEnv("ADMIN_PASSWORD", "admin")
+	config.DBConfig.AdminUsername = GetEnv("ADMIN_USERNAME", "admin")
+	config.DBConfig.AdminPassword = GetEnv("ADMIN_PASSWORD", "admin")
 
 	// Messenger
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")
