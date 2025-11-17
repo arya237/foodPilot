@@ -1,39 +1,30 @@
-package repositories
+package memory
 
 import (
 	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 )
-
-type User interface {
-	Save(newUser *models.User) (*models.User, error)
-	GetById(id int) (*models.User, error)
-	GetByUserName(username string) (*models.User, error)
-	GetAll() ([]*models.User, error)
-	Delete(id int) error
-	Update(new *models.User) error
-}
 
 type userRepo struct {
 	db *db.FakeDb
 }
 
-func NewUserRepo(db *db.FakeDb) User {
+func NewUserRepo(db *db.FakeDb) repositories.User {
 	return &userRepo{
 		db: db,
 	}
 }
 
-//TODO: I think it is better to have --> func (fdb *userRepo) SaveUser(*user) (int, error)
 func (fdb *userRepo) Save(newUser *models.User) (*models.User, error) {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	for _, user := range fdb.db.Users {
 		if user.Username == newUser.Username {
-			return nil, ErrorDuplicateUser
+			return nil, repositories.ErrorDuplicateUser
 		}
 	}
-	
+
 	newUser.Id = fdb.db.UserCounter
 	fdb.db.Users[fdb.db.UserCounter] = newUser
 	fdb.db.UserCounter++
@@ -45,7 +36,7 @@ func (fdb *userRepo) GetById(id int) (*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
 	if _, find := fdb.db.Users[id]; !find {
-		return nil, ErrorInvalidUID
+		return nil, repositories.ErrorInvalidUID
 	}
 	return fdb.db.Users[id], nil
 }
@@ -58,7 +49,7 @@ func (fdb *userRepo) GetByUserName(username string) (*models.User, error) {
 			return user, nil
 		}
 	}
-	return nil, ErrorInvalidUName
+	return nil, repositories.ErrorInvalidUName
 }
 
 func (fdb *userRepo) GetAll() ([]*models.User, error) {
@@ -70,7 +61,7 @@ func (fdb *userRepo) GetAll() ([]*models.User, error) {
 	}
 
 	if len(users) == 0 {
-		return nil, ErrorNoUser
+		return nil, repositories.ErrorNoUser
 	}
 
 	return users, nil
@@ -80,7 +71,7 @@ func (fdb *userRepo) Delete(id int) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[id]; !find {
-		return ErrorInvalidUID
+		return repositories.ErrorInvalidUID
 	}
 
 	delete(fdb.db.Users, id)
@@ -91,7 +82,7 @@ func (fdb *userRepo) Update(new *models.User) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[new.Id]; !find {
-		return ErrorInvalidUID
+		return repositories.ErrorInvalidUID
 	}
 
 	fdb.db.Users[new.Id] = new

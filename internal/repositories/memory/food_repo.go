@@ -1,23 +1,16 @@
-package repositories
+package memory
 
 import (
 	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 )
-
-type Food interface {
-	Save(name string) (int, error)
-	GetById(id int) (*models.Food, error)
-	GetAll() ([]*models.Food, error)
-	Delete(id int) error
-	Update(new *models.Food) error
-}
 
 type foodRepo struct {
 	db *db.FakeDb
 }
 
-func NewFoodRepo(db *db.FakeDb) Food {
+func NewFoodRepo(db *db.FakeDb) repositories.Food {
 	return &foodRepo{
 		db: db,
 	}
@@ -29,7 +22,7 @@ func (fdb *foodRepo) Save(name string) (int, error) {
 
 	for _, food := range fdb.db.Foods {
 		if food.Name == name {
-			return 0, ErrorDuplicateFood
+			return 0, repositories.ErrorDuplicateFood
 		}
 	}
 
@@ -42,7 +35,7 @@ func (fdb *foodRepo) GetById(id int) (*models.Food, error) {
 	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.RUnlock()
 	if _, find := fdb.db.Foods[id]; !find {
-		return nil, ErrorInvalidFID
+		return nil, repositories.ErrorInvalidFID
 	}
 	return fdb.db.Foods[id], nil
 }
@@ -56,7 +49,7 @@ func (fdb *foodRepo) GetAll() ([]*models.Food, error) {
 	}
 
 	if len(foods) == 0 {
-		return nil, ErrorNoFood
+		return nil, repositories.ErrorNoFood
 	}
 
 	return foods, nil
@@ -66,7 +59,7 @@ func (fdb *foodRepo) Delete(id int) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
 	if _, find := fdb.db.Foods[id]; !find {
-		return ErrorInvalidFID
+		return repositories.ErrorInvalidFID
 	}
 
 	delete(fdb.db.Foods, id)
@@ -77,7 +70,7 @@ func (fdb *foodRepo) Update(new *models.Food) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
 	if _, find := fdb.db.Foods[new.Id]; !find {
-		return ErrorInvalidFID
+		return repositories.ErrorInvalidFID
 	}
 
 	fdb.db.Foods[new.Id] = new

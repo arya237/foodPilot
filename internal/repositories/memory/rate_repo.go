@@ -1,22 +1,16 @@
-package repositories
+package memory
 
 import (
 	"github.com/arya237/foodPilot/internal/db"
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 )
-
-type Rate interface {
-	Save(userID, foodID, score int) error
-	GetByUser(userID int) ([]*models.Rate, error)
-	Delete(userID, foodID int) error
-	Update(userID int, new *models.Rate) error
-}
 
 type rateRepo struct {
 	db *db.FakeDb
 }
 
-func NewRateRepo(db *db.FakeDb) Rate {
+func NewRateRepo(db *db.FakeDb) repositories.Rate {
 	return &rateRepo{
 		db: db,
 	}
@@ -26,7 +20,7 @@ func (fdb *rateRepo) Save(userID, foodID, score int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 	if _, ok := fdb.db.Users[userID]; !ok {
-		return ErrorInvalidUID
+		return repositories.ErrorInvalidUID
 	}
 
 	//for _, rate := range fdb.db.Rates[userID] {
@@ -36,7 +30,7 @@ func (fdb *rateRepo) Save(userID, foodID, score int) error {
 	//}
 
 	if _, ok := fdb.db.Foods[foodID]; !ok {
-		return ErrorInvalidFID
+		return repositories.ErrorInvalidFID
 	}
 	if fdb.db.Rates[userID] == nil {
 		fdb.db.Rates[userID] = make(map[int]*models.Rate)
@@ -49,7 +43,7 @@ func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
-		return nil, ErrorNorate
+		return nil, repositories.ErrorNorate
 	}
 
 	var rates []*models.Rate
@@ -58,7 +52,7 @@ func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 		rates = append(rates, rate)
 	}
 	if len(rates) == 0 {
-		return nil, ErrorNorate
+		return nil, repositories.ErrorNorate
 	}
 	return rates, nil
 }
@@ -71,10 +65,10 @@ func (fdb *rateRepo) Delete(userID, foodID int) error {
 			delete(rates, foodID)
 			return nil
 		} else {
-			return ErrorInvalidFID
+			return repositories.ErrorInvalidFID
 		}
 	} else {
-		return ErrorInvalidUID
+		return repositories.ErrorInvalidUID
 	}
 }
 
@@ -87,9 +81,9 @@ func (fdb *rateRepo) Update(userID int, new *models.Rate) error {
 			rates[new.FoodID] = new
 			return nil
 		} else {
-			return ErrorInvalidFID
+			return repositories.ErrorInvalidFID
 		}
 	} else {
-		return ErrorInvalidUID
+		return repositories.ErrorInvalidUID
 	}
 }

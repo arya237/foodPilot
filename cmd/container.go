@@ -11,6 +11,7 @@ import (
 	"github.com/arya237/foodPilot/internal/handler/auth"
 	"github.com/arya237/foodPilot/internal/handler/user"
 	"github.com/arya237/foodPilot/internal/repositories"
+	"github.com/arya237/foodPilot/internal/repositories/memory"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
@@ -45,9 +46,9 @@ func (c *Container) SetUp(db *db.FakeDb, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.db = db
-	c.UserRepo = repositories.NewUserRepo(c.db)
-	c.FoodRepo = repositories.NewFoodRepo(c.db)
-	c.RateRepo = repositories.NewRateRepo(c.db)
+	c.UserRepo = memory.NewUserRepo(c.db)
+	c.FoodRepo = memory.NewFoodRepo(c.db)
+	c.RateRepo = memory.NewRateRepo(c.db)
 
 	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
 
