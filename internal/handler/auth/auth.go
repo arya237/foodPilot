@@ -7,7 +7,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 
-	"github.com/arya237/foodPilot/internal/auth"
+	"github.com/arya237/foodPilot/internal/handler/middelware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -59,7 +59,7 @@ func (h *LoginHandler) HandleLogin(c *gin.Context) {
 	}
 
 	// generate token for this user
-	jwtToken, err := auth.GenerateJWT(user, h.TokenExpiry)
+	jwtToken, err := middelware.GenerateJWT(user, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "could not generate token"})
 		return
@@ -95,7 +95,7 @@ func (h *LoginHandler) HandleSignUp(c *gin.Context) {
 	}
 
 	// generate token for this user
-	jwtToken, err := auth.GenerateJWT(user, h.TokenExpiry)
+	jwtToken, err := middelware.GenerateJWT(user, h.TokenExpiry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "could not generate token"})
 		return

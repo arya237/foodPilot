@@ -3,7 +3,7 @@ package user
 import (
 	"time"
 
-	"github.com/arya237/foodPilot/internal/auth"
+	"github.com/arya237/foodPilot/internal/handler/middelware"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func RegisterRoutes(group *gin.RouterGroup, userHandler *UserHandler) {
 	store := memory.NewStore()
 	limiter := limiter.New(store, rate)
 
-	group.Use(auth.AuthMiddleware(), auth.LimitMiddelware(limiter))
+	group.Use(middelware.AuthMiddleware(), middelware.LimitMiddelware(limiter))
 	group.POST("/autosave", userHandler.AutoSave)
 	group.GET("/rates", userHandler.GetRates)
 	group.GET("/view-foods", userHandler.GetFoods)
