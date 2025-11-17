@@ -21,8 +21,8 @@ func NewDb(cnf *Config) *FakeDb {
 	users := map[int]*models.User{
 		0: {
 			Id: 0,
-			Username: cnf.Username,
-			Password: cnf.Password,
+			Username: cnf.AdminUsername,
+			Password: cnf.AdminUsername,
 			AutoSave: true,
 			Role: models.RoleAdmin,
 		},
