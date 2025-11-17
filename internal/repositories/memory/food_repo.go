@@ -22,7 +22,7 @@ func (fdb *foodRepo) Save(name string) (int, error) {
 
 	for _, food := range fdb.db.Foods {
 		if food.Name == name {
-			return 0, repositories.ErrorDuplicateFood
+			return 0, repositories.ErrorDuplicate
 		}
 	}
 
@@ -35,7 +35,7 @@ func (fdb *foodRepo) GetById(id int) (*models.Food, error) {
 	fdb.db.FoodMu.RLock()
 	defer fdb.db.FoodMu.RUnlock()
 	if _, find := fdb.db.Foods[id]; !find {
-		return nil, repositories.ErrorInvalidFID
+		return nil, repositories.ErrorNotFound
 	}
 	return fdb.db.Foods[id], nil
 }
@@ -48,29 +48,27 @@ func (fdb *foodRepo) GetAll() ([]*models.Food, error) {
 		foods = append(foods, food)
 	}
 
-	if len(foods) == 0 {
-		return nil, repositories.ErrorNoFood
-	}
-
 	return foods, nil
 }
 
 func (fdb *foodRepo) Delete(id int) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
-	if _, find := fdb.db.Foods[id]; !find {
-		return repositories.ErrorInvalidFID
-	}
 
+	if _, find := fdb.db.Foods[id]; !find {
+		return repositories.ErrorNotFound
+	}
 	delete(fdb.db.Foods, id)
+	
 	return nil
 }
 
 func (fdb *foodRepo) Update(new *models.Food) error {
 	fdb.db.FoodMu.Lock()
 	defer fdb.db.FoodMu.Unlock()
+
 	if _, find := fdb.db.Foods[new.Id]; !find {
-		return repositories.ErrorInvalidFID
+		return repositories.ErrorNotFound
 	}
 
 	fdb.db.Foods[new.Id] = new

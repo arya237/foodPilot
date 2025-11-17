@@ -1,6 +1,10 @@
 package repositories
 
-import "github.com/arya237/foodPilot/internal/models"
+import (
+	"errors"
+
+	"github.com/arya237/foodPilot/internal/models"
+)
 
 type User interface {
 	Save(newUser *models.User) (*models.User, error)
@@ -25,3 +29,9 @@ type Food interface {
 	Delete(id int) error
 	Update(new *models.Food) error
 }
+
+// --------------- Errors -------------------------------
+var (
+	ErrorDuplicate = errors.New("duplicate")
+	ErrorNotFound  = errors.New("there is no entity in database")
+)

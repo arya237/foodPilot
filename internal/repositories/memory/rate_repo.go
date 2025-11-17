@@ -20,17 +20,11 @@ func (fdb *rateRepo) Save(userID, foodID, score int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
 	if _, ok := fdb.db.Users[userID]; !ok {
-		return repositories.ErrorInvalidUID
+		return repositories.ErrorNotFound
 	}
 
-	//for _, rate := range fdb.db.Rates[userID] {
-	//	if rate.FoodID == foodID {
-	//		return ErrorDuplicateFood
-	//	}
-	//}
-
 	if _, ok := fdb.db.Foods[foodID]; !ok {
-		return repositories.ErrorInvalidFID
+		return repositories.ErrorNotFound
 	}
 	if fdb.db.Rates[userID] == nil {
 		fdb.db.Rates[userID] = make(map[int]*models.Rate)
@@ -43,7 +37,7 @@ func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
-		return nil, repositories.ErrorNorate
+		return nil, repositories.ErrorNotFound
 	}
 
 	var rates []*models.Rate
@@ -51,25 +45,23 @@ func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 	for _, rate := range fdb.db.Rates[userID] {
 		rates = append(rates, rate)
 	}
-	if len(rates) == 0 {
-		return nil, repositories.ErrorNorate
-	}
+
 	return rates, nil
 }
 
 func (fdb *rateRepo) Delete(userID, foodID int) error {
 	fdb.db.RateMu.Lock()
 	defer fdb.db.RateMu.Unlock()
+
 	if rates, ok := fdb.db.Rates[userID]; ok {
 		if _, find := rates[foodID]; find {
 			delete(rates, foodID)
 			return nil
 		} else {
-			return repositories.ErrorInvalidFID
+			return repositories.ErrorNotFound
 		}
-	} else {
-		return repositories.ErrorInvalidUID
 	}
+	return repositories.ErrorNotFound
 }
 
 func (fdb *rateRepo) Update(userID int, new *models.Rate) error {
@@ -81,9 +73,8 @@ func (fdb *rateRepo) Update(userID int, new *models.Rate) error {
 			rates[new.FoodID] = new
 			return nil
 		} else {
-			return repositories.ErrorInvalidFID
+			return repositories.ErrorNotFound
 		}
-	} else {
-		return repositories.ErrorInvalidUID
 	}
+	return repositories.ErrorNotFound
 }

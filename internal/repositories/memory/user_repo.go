@@ -21,7 +21,7 @@ func (fdb *userRepo) Save(newUser *models.User) (*models.User, error) {
 	defer fdb.db.UserMu.Unlock()
 	for _, user := range fdb.db.Users {
 		if user.Username == newUser.Username {
-			return nil, repositories.ErrorDuplicateUser
+			return nil, repositories.ErrorDuplicate
 		}
 	}
 
@@ -36,7 +36,7 @@ func (fdb *userRepo) GetById(id int) (*models.User, error) {
 	fdb.db.UserMu.RLock()
 	defer fdb.db.UserMu.RUnlock()
 	if _, find := fdb.db.Users[id]; !find {
-		return nil, repositories.ErrorInvalidUID
+		return nil, repositories.ErrorNotFound
 	}
 	return fdb.db.Users[id], nil
 }
@@ -49,7 +49,7 @@ func (fdb *userRepo) GetByUserName(username string) (*models.User, error) {
 			return user, nil
 		}
 	}
-	return nil, repositories.ErrorInvalidUName
+	return nil, repositories.ErrorNotFound
 }
 
 func (fdb *userRepo) GetAll() ([]*models.User, error) {
@@ -61,7 +61,7 @@ func (fdb *userRepo) GetAll() ([]*models.User, error) {
 	}
 
 	if len(users) == 0 {
-		return nil, repositories.ErrorNoUser
+		return nil, repositories.ErrorNotFound
 	}
 
 	return users, nil
@@ -71,7 +71,7 @@ func (fdb *userRepo) Delete(id int) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[id]; !find {
-		return repositories.ErrorInvalidUID
+		return repositories.ErrorNotFound
 	}
 
 	delete(fdb.db.Users, id)
@@ -82,7 +82,7 @@ func (fdb *userRepo) Update(new *models.User) error {
 	fdb.db.UserMu.Lock()
 	defer fdb.db.UserMu.Unlock()
 	if _, find := fdb.db.Users[new.Id]; !find {
-		return repositories.ErrorInvalidUID
+		return repositories.ErrorNotFound
 	}
 
 	fdb.db.Users[new.Id] = new
