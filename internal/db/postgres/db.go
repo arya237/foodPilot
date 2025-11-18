@@ -9,41 +9,45 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type DB struct {
-	db *sql.DB
-}
-
 var (
-	once     sync.Once
-	instance *DB
+	mu sync.Mutex
+	instance *sql.DB
 )
 
-func NewDB(config Config) *DB {
-	once.Do(func() {
-		connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			config.Host, config.Port, config.User, config.Password, config.DBName)
+func NewDB(config Config) *sql.DB {
+	if (instance != nil){
+		return instance
+	}
 
-		db, err := sql.Open("postgres", connStr)
-		if err != nil {
-			log.Printf("Failed to open database: %v", err)
-			return
-		}
+	mu.Lock()
+	defer mu.Unlock()
 
-		if err := db.Ping(); err != nil {
-			log.Printf("Failed to ping database: %v", err)
-			return
-		}
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		config.Host, config.Port, config.User, config.Password, config.DBName)
 
-		instance = &DB{db: db}
-		log.Println("Database connected successfully")
-	})
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		log.Printf("Failed to open database: %v", err)
+		return nil
+	}
+
+	if err := db.Ping(); err != nil {
+		log.Printf("Failed to ping database: %v", err)
+		return nil
+	}
+
+	instance = db
+	log.Println("Database connected successfully")
 
 	return instance
 }
 
-func (d *DB) Close() error {
-	if d.db != nil {
-		return d.db.Close()
+func Close() error {
+	lastInstance := instance
+	instance = nil
+
+	if lastInstance != nil {
+		return lastInstance.Close()
 	}
 	return nil
 }
