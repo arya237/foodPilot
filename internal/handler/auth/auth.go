@@ -11,21 +11,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type LoginHandler struct {
+type AuthHandler struct {
 	TokenExpiry time.Duration
 	UserService services.UserService
 	logger      logger.Logger
 }
 
-func NewLoginHandler(expiry time.Duration, u services.UserService) *LoginHandler {
-	return &LoginHandler{
+func NewHandler(expiry time.Duration, u services.UserService) *AuthHandler {
+	return &AuthHandler{
 		TokenExpiry: expiry,
 		UserService: u,
 		logger:      logger.New("loginHandler"),
 	}
 }
 
-func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
+func RegisterRoutes(group *gin.RouterGroup, loginHandler *AuthHandler) {
 	group.POST("/login", loginHandler.HandleLogin)
 	group.POST("/signup", loginHandler.HandleSignUp)
 }
@@ -43,7 +43,7 @@ func RegisterRoutes(group *gin.RouterGroup, loginHandler *LoginHandler) {
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /auth/login [POST]
-func (h *LoginHandler) HandleLogin(c *gin.Context) {
+func (h *AuthHandler) HandleLogin(c *gin.Context) {
 	// Get request  information
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -79,7 +79,7 @@ func (h *LoginHandler) HandleLogin(c *gin.Context) {
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
 // @Router      /auth/signup [POST]
-func (h *LoginHandler) HandleSignUp(c *gin.Context) {
+func (h *AuthHandler) HandleSignUp(c *gin.Context) {
 	// Bind request info
 	var req SignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
