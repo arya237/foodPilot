@@ -59,10 +59,10 @@ func (c *Container) SetUp(db *tempdb.FakeDb, conf *samad.Config) {
 }
 
 
-func (c *Container) GetLoginHandler() *auth.LoginHandler {
+func (c *Container) GetLoginHandler() *auth.AuthHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	loginHandler := auth.NewLoginHandler(time.Hour, c.UserService)
+	loginHandler := auth.NewHandler(time.Hour, c.UserService)
 	return loginHandler
 }
 
@@ -89,7 +89,7 @@ func (c *Container) GetAdminHandler() *admin.AdminHandler {
 // @in                         header
 // @name                       Authorization
 // @description                Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"
-func NewApp() (*gin.Engine, error) {
+func Run() (error) {
 	engine := gin.Default()
 	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
 		ginSwagger.DocExpansion("none"),
@@ -107,7 +107,7 @@ func NewApp() (*gin.Engine, error) {
 
 	conf, err := config.New()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	db := tempdb.NewDb(conf.DBConfig)
@@ -126,5 +126,5 @@ func NewApp() (*gin.Engine, error) {
 	user.RegisterRoutes(userGroup, userHandler)
 	admin.RegisterRoutes(adminGroup, *adminHandler)
 
-	return engine, nil
+	return engine.Run(":8080")
 }
