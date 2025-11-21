@@ -5,6 +5,7 @@ import (
 
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/internal/web/api"
+	"github.com/arya237/foodPilot/internal/web/ui"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -37,8 +38,14 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	engine.Use(cors.New(corsConfig))
 	engine.GET("/swagger/*any", swaggerHandler)
 
+	// Register API routes
 	api.RegisterRoutes(engine.Group("/api"),
 		tokenEpereTime, userService, adminService, resrveService)
+
+	// Register Web UI routes
+	if err := ui.RegisterRoutes(engine, tokenEpereTime, userService); err != nil {
+		return err
+	}
 
 	return engine.Run(":8080")
 }
