@@ -10,7 +10,7 @@
         }
     },
     "paths": {
-        "/admin/food": {
+        "/api/admin/food": {
             "get": {
                 "security": [
                     {
@@ -90,7 +90,7 @@
                 }
             }
         },
-        "/admin/food/{foodID}": {
+        "/api/admin/food/{foodID}": {
             "delete": {
                 "security": [
                     {
@@ -136,7 +136,7 @@
                 }
             }
         },
-        "/admin/reserve": {
+        "/api/admin/reserve": {
             "post": {
                 "security": [
                     {
@@ -167,7 +167,7 @@
                 }
             }
         },
-        "/admin/user": {
+        "/api/admin/user": {
             "get": {
                 "security": [
                     {
@@ -290,7 +290,7 @@
                 }
             }
         },
-        "/admin/user/{userID}": {
+        "/api/admin/user/{userID}": {
             "delete": {
                 "security": [
                     {
@@ -336,7 +336,7 @@
                 }
             }
         },
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
                 "consumes": [
@@ -382,7 +382,7 @@
                 }
             }
         },
-        "/auth/signup": {
+        "/api/auth/signup": {
             "post": {
                 "description": "Register a new user and generate token for it",
                 "consumes": [
@@ -428,7 +428,7 @@
                 }
             }
         },
-        "/user/autosave": {
+        "/api/user/autosave": {
             "post": {
                 "security": [
                     {
@@ -476,7 +476,7 @@
                 }
             }
         },
-        "/user/rate": {
+        "/api/user/rate": {
             "post": {
                 "security": [
                     {
@@ -527,7 +527,7 @@
                 }
             }
         },
-        "/user/rates": {
+        "/api/user/rates": {
             "get": {
                 "security": [
                     {
@@ -561,7 +561,7 @@
                 }
             }
         },
-        "/user/view-foods": {
+        "/api/user/view-foods": {
             "get": {
                 "security": [
                     {

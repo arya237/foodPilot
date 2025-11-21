@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/food": {
+        "/api/admin/food": {
             "get": {
                 "security": [
                     {
@@ -99,7 +99,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/food/{foodID}": {
+        "/api/admin/food/{foodID}": {
             "delete": {
                 "security": [
                     {
@@ -145,7 +145,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/reserve": {
+        "/api/admin/reserve": {
             "post": {
                 "security": [
                     {
@@ -176,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user": {
+        "/api/admin/user": {
             "get": {
                 "security": [
                     {
@@ -299,7 +299,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/{userID}": {
+        "/api/admin/user/{userID}": {
             "delete": {
                 "security": [
                     {
@@ -345,7 +345,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
                 "consumes": [
@@ -391,7 +391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/signup": {
+        "/api/auth/signup": {
             "post": {
                 "description": "Register a new user and generate token for it",
                 "consumes": [
@@ -437,7 +437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/autosave": {
+        "/api/user/autosave": {
             "post": {
                 "security": [
                     {
@@ -485,7 +485,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/rate": {
+        "/api/user/rate": {
             "post": {
                 "security": [
                     {
@@ -536,7 +536,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/rates": {
+        "/api/user/rates": {
             "get": {
                 "security": [
                     {
@@ -570,7 +570,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/view-foods": {
+        "/api/user/view-foods": {
             "get": {
                 "security": [
                     {

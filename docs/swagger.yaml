@@ -262,7 +262,7 @@ info:
   termsOfService: http://swagger.io/terms/
   title: FoodPilot
 paths:
-  /admin/food:
+  /api/admin/food:
     get:
       description: Return all the foods
       produces:
@@ -312,7 +312,7 @@ paths:
       summary: Add new food
       tags:
       - Admin
-  /admin/food/{foodID}:
+  /api/admin/food/{foodID}:
     delete:
       description: Delete food
       parameters:
@@ -341,7 +341,7 @@ paths:
       summary: Delete food
       tags:
       - Admin
-  /admin/reserve:
+  /api/admin/reserve:
     post:
       description: Reserve food for all users
       produces:
@@ -360,7 +360,7 @@ paths:
       summary: Reserve food
       tags:
       - Admin
-  /admin/user:
+  /api/admin/user:
     get:
       description: Return all the users
       produces:
@@ -437,7 +437,7 @@ paths:
       summary: Update user
       tags:
       - Admin
-  /admin/user/{userID}:
+  /api/admin/user/{userID}:
     delete:
       description: Delete user
       parameters:
@@ -466,7 +466,7 @@ paths:
       summary: Delete user
       tags:
       - Admin
-  /auth/login:
+  /api/auth/login:
     post:
       consumes:
       - application/json
@@ -496,7 +496,7 @@ paths:
       summary: login a user
       tags:
       - Auth
-  /auth/signup:
+  /api/auth/signup:
     post:
       consumes:
       - application/json
@@ -526,7 +526,7 @@ paths:
       summary: signup a new user
       tags:
       - Auth
-  /user/autosave:
+  /api/user/autosave:
     post:
       consumes:
       - application/json
@@ -556,7 +556,7 @@ paths:
       summary: Toggle user autosave
       tags:
       - User
-  /user/rate:
+  /api/user/rate:
     post:
       consumes:
       - application/json
@@ -588,7 +588,7 @@ paths:
       summary: Rates foods
       tags:
       - User
-  /user/rates:
+  /api/user/rates:
     get:
       description: return user rates
       responses:
@@ -609,7 +609,7 @@ paths:
       summary: return user rates
       tags:
       - User
-  /user/view-foods:
+  /api/user/view-foods:
     get:
       description: Return all the foods
       produces:
