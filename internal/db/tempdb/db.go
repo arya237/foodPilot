@@ -67,7 +67,7 @@ func NewDb(cnf *Config) *FakeDb {
 		Foods: foods,
 
 		Rates:       map[int]map[int]*models.Rate{},
-		FoodCounter: len(foods),
-		UserCounter: len(users),
+		FoodCounter: len(foods) + 1,
+		UserCounter: len(users) + 1,
 	}
 }
