@@ -7,7 +7,7 @@ import (
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 
-	"github.com/arya237/foodPilot/internal/http/middelware"
+	"github.com/arya237/foodPilot/internal/web/middelware"
 	"github.com/gin-gonic/gin"
 )
 
