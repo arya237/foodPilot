@@ -3,10 +3,8 @@ package web
 import (
 	"time"
 
-	"github.com/arya237/foodPilot/internal/web/api/admin"
-	"github.com/arya237/foodPilot/internal/web/api/auth"
-	"github.com/arya237/foodPilot/internal/web/api/user"
 	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/internal/web/api"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -23,7 +21,7 @@ import (
 // @name                       Authorization
 // @description                Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"
 func Start(tokenEpereTime time.Duration, userService services.UserService,
-	adminService services.AdminService, resrveService services.Reserve) error{
+	adminService services.AdminService, resrveService services.Reserve) error {
 
 	engine := gin.Default()
 
@@ -39,17 +37,8 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	engine.Use(cors.New(corsConfig))
 	engine.GET("/swagger/*any", swaggerHandler)
 
-	authHandler := auth.NewHandler(tokenEpereTime , userService)
-	userHandler := user.NewUserHandler(userService)
-	adminHandler := admin.New(adminService, resrveService)
-	
-	authGroup := engine.Group("/auth")
-	userGroup := engine.Group("/user")
-	adminGroup := engine.Group("/admin")
-
-	auth.RegisterRoutes(authGroup, authHandler)
-	user.RegisterRoutes(userGroup, userHandler)
-	admin.RegisterRoutes(adminGroup, *adminHandler) // Fuck you arya
+	api.RegisterRoutes(engine.Group(""),
+		tokenEpereTime, userService, adminService, resrveService)
 
 	return engine.Run(":8080")
 }
