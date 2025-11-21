@@ -7,9 +7,9 @@ import (
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
-	"github.com/arya237/foodPilot/internal/handler/admin"
-	"github.com/arya237/foodPilot/internal/handler/auth"
-	"github.com/arya237/foodPilot/internal/handler/user"
+	"github.com/arya237/foodPilot/internal/http/api/admin"
+	"github.com/arya237/foodPilot/internal/http/api/auth"
+	"github.com/arya237/foodPilot/internal/http/api/user"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/repositories/memory"
 	"github.com/arya237/foodPilot/internal/services"
@@ -58,7 +58,6 @@ func (c *Container) SetUp(db *tempdb.FakeDb, conf *samad.Config) {
 	c.ReserveService = services.NewReserveService(c.UserRepo, c.UserService, c.Samad)
 }
 
-
 func (c *Container) GetLoginHandler() *auth.AuthHandler {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -89,7 +88,7 @@ func (c *Container) GetAdminHandler() *admin.AdminHandler {
 // @in                         header
 // @name                       Authorization
 // @description                Type `Bearer ` followed by your JWT token. example: "Bearer abcde12345"
-func Run() (error) {
+func Run() error {
 	engine := gin.Default()
 	swaggerHandler := ginSwagger.WrapHandler(swaggerFiles.Handler,
 		ginSwagger.DocExpansion("none"),

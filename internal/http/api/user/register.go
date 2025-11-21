@@ -3,7 +3,7 @@ package user
 import (
 	"time"
 
-	"github.com/arya237/foodPilot/internal/handler/middelware"
+	"github.com/arya237/foodPilot/internal/http/middelware"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/gin-gonic/gin"
