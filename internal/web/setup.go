@@ -37,7 +37,7 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	engine.Use(cors.New(corsConfig))
 	engine.GET("/swagger/*any", swaggerHandler)
 
-	api.RegisterRoutes(engine.Group(""),
+	api.RegisterRoutes(engine.Group("/api"),
 		tokenEpereTime, userService, adminService, resrveService)
 
 	return engine.Run(":8080")

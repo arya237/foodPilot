@@ -17,7 +17,7 @@ import (
 // @Success     200 {object} AutoSaveResponse
 // @Failure     404 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /user/autosave [POST]
+// @Router      /api/user/autosave [POST]
 func (h *UserHandler) AutoSave(c *gin.Context) {
 
 	req := AutoSaveRequest{}
@@ -53,7 +53,7 @@ func (h *UserHandler) AutoSave(c *gin.Context) {
 // @Success     200 {object} RatesResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /user/rates [GET]
+// @Router      /api/user/rates [GET]
 func (h *UserHandler) GetRates(c *gin.Context) {
 	id, exist := c.Get("userID")
 	if !exist {
@@ -80,7 +80,7 @@ func (h *UserHandler) GetRates(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /user/view-foods [GET]
+// @Router      /api/user/view-foods [GET]
 func (h *UserHandler) GetFoods(c *gin.Context) {
 
 	foodList, err := h.UserService.ViewFoods()
@@ -104,7 +104,7 @@ func (h *UserHandler) GetFoods(c *gin.Context) {
 // @Success     200 {object} RateFoodsResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /user/rate [POST]
+// @Router      /api/user/rate [POST]
 func (h *UserHandler) RateFoods(c *gin.Context) {
 	rates := RateFoodsRequest{}
 	if err := c.ShouldBindJSON(&rates); err != nil {

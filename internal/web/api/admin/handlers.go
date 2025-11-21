@@ -16,7 +16,7 @@ import (
 // @Produce     json
 // @Success     200 {object} GetUsersResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/user [GET]
+// @Router      /api/admin/user [GET]
 func (h *AdminHandler) GetUsers(c *gin.Context) {
 	users, err := h.AdminService.GetUsers()
 	if err != nil {
@@ -41,7 +41,7 @@ func (h *AdminHandler) GetUsers(c *gin.Context) {
 // @Success     201 {object} AddNewUserResponse
 // @Failure     500 {object} ErrorResponse
 // @Failure     400 {object} ErrorResponse
-// @Router      /admin/user [POST]
+// @Router      /api/admin/user [POST]
 func (h *AdminHandler) AddNewUser(c *gin.Context) {
 	var arrived AddNewUserRequest
 	if err := c.ShouldBindJSON(&arrived); err != nil {
@@ -74,7 +74,7 @@ func (h *AdminHandler) AddNewUser(c *gin.Context) {
 // @Success     200 {object} MessageResponse
 // @Failure     500 {object} ErrorResponse
 // @Failure     400 {object} ErrorResponse
-// @Router      /admin/user/{userID} [DELETE]
+// @Router      /api/admin/user/{userID} [DELETE]
 func (h *AdminHandler) DeleteUser(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Param("userID"))
 	if err != nil {
@@ -108,7 +108,7 @@ func (h *AdminHandler) DeleteUser(c *gin.Context) {
 // @Produce     json
 // @Success     202 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/user [PUT]
+// @Router      /api/admin/user [PUT]
 func (h *AdminHandler) UpdateUser(c *gin.Context) {
 	var arrived UpdateUserRequest
 	if err := c.ShouldBindJSON(&arrived); err != nil {
@@ -139,7 +139,7 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} GetFoodsResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/food [GET]
+// @Router      /api/admin/food [GET]
 func (h *AdminHandler) GetFood(c *gin.Context) {
 	foodList, err := h.AdminService.GetFoods()
 	if err != nil {
@@ -165,7 +165,7 @@ func (h *AdminHandler) GetFood(c *gin.Context) {
 // @Success     201 {object} MessageResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/food [POST]
+// @Router      /api/admin/food [POST]
 func (h *AdminHandler) AddNewFood(c *gin.Context) {
 	var arrived AddNewFoodRequest
 
@@ -195,7 +195,7 @@ func (h *AdminHandler) AddNewFood(c *gin.Context) {
 // @Success     200 {object} MessageResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/food/{foodID} [DELETE]
+// @Router      /api/admin/food/{foodID} [DELETE]
 func (h *AdminHandler) DeleteFood(c *gin.Context) {
 	foodID, err := strconv.Atoi(c.Param("foodID"))
 	if err != nil {
@@ -227,7 +227,7 @@ func (h *AdminHandler) DeleteFood(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} ReserveFoodResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /admin/reserve [POST]
+// @Router      /api/admin/reserve [POST]
 func (h *AdminHandler) ReserveFood(c *gin.Context) {
 	results, err := h.ReserveService.ReserveFood()
 	if err != nil {

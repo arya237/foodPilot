@@ -42,7 +42,7 @@ func RegisterRoutes(group *gin.RouterGroup, loginHandler *AuthHandler) {
 // @Success     200 {object} LoginResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /auth/login [POST]
+// @Router      /api/auth/login [POST]
 func (h *AuthHandler) HandleLogin(c *gin.Context) {
 	// Get request  information
 	var req LoginRequest
@@ -78,7 +78,7 @@ func (h *AuthHandler) HandleLogin(c *gin.Context) {
 // @Success     201 {object} SignUpResponse
 // @Failure     400 {object} ErrorResponse
 // @Failure     500 {object} ErrorResponse
-// @Router      /auth/signup [POST]
+// @Router      /api/auth/signup [POST]
 func (h *AuthHandler) HandleSignUp(c *gin.Context) {
 	// Bind request info
 	var req SignUpRequest
