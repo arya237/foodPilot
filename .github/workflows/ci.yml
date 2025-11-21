@@ -52,6 +52,6 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: 
+        tags: | 
           ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.VERSION }}
           ${{ env.REGISTRY }}/${{ env.REPO }}:latest
