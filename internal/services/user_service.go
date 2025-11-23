@@ -109,12 +109,14 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 	user, err := u.userStorage.GetById(userID)
 	if err != nil {
+		u.logger.Info(err.Error())
 		return err
 	}
 
 	user.AutoSave = autoSave
 	err = u.userStorage.Update(user)
 	if err != nil {
+		u.logger.Info(err.Error())
 		return err
 	}
 	return nil
@@ -158,6 +160,7 @@ func (u *userService) RateFoods(userID string, foods map[string]int) (string, er
 func (u *userService) ViewRating(ID int) (map[string]int, error){
 	rates, err := u.rateStorage.GetByUser(ID)
 	if err != nil {
+		u.logger.Info(err.Error())
 		return nil, err
 	}
 

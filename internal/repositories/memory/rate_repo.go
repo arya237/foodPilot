@@ -37,7 +37,7 @@ func (fdb *rateRepo) GetByUser(userID int) ([]*models.Rate, error) {
 	fdb.db.RateMu.RLock()
 	defer fdb.db.RateMu.RUnlock()
 	if _, ok := fdb.db.Rates[userID]; !ok {
-		return nil, repositories.ErrorNotFound
+		return nil, nil
 	}
 
 	var rates []*models.Rate

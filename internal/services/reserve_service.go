@@ -104,7 +104,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 }
 
 func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (reservations.ReserveModel, error) {
-	bestFood := reservations.ReserveModel{}
+	bestFood := mealList[0]
 	bestScore := 0
 
 	for _, meal := range mealList {
