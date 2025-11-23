@@ -56,6 +56,8 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 		return 0, err
 	}
 
+	// log.Println(string(datas), "\nNigggerrr\n\n", resp)
+
 	var income map[string]any
 
 	err = json.Unmarshal(datas, &income)

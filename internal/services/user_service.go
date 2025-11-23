@@ -88,19 +88,17 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		return nil, ErrInvalidCredentials
 	}
 
-	if ok := checkToken(user.Token); !ok {
-		token, err := u.samad.GetAccessToken(user.Username, user.Password)
-		if err != nil {
-			u.logger.Info(err.Error())
-			return nil, ErrTokenGeneration
-		}
-
-		user.Token = token
-		err = u.userStorage.Update(user)
-		if err != nil {
-			u.logger.Info(err.Error())
-			return nil, err
-		}
+	token, err := u.samad.GetAccessToken(userName, password)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, err
+	}
+	
+	user.Token = token
+	err = u.userStorage.Update(user)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, err
 	}
 
 	return user, nil
@@ -157,7 +155,7 @@ func (u *userService) RateFoods(userID string, foods map[string]int) (string, er
 	return "all Rates save successfully", nil
 }
 
-func (u *userService) ViewRating(ID int) (map[string]int, error){
+func (u *userService) ViewRating(ID int) (map[string]int, error) {
 	rates, err := u.rateStorage.GetByUser(ID)
 	if err != nil {
 		u.logger.Info(err.Error())
@@ -172,6 +170,7 @@ func (u *userService) ViewRating(ID int) (map[string]int, error){
 
 	return userRates, nil
 }
+
 // ------------------------ HELPERS ----------------------------------------
 
 func findFoodID(foods []*models.Food, foodName string) (int, error) {
@@ -215,4 +214,3 @@ func checkToken(samadToken string) bool {
 
 	return false
 }
-
