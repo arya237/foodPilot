@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/food": {
+        "/api/admin/food": {
             "get": {
                 "security": [
                     {
@@ -99,7 +99,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/food/{foodID}": {
+        "/api/admin/food/{foodID}": {
             "delete": {
                 "security": [
                     {
@@ -145,7 +145,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/reserve": {
+        "/api/admin/reserve": {
             "post": {
                 "security": [
                     {
@@ -176,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user": {
+        "/api/admin/user": {
             "get": {
                 "security": [
                     {
@@ -299,7 +299,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/{userID}": {
+        "/api/admin/user/{userID}": {
             "delete": {
                 "security": [
                     {
@@ -345,7 +345,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
                 "consumes": [
@@ -391,7 +391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/signup": {
+        "/api/auth/signup": {
             "post": {
                 "description": "Register a new user and generate token for it",
                 "consumes": [
@@ -437,89 +437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/food/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Return all the foods",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Get foods",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.GetFoodsResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/food/rate": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Rates all the foods",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Rates foods",
-                "parameters": [
-                    {
-                        "description": "Rates info",
-                        "name": "rates",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/autosave": {
+        "/api/user/autosave": {
             "post": {
                 "security": [
                     {
@@ -567,7 +485,58 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/rates": {
+        "/api/user/rate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Rates all the foods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Rates foods",
+                "parameters": [
+                    {
+                        "description": "Rates info",
+                        "name": "rates",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/rates": {
             "get": {
                 "security": [
                     {
@@ -590,6 +559,37 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/view-foods": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the foods",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get foods",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.GetFoodsResponse"
                         }
                     },
                     "500": {
@@ -772,53 +772,6 @@ const docTemplate = `{
                 }
             }
         },
-        "food.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "error message"
-                }
-            }
-        },
-        "food.GetFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "foods": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Food"
-                    }
-                }
-            }
-        },
-        "food.RateFoodsRequest": {
-            "type": "object",
-            "required": [
-                "foods"
-            ],
-            "properties": {
-                "foods": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    },
-                    "example": {
-                        "foodName1": 93,
-                        "foodName2": 74,
-                        "foodName3": 80
-                    }
-                }
-            }
-        },
-        "food.RateFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Food": {
             "type": "object",
             "properties": {
@@ -970,6 +923,44 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "error message"
+                }
+            }
+        },
+        "user.GetFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Food"
+                    }
+                }
+            }
+        },
+        "user.RateFoodsRequest": {
+            "type": "object",
+            "required": [
+                "foods"
+            ],
+            "properties": {
+                "foods": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
+                    }
+                }
+            }
+        },
+        "user.RateFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         },

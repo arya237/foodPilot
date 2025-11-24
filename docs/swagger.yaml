@@ -111,37 +111,6 @@ definitions:
         example: generated token
         type: string
     type: object
-  food.ErrorResponse:
-    properties:
-      error:
-        example: error message
-        type: string
-    type: object
-  food.GetFoodsResponse:
-    properties:
-      foods:
-        items:
-          $ref: '#/definitions/models.Food'
-        type: array
-    type: object
-  food.RateFoodsRequest:
-    properties:
-      foods:
-        additionalProperties:
-          type: integer
-        example:
-          foodName1: 93
-          foodName2: 74
-          foodName3: 80
-        type: object
-    required:
-    - foods
-    type: object
-  food.RateFoodsResponse:
-    properties:
-      message:
-        type: string
-    type: object
   models.Food:
     properties:
       id:
@@ -249,6 +218,31 @@ definitions:
         example: error message
         type: string
     type: object
+  user.GetFoodsResponse:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/models.Food'
+        type: array
+    type: object
+  user.RateFoodsRequest:
+    properties:
+      foods:
+        additionalProperties:
+          type: integer
+        example:
+          foodName1: 93
+          foodName2: 74
+          foodName3: 80
+        type: object
+    required:
+    - foods
+    type: object
+  user.RateFoodsResponse:
+    properties:
+      message:
+        type: string
+    type: object
   user.RatesResponse:
     properties:
       rates:
@@ -268,7 +262,7 @@ info:
   termsOfService: http://swagger.io/terms/
   title: FoodPilot
 paths:
-  /admin/food:
+  /api/admin/food:
     get:
       description: Return all the foods
       produces:
@@ -318,7 +312,7 @@ paths:
       summary: Add new food
       tags:
       - Admin
-  /admin/food/{foodID}:
+  /api/admin/food/{foodID}:
     delete:
       description: Delete food
       parameters:
@@ -347,7 +341,7 @@ paths:
       summary: Delete food
       tags:
       - Admin
-  /admin/reserve:
+  /api/admin/reserve:
     post:
       description: Reserve food for all users
       produces:
@@ -366,7 +360,7 @@ paths:
       summary: Reserve food
       tags:
       - Admin
-  /admin/user:
+  /api/admin/user:
     get:
       description: Return all the users
       produces:
@@ -443,7 +437,7 @@ paths:
       summary: Update user
       tags:
       - Admin
-  /admin/user/{userID}:
+  /api/admin/user/{userID}:
     delete:
       description: Delete user
       parameters:
@@ -472,7 +466,7 @@ paths:
       summary: Delete user
       tags:
       - Admin
-  /auth/login:
+  /api/auth/login:
     post:
       consumes:
       - application/json
@@ -502,7 +496,7 @@ paths:
       summary: login a user
       tags:
       - Auth
-  /auth/signup:
+  /api/auth/signup:
     post:
       consumes:
       - application/json
@@ -532,58 +526,7 @@ paths:
       summary: signup a new user
       tags:
       - Auth
-  /food/list:
-    get:
-      description: Return all the foods
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/food.GetFoodsResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/food.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get foods
-      tags:
-      - Food
-  /food/rate:
-    post:
-      consumes:
-      - application/json
-      description: Rates all the foods
-      parameters:
-      - description: Rates info
-        in: body
-        name: rates
-        required: true
-        schema:
-          $ref: '#/definitions/food.RateFoodsRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/food.RateFoodsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/food.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/food.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Rates foods
-      tags:
-      - Food
-  /user/autosave:
+  /api/user/autosave:
     post:
       consumes:
       - application/json
@@ -613,7 +556,39 @@ paths:
       summary: Toggle user autosave
       tags:
       - User
-  /user/rates:
+  /api/user/rate:
+    post:
+      consumes:
+      - application/json
+      description: Rates all the foods
+      parameters:
+      - description: Rates info
+        in: body
+        name: rates
+        required: true
+        schema:
+          $ref: '#/definitions/user.RateFoodsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.RateFoodsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Rates foods
+      tags:
+      - User
+  /api/user/rates:
     get:
       description: return user rates
       responses:
@@ -632,6 +607,25 @@ paths:
       security:
       - BearerAuth: []
       summary: return user rates
+      tags:
+      - User
+  /api/user/view-foods:
+    get:
+      description: Return all the foods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetFoodsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get foods
       tags:
       - User
 securityDefinitions:
