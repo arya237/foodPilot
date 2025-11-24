@@ -8,10 +8,5 @@ import (
 
 func main() {
 
-	app, err := cmd.NewApp()
-	if err != nil {
-		log.Print(err.Error())
-	}
-
-	log.Print(app.Run(":8080"))
+	log.Print(cmd.Run())
 }

@@ -1,54 +1,54 @@
 package services
 
 import (
+	"errors"
 	"fmt"
+	"log"
+	"strconv"
+	"time"
+
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
 )
 
 type UserService interface {
 	SignUp(userName, password string) (*models.User, error)
 	Login(userName, password string) (*models.User, error)
-	Save(user *models.User) (int, error)
 	ToggleAutoSave(userID int, autoSave bool) error
-	Delete(id int) error
-	GetAll() ([]*models.User, error)
-
-	// IDEA: repo like functions -> i think it is better to delete them all :)
-	GetById(id int) (*models.User, error)
-	GetByUserName(username string) (*models.User, error)
-	Update(new *models.User) error
+	ViewFoods() ([]*models.Food, error)
+	RateFoods(ID string, foods map[string]int) (string, error)
+	ViewRating(ID int) (map[string]int, error)
 }
 
 type userService struct {
-	repo   repositories.User
-	samad  reservations.RequiredFunctions
-	logger logger.Logger
+	userStorage repositories.User
+	foodStorge  repositories.Food
+	rateStorage repositories.Rate
+	samad       reservations.RequiredFunctions
+	logger      logger.Logger
 }
 
-func NewUserService(repo repositories.User, config *samad.Config) UserService {
+func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
+	rateRepo repositories.Rate, config *samad.Config) UserService {
 	return &userService{
-		repo:   repo,
-		logger: logger.New("userService"),
-		samad:  samad.NewSamad(config),
+		userStorage: userRepo,
+		foodStorge:  foodRepo,
+		rateStorage: rateRepo,
+		logger:      logger.New("userService"),
+		samad:       samad.NewSamad(config),
 	}
 }
 
-// this functio need a huge refactoring.... in package repo
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
-	// Check if user already exists
-	existingUser, err := u.repo.GetUserByUserName(userName)
+	existingUser, err := u.userStorage.GetByUserName(userName)
 	if err == nil && existingUser != nil {
 		return nil, ErrUserAlreadyExists
 	}
 
-	// Generate access token if Needed
-	// TODO: fucking arya see this line.................
 	token, err := u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
@@ -68,8 +68,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		Token:    token,
 	}
 
-	// Save user to database
-	user, err = u.repo.SaveUser(user)
+	user, err = u.userStorage.Save(user)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserRegistration
@@ -78,103 +77,110 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	return user, nil
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
-	// Get user by username
-	user, err := u.repo.GetUserByUserName(userName)
+
+	user, err := u.userStorage.GetByUserName(userName)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
 	}
 
-	// Validate password
 	if user.Password != password {
 		return nil, ErrInvalidCredentials
 	}
 
-	if ok := checkToken(user.Token); !ok {
-		token, err := u.samad.GetAccessToken(user.Username, user.Password)
-		if err != nil {
-			u.logger.Info(err.Error())
-			return nil, ErrTokenGeneration
-		}
-
-		user.Token = token
-		err = u.Update(user)
-		if err != nil {
-			u.logger.Info(err.Error())
-			return nil, err
-		}
+	token, err := u.samad.GetAccessToken(userName, password)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, err
+	}
+	
+	user.Token = token
+	err = u.userStorage.Update(user)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, err
 	}
 
 	return user, nil
 }
 
-func (u *userService) Save(user *models.User) (int, error) {
-
-	SaveUser, err := u.repo.SaveUser(user)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return -1, err
-	}
-
-	return SaveUser.Id, nil
-}
-
-func (u *userService) GetById(id int) (*models.User, error) {
-	user, err := u.repo.GetUserById(id)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *userService) GetByUserName(username string) (*models.User, error) {
-	user, err := u.repo.GetUserByUserName(username)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return user, nil
-}
-
-func (u *userService) GetAll() ([]*models.User, error) {
-	users, err := u.repo.GetAllUsers()
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	return users, nil
-}
-
-func (u *userService) Delete(id int) error {
-	err := u.repo.DeleteUser(id)
-	if err != nil {
-		u.logger.Info(err.Error())
-	}
-	return err
-}
-
-func (u *userService) Update(new *models.User) error {
-	err := u.repo.UpdateUser(new)
-	if err != nil {
-		u.logger.Info(err.Error())
-	}
-	return err
-}
-
-// change auto save is better
 func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
-	user, err := u.repo.GetUserById(userID)
+	user, err := u.userStorage.GetById(userID)
 	if err != nil {
+		u.logger.Info(err.Error())
 		return err
 	}
 
 	user.AutoSave = autoSave
-	err = u.repo.UpdateUser(user)
+	err = u.userStorage.Update(user)
 	if err != nil {
+		u.logger.Info(err.Error())
 		return err
 	}
 	return nil
+}
+
+func (u *userService) ViewFoods() ([]*models.Food, error) {
+	return u.foodStorge.GetAll()
+}
+
+func (u *userService) RateFoods(userID string, foods map[string]int) (string, error) {
+
+	foodList, err := u.foodStorge.GetAll()
+
+	if err != nil {
+		return "", err
+	}
+
+	for key, value := range foods {
+
+		foodID, err := findFoodID(foodList, key)
+
+		if err != nil {
+			return "", err
+		}
+
+		userID, err := strconv.Atoi(userID)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = u.rateStorage.Save(userID, foodID, value)
+
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return "all Rates save successfully", nil
+}
+
+func (u *userService) ViewRating(ID int) (map[string]int, error) {
+	rates, err := u.rateStorage.GetByUser(ID)
+	if err != nil {
+		u.logger.Info(err.Error())
+		return nil, err
+	}
+
+	userRates := make(map[string]int, len(rates))
+	for _, rate := range rates {
+		food, _ := u.foodStorge.GetById(rate.FoodID)
+		userRates[food.Name] = rate.Score
+	}
+
+	return userRates, nil
+}
+
+// ------------------------ HELPERS ----------------------------------------
+
+func findFoodID(foods []*models.Food, foodName string) (int, error) {
+	for _, food := range foods {
+		if food.Name == foodName {
+			return food.Id, nil
+		}
+	}
+
+	return 0, errors.New("food not found")
 }
 
 func checkToken(samadToken string) bool {

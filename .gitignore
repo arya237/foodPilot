@@ -22,3 +22,4 @@ go.work
 # IDE/editor files
 .vscode/
 .idea/
+private.md

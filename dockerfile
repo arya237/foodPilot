@@ -20,7 +20,14 @@ FROM alpine:latest
 
 WORKDIR /app
 
+# Copy the binary
 COPY --from=builder /app/FoodPilot .
+
+# Copy static files (CSS, JS)
+COPY --from=builder /app/statics ./statics
+
+# Copy HTML templates
+COPY --from=builder /app/internal/web/ui/templates ./internal/web/ui/templates
 
 EXPOSE 8080
 
