@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/pkg/reservations"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/pkg/reservations"
 )
 
 type TokenResponse struct {
@@ -54,6 +55,8 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 		s.logger.Info(err.Error())
 		return 0, err
 	}
+
+	// log.Println(string(datas), "\nNigggerrr\n\n", resp)
 
 	var income map[string]any
 

@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 )
 
@@ -16,12 +17,12 @@ type AdminService interface {
 }
 
 type adminService struct {
-	user   UserService
-	food   FoodService
+	user   repositories.User
+	food   repositories.Food
 	logger logger.Logger
 }
 
-func NewAdminService(user UserService, food FoodService) AdminService {
+func NewAdminService(user repositories.User, food repositories.Food) AdminService {
 	return &adminService{
 		user:   user,
 		food:   food,
@@ -39,7 +40,8 @@ func (s *adminService) AddUser(userName, password string, role models.UserRole) 
 		Token:    "empty",
 	}
 
-	id, err := s.user.Save(user)
+	savedUser, err := s.user.Save(user)
+	id := savedUser.Id
 	if err != nil {
 		s.logger.Info(err.Error())
 		return id, err
