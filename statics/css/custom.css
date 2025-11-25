@@ -1,0 +1,43 @@
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.star-rating {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.star {
+    color: #ccc;
+    transition: color 0.2s;
+    user-select: none;
+}
+
+.star.filled {
+    color: #ffc107;
+}
+
+.star:hover {
+    color: #ffc107;
+}
+
+.rating-input {
+    min-width: 150px;
+}
+
+.table th {
+    white-space: nowrap;
+}
+

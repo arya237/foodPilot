@@ -31,7 +31,7 @@ dep: ## Download and vendor dependencies
 
 swag: ## Generate Swagger docs (requires github.com/swaggo/swag)
 	@which swag >/dev/null 2>&1 || (echo "Installing swag..." && go install github.com/swaggo/swag/cmd/swag@latest)
-	swag init -g cmd/container.go -o docs
+	swag init -g internal/web/setup.go -o docs
 	@echo "Swagger docs generated in ./docs"
 
 clean: ## Remove build artifacts
@@ -46,7 +46,15 @@ pull: ## Pull current branch from origin
 # lint: ## Lint the project (requires golangci-lint)
 # 	golangci-lint run ./...
 
-info: ## Show build info
+db: ## make db up
+	@echo "try to turn on database..."
+	@docker compose up -d    
+
+db_off: ## make db down
+	@echo "try to turn off database..."
+	@docker compose down                                  
+
+info: ## Show Current branch
 	@echo "Branch:   $(BRANCH)"
 
 help: ## Show this help

@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/foods": {
+        "/api/admin/food": {
             "get": {
                 "security": [
                     {
@@ -48,9 +48,104 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register new food",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Add new food",
+                "parameters": [
+                    {
+                        "description": "Food info",
+                        "name": "newFood",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.AddNewFoodRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/admin.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
-        "/admin/reserve": {
+        "/api/admin/food/{foodID}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete food",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete food",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Food ID",
+                        "name": "foodID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/reserve": {
             "post": {
                 "security": [
                     {
@@ -81,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/users": {
+        "/api/admin/user": {
             "get": {
                 "security": [
                     {
@@ -110,9 +205,147 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update user",
+                "parameters": [
+                    {
+                        "description": "user info",
+                        "name": "userInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/admin.GetFoodsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Add new user",
+                "parameters": [
+                    {
+                        "description": "User info",
+                        "name": "newUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.AddNewUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/admin.AddNewUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
-        "/auth/login": {
+        "/api/admin/user/{userID}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
             "post": {
                 "description": "Login a user to app and generate code for it",
                 "consumes": [
@@ -158,7 +391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/signup": {
+        "/api/auth/signup": {
             "post": {
                 "description": "Register a new user and generate token for it",
                 "consumes": [
@@ -204,89 +437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/food/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Return all the foods",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Get foods",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.GetFoodsResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/food/rate": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Rates all the foods",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Food"
-                ],
-                "summary": "Rates foods",
-                "parameters": [
-                    {
-                        "description": "Rates info",
-                        "name": "rates",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/food.RateFoodsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/food.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/autosave": {
+        "/api/user/autosave": {
             "post": {
                 "security": [
                     {
@@ -334,7 +485,58 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/rates": {
+        "/api/user/rate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Rates all the foods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Rates foods",
+                "parameters": [
+                    {
+                        "description": "Rates info",
+                        "name": "rates",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.RateFoodsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/rates": {
             "get": {
                 "security": [
                     {
@@ -367,9 +569,70 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/user/view-foods": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Return all the foods",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get foods",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.GetFoodsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/user.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "admin.AddNewFoodRequest": {
+            "type": "object",
+            "properties": {
+                "food": {
+                    "type": "string"
+                }
+            }
+        },
+        "admin.AddNewUserRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/models.UserRole"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "admin.AddNewUserResponse": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "integer"
+                }
+            }
+        },
         "admin.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -401,6 +664,15 @@ const docTemplate = `{
                 }
             }
         },
+        "admin.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                }
+            }
+        },
         "admin.ReserveFoodResponse": {
             "type": "object",
             "properties": {
@@ -409,6 +681,29 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/services.UserReserveResult"
                     }
+                }
+            }
+        },
+        "admin.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "autosave": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/models.UserRole"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
@@ -474,53 +769,6 @@ const docTemplate = `{
                 "token": {
                     "type": "string",
                     "example": "generated token"
-                }
-            }
-        },
-        "food.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "error message"
-                }
-            }
-        },
-        "food.GetFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "foods": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Food"
-                    }
-                }
-            }
-        },
-        "food.RateFoodsRequest": {
-            "type": "object",
-            "required": [
-                "foods"
-            ],
-            "properties": {
-                "foods": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    },
-                    "example": {
-                        "foodName1": 93,
-                        "foodName2": 74,
-                        "foodName3": 80
-                    }
-                }
-            }
-        },
-        "food.RateFoodsResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
                 }
             }
         },
@@ -675,6 +923,44 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "error message"
+                }
+            }
+        },
+        "user.GetFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Food"
+                    }
+                }
+            }
+        },
+        "user.RateFoodsRequest": {
+            "type": "object",
+            "required": [
+                "foods"
+            ],
+            "properties": {
+                "foods": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "example": {
+                        "foodName1": 93,
+                        "foodName2": 74,
+                        "foodName3": 80
+                    }
+                }
+            }
+        },
+        "user.RateFoodsResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         },

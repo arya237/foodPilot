@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/arya237/foodPilot/pkg/reservations"
 )
@@ -37,18 +38,18 @@ type UserReserveResult struct {
 //******************************************************************************
 
 type reserve struct {
-	user   UserService
-	rate   RateFoodService
-	samad  reservations.RequiredFunctions
-	logger logger.Logger
+	user        repositories.User
+	userService UserService
+	samad       reservations.ReserveFunctions
+	logger      logger.Logger
 }
 
-func NewReserveService(u UserService, r RateFoodService, s reservations.RequiredFunctions) Reserve {
+func NewReserveService(u repositories.User, userService UserService, s reservations.ReserveFunctions) Reserve {
 	return &reserve{
-		user:   u,
-		rate:   r,
-		samad:  s,
-		logger: logger.New("reserve"),
+		user:        u,
+		userService: userService,
+		samad:       s,
+		logger:      logger.New("reserve"),
 	}
 }
 
@@ -93,7 +94,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 		close(results)
 	}()
 
-	// Add all ansers togheter
+	// Add all answers together
 	aggregated := make([]UserReserveResult, 0, len(users))
 	for res := range results {
 		aggregated = append(aggregated, res)
@@ -103,7 +104,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 }
 
 func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (reservations.ReserveModel, error) {
-	bestFood := reservations.ReserveModel{}
+	bestFood := mealList[0]
 	bestScore := 0
 
 	for _, meal := range mealList {
@@ -140,7 +141,7 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 	}
 
 	// Get user rates
-	rates, err := r.rate.GetRateByUser(user.Id)
+	rates, err := r.userService.ViewRating(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
 		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err

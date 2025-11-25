@@ -22,3 +22,6 @@ go.work
 # IDE/editor files
 .vscode/
 .idea/
+
+# custom
+private.*

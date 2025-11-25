@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/pkg/reservations"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/arya237/foodPilot/pkg/logger"
+	"github.com/arya237/foodPilot/pkg/reservations"
 )
 
 type TokenResponse struct {
@@ -24,7 +25,7 @@ type Samad struct {
 	logger logger.Logger
 }
 
-func NewSamad(conf *Config) reservations.RequiredFunctions {
+func NewSamad(conf *Config) reservations.ReserveFunctions {
 	return &Samad{
 		Config: conf,
 		logger: logger.New("samadService"),
@@ -36,7 +37,8 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
-		return 0, err
+		s.logger.Info(err.Error())
+		return 0, reservations.ErrorInternal
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -44,12 +46,17 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		s.logger.Info(err.Error())
+		return 0, reservations.ErrorInternal
 	}
-	defer resp.Body.Close()
 
+	defer resp.Body.Close()
 	datas, err := io.ReadAll(resp.Body)
 
+	if resp.StatusCode != 200 {
+		s.logger.Info(string(datas))
+		return 0, reservations.ErrorSamadReserveation
+	}
 	if err != nil {
 		s.logger.Info(err.Error())
 		return 0, err
@@ -76,7 +83,7 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
 
 	baseUrl := s.GetTokenUrl
-	const authHeader = "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ="
+	authHeader := s.AuthHeader
 
 	param := url.Values{}
 	param.Set("username", studentNumber)
@@ -167,7 +174,7 @@ func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations
 
 	if resp.StatusCode != http.StatusOK {
 		s.logger.Info(string(datas))
-		return nil, errors.New(string(datas))
+		return nil, errors.New("failed to get food program")
 	}
 
 	var income map[string]any
@@ -217,6 +224,11 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 	if err != nil {
 		s.logger.Info(err.Error())
 		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		s.logger.Info(string(datas))
+		return "", errors.New("failed to reserve food")
 	}
 
 	return string(datas), nil
