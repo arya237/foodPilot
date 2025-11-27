@@ -25,11 +25,9 @@ type UserService interface {
 }
 
 type userService struct {
-	userStorage repositories.User
-	foodStorge  repositories.Food
-	rateStorage repositories.Rate
-	samad       reservations.RequiredFunctions
-	logger      logger.Logger
+	repo   repositories.User
+	samad  reservations.RequiredFunctions
+	logger logger.Logger
 }
 
 func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
@@ -88,17 +86,19 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		return nil, ErrInvalidCredentials
 	}
 
-	token, err := u.samad.GetAccessToken(userName, password)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
-	}
-	
-	user.Token = token
-	err = u.userStorage.Update(user)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
+	if ok := checkToken(user.Token); !ok {
+		token, err := u.samad.GetAccessToken(user.Username, user.Password)
+		if err != nil {
+			u.logger.Info(err.Error())
+			return nil, ErrTokenGeneration
+		}
+
+		user.Token = token
+		err = u.Update(user)
+		if err != nil {
+			u.logger.Info(err.Error())
+			return nil, err
+		}
 	}
 
 	return user, nil
