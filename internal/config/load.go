@@ -18,6 +18,7 @@ func New() (*Config, error) {
 	config.SamadConfig.GetTokenUrl = GetEnv("GETTOKENURL", "")
 	config.SamadConfig.ReserveUrl = GetEnv("RESERVEURL", "")
 	config.SamadConfig.GetSelfIDUrl = GetEnv("GETSELFIDURL", "")
+	config.SamadConfig.AuthHeader = GetEnv("AUTHHEADER", "")
 
 	// Reading fack db config
 	config.DBConfig.AdminUsername = GetEnv("ADMIN_USERNAME", "admin")

@@ -7,4 +7,5 @@ type Config struct {
 	GetProgramUrl string
 	ReserveUrl    string
 	GetSelfIDUrl  string
+	AuthHeader    string
 }
