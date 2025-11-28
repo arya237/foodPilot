@@ -40,11 +40,11 @@ type UserReserveResult struct {
 type reserve struct {
 	user       repositories.User
 	userSevise UserService
-	samad      reservations.RequiredFunctions
+	samad      reservations.ReserveFunctions
 	logger     logger.Logger
 }
 
-func NewReserveService(u repositories.User, userService UserService, s reservations.RequiredFunctions) Reserve {
+func NewReserveService(u repositories.User, userService UserService, s reservations.ReserveFunctions) Reserve {
 	return &reserve{
 		user:       u,
 		userSevise: userService,

@@ -26,7 +26,7 @@ type Container struct {
 	//service
 	UserService    services.UserService
 	AdminService   services.AdminService
-	Samad          reservations.RequiredFunctions
+	Samad          reservations.ReserveFunctions
 	ReserveService services.Reserve
 
 	mutex sync.RWMutex
@@ -51,7 +51,6 @@ func (c *Container) SetUp(db *tempdb.FakeDb, conf *samad.Config) {
 	c.Samad = samad.NewSamad(conf)
 	c.ReserveService = services.NewReserveService(c.UserRepo, c.UserService, c.Samad)
 }
-
 
 func Run() error {
 
