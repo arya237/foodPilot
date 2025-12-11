@@ -10,13 +10,13 @@ const (
 )
 
 const (
-	Sunday Weekday = iota + 1
+	Saturday Weekday = iota + 1
+	Sunday
 	Monday
 	Tuesday
 	Wednesday
 	Thursday
 	Friday
-	Saturday
 )
 
 // String returns the canonical name for the Meal value.

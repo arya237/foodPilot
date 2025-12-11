@@ -57,7 +57,7 @@ func (r *rateRepository) Save(userID, foodID, score int) error {
  				  DO UPDATE SET score = EXCLUDED.score;
 	`
 
-	_, err = r.db.Exec(rateQuery, userID, foodID, Fid)
+	_, err = r.db.Exec(rateQuery, userID, foodID, score)
 	if err != nil {
 		r.logger.Info(err.Error())
 		return errors.New("cannot save rate")
@@ -80,9 +80,7 @@ func (r *rateRepository) GetByUser(userID int) ([]*models.Rate, error) {
 		}
 	}
 
-	query := ` SELECT user_id, food_id, score
-			  FROM rates
- 			  WHERE user_id = $1
+	query := ` SELECT * FROM rates WHERE user_id = $1
 	`
 	rows, err := r.db.Query(query, userID)
 	if err != nil {
