@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	mu sync.Mutex
+	mu       sync.Mutex
 	instance *sql.DB
 )
 
-func NewDB(config Config) *sql.DB {
-	if (instance != nil){
+func NewDB(config *Config) *sql.DB {
+	if instance != nil {
 		return instance
 	}
 

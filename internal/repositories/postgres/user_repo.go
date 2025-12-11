@@ -14,10 +14,9 @@ type UserRepository struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
+func NewUserRepo(db *sql.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
-
 
 func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	if r.db == nil {
@@ -218,17 +217,13 @@ func (r *UserRepository) Update(updatedUser *models.User) error {
 	return nil
 }
 
-
 func isDuplicateError(err error) bool {
 	if err == nil {
 		return false
 	}
 
-	
 	errorStr := err.Error()
 	return strings.Contains(errorStr, "23505") ||
 		strings.Contains(errorStr, "duplicate key") ||
 		strings.Contains(errorStr, "already exists")
 }
-
-

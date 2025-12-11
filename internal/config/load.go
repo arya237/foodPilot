@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
 	"github.com/arya237/foodPilot/pkg/messaging"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
@@ -11,6 +12,7 @@ func New() (*Config, error) {
 		SamadConfig:     &samad.Config{},
 		DBConfig:        &tempdb.Config{},
 		MessagingConfig: &messaging.Config{},
+		PostGresConfig:  &postgres.Config{},
 	}
 
 	// Readin samad config
@@ -23,6 +25,13 @@ func New() (*Config, error) {
 	// Reading fack db config
 	config.DBConfig.AdminUsername = GetEnv("ADMIN_USERNAME", "admin")
 	config.DBConfig.AdminPassword = GetEnv("ADMIN_PASSWORD", "admin")
+
+	// Reading postgres config
+	config.PostGresConfig.Host = GetEnv("Host", "localhost")
+	config.PostGresConfig.Port = GetEnv("PORT", "5432")
+	config.PostGresConfig.User = GetEnv("USER", "postgres")
+	config.PostGresConfig.DBName = GetEnv("Database ", "postgres")
+	config.PostGresConfig.Password = GetEnv("PostGresPassword", "")
 
 	// Messenger
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")
