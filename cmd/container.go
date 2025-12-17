@@ -43,9 +43,6 @@ func (c *Container) SetUp(db *sql.DB, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.db = db
-	//c.UserRepo = memory.NewUserRepo(c.db)
-	//c.FoodRepo = memory.NewFoodRepo(c.db)
-	//c.RateRepo = memory.NewRateRepo(c.db)
 
 	c.UserRepo = repo_postgres.NewUserRepo(c.db)
 	c.FoodRepo = repo_postgres.NewFoodRepo(c.db)
