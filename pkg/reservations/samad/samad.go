@@ -76,7 +76,9 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 
 	for _, key := range tmp {
 		new := key.(map[string]interface{})
-		return int(new["id"].(float64)), nil
+		if new["name"] == "مرکزی برادران" || new["name"] == "مرکزی خواهران" {
+			return int(new["id"].(float64)), nil
+		}
 	}
 
 	return 0, reservations.ErrorInternal
@@ -230,7 +232,7 @@ func (s *Samad) ReserveFood(token string, meal reservations.ReserveModel) (strin
 
 	if resp.StatusCode != http.StatusOK {
 		s.logger.Info(string(datas))
-		return "", errors.New("failed to reserve food")
+		return "", errors.New(string(datas))
 	}
 
 	return string(datas), nil
