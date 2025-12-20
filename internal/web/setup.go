@@ -47,5 +47,5 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 		return err
 	}
 
-	return engine.Run("localhost:8080")
+	return engine.Run(":8080")
 }
