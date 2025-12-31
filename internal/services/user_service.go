@@ -200,6 +200,7 @@ func checkToken(samadToken string) bool {
 
 			if now.Before(expTime) {
 				log.Info(fmt.Sprintf("exp: %v \ntoken is valid", expTime))
+				//
 				return true
 			}
 

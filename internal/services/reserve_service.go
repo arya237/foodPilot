@@ -12,7 +12,7 @@ import (
 )
 
 type Reserve interface {
-	ReserveFood() ([]UserReserveResult, error)
+	ReserveFood() ([]*UserReserveResult, error)
 }
 
 //**********************    Structured reservation results    ***********************************
@@ -53,7 +53,7 @@ func NewReserveService(u repositories.User, userService UserService, s reservati
 	}
 }
 
-func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
+func (r *reserve) ReserveFood() ([]*UserReserveResult, error) {
 	users, err := r.user.GetAll()
 	if err != nil {
 		r.logger.Info(err.Error())
@@ -62,7 +62,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 
 	const workerCount = 10
 	jobs := make(chan *models.User, workerCount*2)
-	results := make(chan UserReserveResult, workerCount*2)
+	results := make(chan *UserReserveResult, workerCount*2)
 	var wg sync.WaitGroup
 
 	for range workerCount {
@@ -70,7 +70,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 		go func() {
 			defer wg.Done()
 			for user := range jobs {
-				res, err := r.handleUserReservation(user)
+				res, err := r.handleUserReservation(user.Id)
 				if err != nil {
 					r.logger.Warn(err.Error())
 				}
@@ -95,7 +95,7 @@ func (r *reserve) ReserveFood() ([]UserReserveResult, error) {
 	}()
 
 	// Add all ansers togheter
-	aggregated := make([]UserReserveResult, 0, len(users))
+	aggregated := make([]*UserReserveResult, 0, len(users))
 	for res := range results {
 		aggregated = append(aggregated, res)
 	}
@@ -120,16 +120,31 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 	return bestFood, nil
 }
 
-func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, error) {
+func (r *reserve) handleUserReservation(userID int) (*UserReserveResult, error) {
 	// TODO: check if token is valid or not
-	//token, _ := r.samad.GetAccessToken(user.Username, user.Password)
-	token := user.Token
+
+	user, err := r.user.GetById(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var token string
+
+	if ok := checkToken(user.Token); !ok {
+		token, err = r.samad.GetAccessToken(user.Username, user.Password)
+		if err != nil {
+			return nil, ErrInvalidToken
+		}
+		user.Token = token
+	}
+
+	token = user.Token
 
 	// Get Samad food program
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*48))
 	if err != nil {
 		r.logger.Info(err.Error())
-		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
+		return &UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	if foodProgram == nil {
@@ -137,14 +152,14 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 			logger.Field{Key: "User", Value: user},
 		)
 		err := fmt.Errorf("user %s has get nil from samad", user.Username)
-		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
+		return &UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	// Get user rates
 	rates, err := r.userSevise.ViewRating(user.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
+		return &UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
 	}
 
 	// build structured per-day results while continuing on errors
@@ -168,5 +183,5 @@ func (r *reserve) handleUserReservation(user *models.User) (UserReserveResult, e
 		dayResults = append(dayResults, DayResult{Day: day, Meals: meals})
 	}
 
-	return UserReserveResult{UserID: user.Id, Username: user.Username, Days: dayResults}, nil
+	return &UserReserveResult{UserID: user.Id, Username: user.Username, Days: dayResults}, nil
 }
