@@ -26,7 +26,7 @@ type MessageResponse struct {
 }
 
 type ReserveFoodResponse struct {
-	Results []services.UserReserveResult `json:"results"`
+	Results []*services.UserReserveResult `json:"results"`
 }
 
 type AddNewFoodRequest struct {
