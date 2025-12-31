@@ -9,4 +9,5 @@ var (
 	ErrUserRegistration   = errors.New("user registration failed")
 	ErrTokenGeneration    = errors.New("token generation failed")
 	ErrUserNotRegistered  = errors.New("user not registered, please sign up first")
+	ErrInvalidToken       = errors.New("invalid token")
 )
