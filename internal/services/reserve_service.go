@@ -128,17 +128,10 @@ func (r *reserve) handleUserReservation(userID int) (*UserReserveResult, error) 
 		return nil, err
 	}
 
-	var token string
-
-	if ok := checkToken(user.Token); !ok {
-		token, err = r.samad.GetAccessToken(user.Username, user.Password)
-		if err != nil {
-			return nil, ErrInvalidToken
-		}
-		user.Token = token
+	token, err := r.samad.GetAccessToken(user.Username, user.Password)
+	if err != nil {
+		return nil, ErrTokenGeneration
 	}
-
-	token = user.Token
 
 	// Get Samad food program
 	foodProgram, err := r.samad.GetFoodProgram(token, time.Now().Add(time.Hour*48))
