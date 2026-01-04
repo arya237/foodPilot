@@ -32,13 +32,13 @@ func NewSamad(conf *Config) reservations.ReserveFunctions {
 	}
 }
 
-func (s *Samad) GetProperSelfID(token string) (int, error) {
+func (s *Samad) GetProperSelfID(token string) (map[string]int, error) {
 	URL := s.GetSelfIDUrl
 
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
 		s.logger.Info(err.Error())
-		return 0, reservations.ErrorInternal
+		return nil, reservations.ErrorInternal
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -47,7 +47,7 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		s.logger.Info(err.Error())
-		return 0, reservations.ErrorInternal
+		return nil, reservations.ErrorInternal
 	}
 
 	defer resp.Body.Close()
@@ -55,11 +55,11 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 
 	if resp.StatusCode != 200 {
 		s.logger.Info(string(datas))
-		return 0, reservations.ErrorSamadReserveation
+		return nil, reservations.ErrorSamadReserveation
 	}
 	if err != nil {
 		s.logger.Info(err.Error())
-		return 0, err
+		return nil, err
 	}
 
 	// log.Println(string(datas), "\nNigggerrr\n\n", resp)
@@ -69,19 +69,26 @@ func (s *Samad) GetProperSelfID(token string) (int, error) {
 	err = json.Unmarshal(datas, &income)
 	if err != nil {
 		s.logger.Info(err.Error())
-		return 0, err
+		return nil, err
 	}
 
 	tmp, _ := income["payload"].([]interface{})
+	selfIDs := make(map[string]int)
 
 	for _, key := range tmp {
 		new := key.(map[string]interface{})
-		if new["name"] == "مرکزی برادران" || new["name"] == "مرکزی خواهران" {
-			return int(new["id"].(float64)), nil
+		if new["name"] == "مرکزی برادران" || new["name"] == "مرکزی خواهران" ||
+			new["name"] == "رستوران مکمل 1 (آشکده)برادران" || new["name"] == "رستوران مکمل 1 (آشکده)خواهران" {
+
+			selfIDs[new["name"].(string)] = int(new["id"].(float64))
 		}
 	}
 
-	return 0, reservations.ErrorInternal
+	if len(selfIDs) != 0 {
+		return selfIDs, nil
+	}
+
+	return nil, reservations.ErrorInternal
 }
 
 func (s *Samad) GetAccessToken(studentNumber string, password string) (string, error) {
@@ -134,13 +141,7 @@ func (s *Samad) GetAccessToken(studentNumber string, password string) (string, e
 	return tokenResp.AccessToken, nil
 }
 
-func (s *Samad) GetFoodProgram(token string, startDate time.Time) (*reservations.WeekFood, error) {
-
-	selfID, err := s.GetProperSelfID(token)
-	if err != nil {
-		s.logger.Info(err.Error())
-		return nil, err
-	}
+func (s *Samad) GetFoodProgram(token string, selfID int, startDate time.Time) (*reservations.WeekFood, error) {
 
 	self := strconv.Itoa(selfID)
 
