@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -157,6 +158,7 @@ func (r *reserve) handleUserReservation(userID int) (*UserReserveResult, error) 
 
 	// build structured per-day results while continuing on errors
 	dayResults := make([]DayResult, 0, 7 /*food count*/)
+	log.Print(foodProgram.DailyFood)
 	for day := range foodProgram.DailyFood {
 		meals := make([]MealResult, 0, 3 /*meals count*/)
 

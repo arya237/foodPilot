@@ -1,9 +1,9 @@
 package samad
 
 import (
-	"strconv"
-
 	"github.com/arya237/foodPilot/pkg/reservations"
+	"sort"
+	"strconv"
 )
 
 func CreateWeekFood(ProgramWeekFoodList []interface{}) reservations.WeekFood {
@@ -72,5 +72,28 @@ func CreateWeekFood(ProgramWeekFoodList []interface{}) reservations.WeekFood {
 		}
 	}
 
+	sortWeekFood(&Week)
 	return Week
+}
+
+func sortWeekFood(week *reservations.WeekFood) {
+	days := make([]reservations.Weekday, 0, len(week.DailyFood))
+	for day := range week.DailyFood {
+		days = append(days, day)
+	}
+
+	sort.Slice(days, func(i, j int) bool {
+		return days[i] < days[j]
+	})
+
+	for _, day := range days {
+		meals := week.DailyFood[day]
+		mealKeys := make([]reservations.Meal, 0, len(meals))
+		for m := range meals {
+			mealKeys = append(mealKeys, m)
+		}
+		sort.Slice(mealKeys, func(i, j int) bool {
+			return mealKeys[i] < mealKeys[j]
+		})
+	}
 }
