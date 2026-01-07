@@ -7,63 +7,147 @@
     <title>Sign Up - FoodPilot</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/statics/css/custom.css">
+
+    <style>
+        body{
+            background: url('/statics/css/background.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .custom-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* ارتفاع منهای نوبار برای وسط چین شدن دقیق */
+            min-height: calc(100vh - 56px);
+            padding: 20px;
+        }
+
+        .custom-glass-container {
+            width: 100%;
+            max-width: 400px;
+            min-height: 450px;
+            padding: 20px;
+            text-align: center;
+            /*background-color: #F5F5F5;*/
+            background-color: transparent;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, .1);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .custom-form {
+            width: 80%;
+            margin: 20px auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .custom-form input {
+            height: 35px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background-color: #f1efec;
+            border: 2px solid rgba(128, 128, 128, .4);
+            width: 100%;
+        }
+
+        .custom-form input::placeholder {
+            color: #829098;
+        }
+
+        .custom-form input:focus {
+            outline: 1px solid #757575;
+        }
+
+        .custom-form button {
+            margin-top: 20px;
+            height: 35px;
+            padding: 4px;
+            border-radius: 4px;
+            background-color: #193697;
+            border: 2px solid rgba(128, 128, 128, .4);
+            color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .custom-form button:hover {
+            background-color: #071952;
+            transition: 0.3s;
+        }
+
+        .custom-footer-text {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .custom-footer-text a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">FoodPilot</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">Sign Up</a>
-                    </li>
-                </ul>
-            </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">FoodPilot</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/signup">Sign Up</a>
+                </li>
+            </ul>
         </div>
-    </nav>
-    
-    <main class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-4">Sign Up</h2>
-                        
-                        {{if .Error}}
-                        <div class="alert alert-danger" role="alert">
-                            {{.Error}}
-                        </div>
-                        {{end}}
-                        
-                        <form method="POST" action="/signup">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required autofocus>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-                        </form>
-                        
-                        <div class="text-center mt-3">
-                            <p>Already have an account? <a href="/login">Login</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+</nav>
+
+<!-- کلاس کانتینر بوت استرپ را نگه داشتم اما کلاس سفارشی custom-page را اضافه کردم -->
+<main class="container custom-page">
+
+    <!-- اینجا ساختار کارت قدیمی بوت استرپ را با ساختار جدید شیشه‌ای جایگزین کردیم -->
+    <div class="custom-glass-container">
+
+        <h2 class="mb-4">Sign Up</h2>
+
+        {{if .Error}}
+        <div class="alert alert-danger" role="alert" style="font-size: 14px; padding: 5px;">
+            {{.Error}}
         </div>
-    </main>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/statics/js/app.js"></script>
+        {{end}}
+
+        <!-- فرم با کلاس‌های جدید -->
+        <form method="POST" action="/signup" class="custom-form">
+            <!-- div های mb-3 بوت استرپ را حذف کردم تا از استایل flex باکس شما استفاده شود -->
+
+            <input type="text" id="username" name="username" placeholder="Username" required autofocus>
+
+            <input type="password" id="password" name="password" placeholder="Password" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <div class="custom-footer-text">
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/statics/js/app.js"></script>
 </body>
 </html>
 {{end}}
