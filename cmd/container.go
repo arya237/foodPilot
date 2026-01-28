@@ -8,12 +8,12 @@ import (
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
 	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
+	"github.com/arya237/foodPilot/internal/delivery/web"
 	"github.com/arya237/foodPilot/internal/repositories"
 
 	//"github.com/arya237/foodPilot/internal/repositories/memory"
 	repo_postgres "github.com/arya237/foodPilot/internal/repositories/postgres"
 	"github.com/arya237/foodPilot/internal/services"
-	"github.com/arya237/foodPilot/internal/web"
 	"github.com/arya237/foodPilot/pkg/reservations"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 )
