@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
+	"github.com/arya237/foodPilot/internal/getways/telegram"
 	"github.com/arya237/foodPilot/pkg/messaging"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 )
@@ -13,6 +14,7 @@ func New() (*Config, error) {
 		DBConfig:        &tempdb.Config{},
 		MessagingConfig: &messaging.Config{},
 		PostGresConfig:  &postgres.Config{},
+		TelegramBot:     &telegram.Config{},
 	}
 
 	// Readin samad config
@@ -36,6 +38,10 @@ func New() (*Config, error) {
 	// Messenger
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")
 	config.MessagingConfig.Key = GetEnv("MSG_KEY", "")
+
+	// bot
+	config.TelegramBot.API = GetEnv("BOT_TOKEN", "")
+	config.TelegramBot.Token = GetEnv("BOT_API", "")
 
 	return &config, nil
 }
