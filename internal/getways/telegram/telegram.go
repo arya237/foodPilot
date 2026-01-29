@@ -14,6 +14,10 @@ type Config struct {
 func New(cfg *Config) (*tgbotapi.BotAPI, error) {
 	bot, err := tgbotapi.NewBotAPIWithAPIEndpoint(cfg.Token, cfg.API)
 
+	if err != nil {
+		return nil, err
+	}
+	
 	bot.Debug = false
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 	return bot, err
