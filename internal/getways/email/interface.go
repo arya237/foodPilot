@@ -1,4 +1,4 @@
-package messaging
+package email
 
 type Config struct {
 	From string
