@@ -11,8 +11,12 @@ type Config struct {
 	Token string
 }
 
-func New(cfg *Config) (*tgbotapi.BotAPI, error) {
-	bot, err := tgbotapi.NewBotAPIWithAPIEndpoint(cfg.Token, cfg.API)
+func New(cfg *Config) (bot *tgbotapi.BotAPI,err error) {
+	if cfg.API == "" {
+		bot, err = tgbotapi.NewBotAPI(cfg.Token)
+	} else {
+		bot, err = tgbotapi.NewBotAPIWithAPIEndpoint(cfg.Token, cfg.API)
+	}
 
 	if err != nil {
 		return nil, err
