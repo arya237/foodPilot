@@ -1,9 +1,6 @@
 name: Telegram PR Notify
 
 on:
-  push:
-    branches: 
-      - '**'  # This means ALL branches
   pull_request:
     types: [opened, closed, reopened]
 
