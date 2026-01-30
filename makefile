@@ -53,6 +53,14 @@ compose_Clean: ## make docker compse down and reomve volumes
 	@echo "try to turn off database..."
 	@docker compose down -v                                 
 
+upTestEnv: ## this command set envirment need to run integration test
+	@docker-compose -f docker-compose.test.yml up -d
+	@echo "test enviment is set and rady to go..."
+
+downTestEnv: ## this command clean envirment of integration test.
+	@docker-compose -f docker-compose.test.yml down
+	@echo "clean test envirment"
+
 image: ## build an image from docker file
 	docker build -t $(PROJECT_NAME):$(TEST_TAG) $(DOCKER_FILE_PATH) 
 
