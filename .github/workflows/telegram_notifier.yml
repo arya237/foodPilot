@@ -20,7 +20,8 @@ jobs:
             Number: #${{ github.event.number }}
             
             Description:
-            ${{ github.event.pull_request.body }}
 
+            ${{ github.event.pull_request.body }}
+            ----------
             Link: (${{ github.event.pull_request.html_url }})
           parse_mode: markdown
