@@ -5,15 +5,15 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/delivery/web/middelware"
 	"github.com/arya237/foodPilot/internal/services"
-	"github.com/arya237/foodPilot/internal/web/middelware"
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(engine *gin.Engine, tokenExpiry time.Duration, userService services.UserService) error {
 	// Load and set HTML templates
 	// Parse all templates - base.html must be parsed first so blocks can be overridden
-	tmpl, err := template.ParseGlob(filepath.Join("internal", "web", "ui", "templates", "*.html"))
+	tmpl, err := template.ParseGlob(filepath.Join("internal", "delivery", "web", "ui", "templates", "*.html"))
 	if err != nil {
 		return err
 	}
@@ -46,4 +46,3 @@ func RegisterRoutes(engine *gin.Engine, tokenExpiry time.Duration, userService s
 
 	return nil
 }
-

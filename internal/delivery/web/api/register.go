@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/services"
-	"github.com/arya237/foodPilot/internal/web/api/admin"
-	"github.com/arya237/foodPilot/internal/web/api/auth"
-	"github.com/arya237/foodPilot/internal/web/api/user"
+	"github.com/arya237/foodPilot/internal/delivery/web/api/admin"
+	"github.com/arya237/foodPilot/internal/delivery/web/api/auth"
+	"github.com/arya237/foodPilot/internal/delivery/web/api/user"
 	"github.com/gin-gonic/gin"
 )
 

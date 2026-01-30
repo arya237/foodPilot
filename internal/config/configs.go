@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
+	"github.com/arya237/foodPilot/internal/getways/telegram"
 	"github.com/arya237/foodPilot/pkg/messaging"
 	"github.com/arya237/foodPilot/pkg/reservations/samad"
 )
@@ -12,4 +13,5 @@ type Config struct {
 	MessagingConfig *messaging.Config
 	DBConfig        *tempdb.Config
 	PostGresConfig  *postgres.Config
+	TelegramBot     *telegram.Config
 }

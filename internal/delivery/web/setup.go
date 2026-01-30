@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/internal/services"
-	"github.com/arya237/foodPilot/internal/web/api"
-	"github.com/arya237/foodPilot/internal/web/ui"
+	"github.com/arya237/foodPilot/internal/delivery/web/api"
+	"github.com/arya237/foodPilot/internal/delivery/web/ui"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
