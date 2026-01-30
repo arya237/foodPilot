@@ -9,7 +9,7 @@ func Start(bot *tgbotapi.BotAPI) error{
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil {
+		if update.Message == nil {
 			continue
 		}
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
