@@ -27,7 +27,7 @@ COPY --from=builder /app/FoodPilot .
 COPY --from=builder /app/statics ./statics
 
 # Copy HTML templates
-COPY --from=builder /app/internal/web/ui/templates ./internal/web/ui/templates
+COPY --from=builder /app/internal/delivery/web/ui/templates ./internal/delivery/web/ui/templates
 
 EXPOSE 8080
 
