@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"database/sql"
+	"log"
 	"sync"
 	"time"
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
 	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
-	"github.com/arya237/foodPilot/internal/delivery/web"
+	"github.com/arya237/foodPilot/internal/delivery"
+	"github.com/arya237/foodPilot/internal/getways/telegram"
 	"github.com/arya237/foodPilot/internal/repositories"
 
 	//"github.com/arya237/foodPilot/internal/repositories/memory"
@@ -67,7 +69,14 @@ func Run() error {
 	db := db_postgres.NewDB(conf.PostGresConfig)
 	container := NewContainer()
 	//container.SetUp(db, conf.SamadConfig)
+
 	container.SetUp(db, conf.SamadConfig)
-	return web.Start(time.Hour, container.UserService,
-		container.AdminService, container.ReserveService)
+
+	bot, err := telegram.New(conf.TelegramBot)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return delivery.Start(time.Hour, container.UserService,
+		container.AdminService, container.ReserveService, bot)
 }

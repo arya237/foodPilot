@@ -17,21 +17,21 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 
 	ch := make(chan any)
 
-	go func ()  {
+	go func() {
 		err := web.Start(tokenEpereTime, userService, adminService, resrveService)
 		log.Println(err)
 		ch <- true
 	}()
 
-	go func ()  {
+	go func() {
 		err := telegram.Start(bot)
 		log.Println(err)
 		ch <- true
 	}()
 
 	for range DELIVERY_OPTIONS {
-		<- ch
+		<-ch
 	}
-	
+
 	return nil
 }
