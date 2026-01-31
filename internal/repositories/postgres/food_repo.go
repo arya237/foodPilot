@@ -48,7 +48,7 @@ func (r *foodRepo) GetById(id int) (*models.Food, error) {
 	err := r.db.QueryRow(query, id).Scan(&food.Id, &food.Name)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return nil, errors.New(fmt.Sprintf("error getting food by id %d", id))
+		return nil, fmt.Errorf("error getting food by id %d", id)
 	}
 
 	return &food, nil
@@ -63,7 +63,7 @@ func (r *foodRepo) GetAll() ([]*models.Food, error) {
 	rows, err := r.db.Query(query)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return nil, errors.New(fmt.Sprintf("error getting foods from database"))
+		return nil, fmt.Errorf("error getting foods from database")
 	}
 
 	defer rows.Close()
@@ -74,7 +74,7 @@ func (r *foodRepo) GetAll() ([]*models.Food, error) {
 		err := rows.Scan(&food.Id, &food.Name)
 		if err != nil {
 			r.logger.Info(err.Error())
-			return nil, errors.New(fmt.Sprintf("error getting foods from database"))
+			return nil, fmt.Errorf("error getting foods from database")
 		}
 
 		foods = append(foods, &food)
@@ -93,7 +93,7 @@ func (r *foodRepo) Delete(id int) error {
 	_, err := r.db.Exec(query, id)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return errors.New(fmt.Sprintf("error deleting food with id %d from database", id))
+		return fmt.Errorf("error deleting food with id %d from database", id)
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func (r foodRepo) Update(new *models.Food) error {
 	_, err := r.db.Exec(query, new.Name, new.Id)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return errors.New(fmt.Sprintf("error updating food with id %d", new.Id))
+		return fmt.Errorf("error updating food with id %d", new.Id)
 	}
 
 	return nil
