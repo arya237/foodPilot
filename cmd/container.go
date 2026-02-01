@@ -76,8 +76,9 @@ func Run() error {
 	connectionTries := 5
 	var bot *tgbotapi.BotAPI
 	for i := range connectionTries {
-
-		if bot, err = telegram.New(conf.TelegramBot); err == nil {
+		getBot, err := telegram.New(conf.TelegramBot)
+		if err == nil {
+			bot = getBot
 			break
 		}
 		log.Printf("Try[%d]:%s\n", i, err.Error())
