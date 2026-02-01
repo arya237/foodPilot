@@ -1,0 +1,21 @@
+# docker-compose.test.yml
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: myapp-postgres-test
+    ports:
+      - "5000:5432"  
+    environment:
+      POSTGRES_DB: testDB
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+    volumes:
+      - ./internal/db/postgres/tables.sql:/docker-entrypoint-initdb.d/01-tables.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d myapp_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
