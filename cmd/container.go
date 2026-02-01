@@ -12,6 +12,7 @@ import (
 	"github.com/arya237/foodPilot/internal/delivery"
 	"github.com/arya237/foodPilot/internal/getways/telegram"
 	"github.com/arya237/foodPilot/internal/repositories"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	//"github.com/arya237/foodPilot/internal/repositories/memory"
 	repo_postgres "github.com/arya237/foodPilot/internal/repositories/postgres"
@@ -72,9 +73,14 @@ func Run() error {
 
 	container.SetUp(db, conf.SamadConfig)
 
-	bot, err := telegram.New(conf.TelegramBot)
-	if err != nil {
-		log.Fatal(err)
+	connectionTries := 5
+	var bot *tgbotapi.BotAPI
+	for i := range connectionTries {
+
+		if bot, err = telegram.New(conf.TelegramBot); err == nil {
+			break
+		}
+		log.Printf("Try[%d]:%s\n", i, err.Error())
 	}
 
 	return delivery.Start(time.Hour, container.UserService,
