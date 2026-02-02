@@ -7,14 +7,16 @@ type User struct {
 	AutoSave bool     `json:"auto_save"`
 
 	//
-	Password string   `json:"-"`
-	Token    string   `json:"token"`
+	Password string `json:"-"`
+	Token    string `json:"token"`
 }
 
 type RestaurantCredentials struct {
-	Username string   `json:"username"`
-	Password string   `json:"-"`
-	Token    string   `json:"token"`
+	Id       int    `json:"id"`
+	UserID   int    `json:"user_id"`
+	Username string `json:"username"`
+	Password string `json:"-"`
+	Token    string `json:"token"`
 }
 
 type UserRole string

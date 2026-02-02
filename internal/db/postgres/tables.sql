@@ -10,6 +10,14 @@ CREATE TABLE users (
     token VARCHAR(10000)
 );
 
+CREATE TABLE restaurant_credentials (
+    id SERIAL PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    username VARCHAR(100),
+    password VARCHAR(100),
+    token text
+);
+
 CREATE TABLE foods (
     id SERIAL PRIMARY KEY,
     name VARCHAR(500) NOT NULL
