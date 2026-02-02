@@ -52,7 +52,7 @@ func (c *Container) SetUp(db *sql.DB, conf *samad.Config) {
 	c.RateRepo = repo_postgres.NewRateRepo(c.db)
 	c.CredRepo = repo_postgres.NewResturantCred(c.db)
 
-	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
+	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, c.CredRepo, conf)
 
 	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
 

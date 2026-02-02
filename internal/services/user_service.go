@@ -34,9 +34,10 @@ type userService struct {
 }
 
 func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
-	rateRepo repositories.Rate, config *samad.Config) UserService {
+	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, config *samad.Config) UserService {
 	return &userService{
 		userStorage: userRepo,
+		userCred: userCred,
 		foodStorge:  foodRepo,
 		rateStorage: rateRepo,
 		logger:      logger.New("userService"),
@@ -68,7 +69,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 	user, err = u.userStorage.Save(user)
 	if err != nil {
-		return nil, ErrUserRegistration
+		return nil, err
 	}
 
 	userCred := &models.RestaurantCredentials{
