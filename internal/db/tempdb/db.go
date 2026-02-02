@@ -18,15 +18,7 @@ type FakeDb struct {
 }
 
 func NewDb(cnf *Config) *FakeDb {
-	users := map[int]*models.User{
-		1: {
-			Id:       1,
-			Username: cnf.AdminUsername,
-			Password: cnf.AdminPassword,
-			AutoSave: true,
-			Role:     models.RoleAdmin,
-		},
-	}
+	users := map[int]*models.User{}
 
 	foods := map[int]*models.Food{
 		1:  {Name: "چلو کباب کوبیده زعفرانی", Id: 1},

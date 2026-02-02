@@ -28,14 +28,16 @@ type userService struct {
 	userStorage repositories.User
 	foodStorge  repositories.Food
 	rateStorage repositories.Rate
+	userCred    repositories.RestaurantCredentials
 	samad       reservations.ReserveFunctions
 	logger      logger.Logger
 }
 
 func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
-	rateRepo repositories.Rate, config *samad.Config) UserService {
+	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, config *samad.Config) UserService {
 	return &userService{
 		userStorage: userRepo,
+		userCred: userCred,
 		foodStorge:  foodRepo,
 		rateStorage: rateRepo,
 		logger:      logger.New("userService"),
@@ -62,18 +64,24 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	// Create new user with default role
 	user := &models.User{
 		Username: userName,
-		Password: password,
 		Role:     models.RoleUser, // Default role is user
 		AutoSave: true,
-		Token:    token,
 	}
-
 	user, err = u.userStorage.Save(user)
 	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, ErrUserRegistration
+		return nil, err
 	}
 
+	userCred := &models.RestaurantCredentials{
+		UserID:   user.Id,
+		Username: userName,
+		Password: password,
+		Token: token,
+	}
+	_, err = u.userCred.Save(userCred)
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 func (u *userService) Login(userName, password string) (*models.User, error) {
@@ -83,22 +91,19 @@ func (u *userService) Login(userName, password string) (*models.User, error) {
 		u.logger.Info(err.Error())
 		return nil, ErrUserNotRegistered
 	}
+	cred, err := u.userCred.GetByUserID(user.Id)
+	if err != nil {
+		return nil, err
+	}
 
-	if user.Password != password {
+	if cred.Password != password {
 		return nil, ErrInvalidCredentials
 	}
 
-	token, err := u.samad.GetAccessToken(userName, password)
+	_, err = u.samad.GetAccessToken(userName, password)
 	if err != nil {
 		u.logger.Info(err.Error())
 		return nil, ErrTokenGeneration
-	}
-
-	user.Token = token
-	err = u.userStorage.Update(user)
-	if err != nil {
-		u.logger.Info(err.Error())
-		return nil, err
 	}
 
 	return user, nil

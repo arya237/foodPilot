@@ -22,7 +22,6 @@ type Claims struct {
 func GenerateJWT(user *models.User, duration time.Duration) (string, error) {
 	claims := &Claims{
 		UserID: strconv.Itoa(user.Id),
-		Token:  user.Token,
 		Role:   user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),

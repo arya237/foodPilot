@@ -4,10 +4,16 @@ CREATE TYPE user_role AS ENUM ('user', 'admin');
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    auto_save BOOLEAN DEFAULT FALSE,
     role user_role DEFAULT 'user',
-    token VARCHAR(10000)
+    auto_save BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE restaurant_credentials (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    username VARCHAR(100),
+    password VARCHAR(100),
+    token text
 );
 
 CREATE TABLE foods (
@@ -59,4 +65,3 @@ INSERT INTO foods (name) VALUES
 ('سوپ جو'),
 ('چلو خورشت بادمجان');
 
-INSERT INTO users (username, password, auto_save, role, token) values ('40112358043', 'arya1383', TRUE, 'admin', '')
