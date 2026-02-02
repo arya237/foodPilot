@@ -5,10 +5,6 @@ type User struct {
 	Username string   `json:"username"`
 	Role     UserRole `json:"role"`
 	AutoSave bool     `json:"auto_save"`
-
-	//
-	Password string `json:"-"`
-	Token    string `json:"token"`
 }
 
 type RestaurantCredentials struct {
