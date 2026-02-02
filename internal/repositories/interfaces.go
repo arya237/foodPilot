@@ -31,8 +31,8 @@ type Food interface {
 }
 
 type RestaurantCredentials interface {
-	save(r *RestaurantCredentials)(*RestaurantCredentials, error)
-	GetByUserID(id int)(*RestaurantCredentials, error)
+	Save(r *models.RestaurantCredentials)(*models.RestaurantCredentials, error)
+	GetByUserID(id int)(*models.RestaurantCredentials, error)
 }
 // --------------- Errors -------------------------------
 var (
