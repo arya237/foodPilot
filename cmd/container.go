@@ -27,6 +27,7 @@ type Container struct {
 	UserRepo repositories.User
 	FoodRepo repositories.Food
 	RateRepo repositories.Rate
+	CredRepo repositories.RestaurantCredentials
 
 	//service
 	UserService    services.UserService
@@ -49,13 +50,14 @@ func (c *Container) SetUp(db *sql.DB, conf *samad.Config) {
 	c.UserRepo = repo_postgres.NewUserRepo(c.db)
 	c.FoodRepo = repo_postgres.NewFoodRepo(c.db)
 	c.RateRepo = repo_postgres.NewRateRepo(c.db)
+	c.CredRepo = repo_postgres.NewResturantCred(c.db)
 
 	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, conf)
 
 	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
 
 	c.Samad = samad.NewSamad(conf)
-	c.ReserveService = services.NewReserveService(c.UserRepo, c.UserService, c.Samad)
+	c.ReserveService = services.NewReserveService(c.UserRepo, c.CredRepo, c.UserService, c.Samad)
 }
 
 func Run() error {
