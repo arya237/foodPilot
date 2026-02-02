@@ -5,7 +5,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     role user_role DEFAULT 'user',
-    auto_save BOOLEAN DEFAULT FALSE,
+    auto_save BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE restaurant_credentials (
