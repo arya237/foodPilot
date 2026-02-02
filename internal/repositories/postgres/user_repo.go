@@ -25,7 +25,7 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 
 	query := `
 		INSERT INTO users (username, auto_save, role) 
-		VALUES ($1, $2, $3, $4, $5) 
+		VALUES ($1, $2, $3) 
 		RETURNING id
 	`
 
