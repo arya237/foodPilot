@@ -12,7 +12,7 @@ CREATE TABLE users (
 
 CREATE TABLE restaurant_credentials (
     id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     username VARCHAR(100),
     password VARCHAR(100),
     token text
