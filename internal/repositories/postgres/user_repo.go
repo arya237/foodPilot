@@ -24,7 +24,7 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	}
 
 	query := `
-		INSERT INTO users (username, password, auto_save, role, token) 
+		INSERT INTO users (username, auto_save, role) 
 		VALUES ($1, $2, $3, $4, $5) 
 		RETURNING id
 	`
@@ -33,10 +33,8 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	err := r.db.QueryRow(
 		query,
 		newUser.Username,
-		newUser.Password,
 		newUser.AutoSave,
 		newUser.Role,
-		newUser.Token,
 	).Scan(&id)
 
 	if err != nil {
@@ -56,7 +54,7 @@ func (r *UserRepository) GetById(id int) (*models.User, error) {
 	}
 
 	query := `
-		SELECT id, username, password, auto_save, role, token 
+		SELECT id, username, auto_save, role 
 		FROM users 
 		WHERE id = $1
 	`
@@ -65,10 +63,8 @@ func (r *UserRepository) GetById(id int) (*models.User, error) {
 	err := r.db.QueryRow(query, id).Scan(
 		&user.Id,
 		&user.Username,
-		&user.Password,
 		&user.AutoSave,
 		&user.Role,
-		&user.Token,
 	)
 
 	if err != nil {
@@ -87,7 +83,7 @@ func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
 	}
 
 	query := `
-		SELECT id, username, password, auto_save, role, token 
+		SELECT id, username, auto_save, role
 		FROM users 
 		WHERE username = $1
 	`
@@ -96,10 +92,8 @@ func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
 	err := r.db.QueryRow(query, username).Scan(
 		&user.Id,
 		&user.Username,
-		&user.Password,
 		&user.AutoSave,
 		&user.Role,
-		&user.Token,
 	)
 
 	if err != nil {
@@ -118,7 +112,7 @@ func (r *UserRepository) GetAll() ([]*models.User, error) {
 	}
 
 	query := `
-		SELECT id, username, password, auto_save, role, token 
+		SELECT id, username, auto_save, role
 		FROM users 
 		ORDER BY id
 	`
@@ -135,10 +129,8 @@ func (r *UserRepository) GetAll() ([]*models.User, error) {
 		err := rows.Scan(
 			&user.Id,
 			&user.Username,
-			&user.Password,
 			&user.AutoSave,
 			&user.Role,
-			&user.Token,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan user: %w", err)
@@ -184,17 +176,15 @@ func (r *UserRepository) Update(updatedUser *models.User) error {
 
 	query := `
 		UPDATE users 
-		SET username = $1, password = $2, auto_save = $3, role = $4, token = $5 
-		WHERE id = $6
+		SET username = $1, auto_save = $2,  role = $3 
+		WHERE id = $4
 	`
 
 	result, err := r.db.Exec(
 		query,
 		updatedUser.Username,
-		updatedUser.Password,
 		updatedUser.AutoSave,
 		updatedUser.Role,
-		updatedUser.Token,
 		updatedUser.Id,
 	)
 
