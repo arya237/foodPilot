@@ -46,14 +46,16 @@ const (
 
 type reserve struct {
 	user       repositories.User
+	userCred   repositories.RestaurantCredentials
 	userSevise UserService
 	samad      reservations.ReserveFunctions
 	logger     logger.Logger
 }
 
-func NewReserveService(u repositories.User, userService UserService, s reservations.ReserveFunctions) Reserve {
+func NewReserveService(u repositories.User, userCred repositories.RestaurantCredentials, userService UserService, s reservations.ReserveFunctions) Reserve {
 	return &reserve{
 		user:       u,
+		userCred:   userCred,
 		userSevise: userService,
 		samad:      s,
 		logger:     logger.New("reserve"),
@@ -130,12 +132,12 @@ func findBestFood(mealList []reservations.ReserveModel, rates map[string]int) (r
 func (r *reserve) UserReservation(userID int) (*UserReserveResult, error) {
 	// TODO: check if token is valid or not
 
-	user, err := r.user.GetById(userID)
+	cred, err := r.userCred.GetByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := r.samad.GetAccessToken(user.Username, user.Password)
+	token, err := r.samad.GetAccessToken(cred.Username, cred.Password)
 	if err != nil {
 		return nil, ErrTokenGeneration
 	}
@@ -152,15 +154,15 @@ func (r *reserve) UserReservation(userID int) (*UserReserveResult, error) {
 		selfsFoodProgram[selfName], err = r.samad.GetFoodProgram(token, selfID, time.Now().Add(time.Hour*48))
 		if err != nil {
 			r.logger.Info(err.Error())
-			return &UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
+			return &UserReserveResult{UserID: cred.UserID, Username: cred.Username, Error: err.Error()}, err
 		}
 	}
 
 	// Get user rates
-	rates, err := r.userSevise.ViewRating(user.Id)
+	rates, err := r.userSevise.ViewRating(cred.UserID)
 	if err != nil {
 		r.logger.Info(err.Error())
-		return &UserReserveResult{UserID: user.Id, Username: user.Username, Error: err.Error()}, err
+		return &UserReserveResult{UserID: cred.UserID, Username: cred.Username, Error: err.Error()}, err
 	}
 
 	// build structured per-day results while continuing on errors
@@ -195,7 +197,7 @@ func (r *reserve) UserReservation(userID int) (*UserReserveResult, error) {
 		}
 	}
 
-	return &UserReserveResult{UserID: user.Id, Username: user.Username, Days: dayResults}, nil
+	return &UserReserveResult{UserID: cred.UserID, Username: cred.Username, Days: dayResults}, nil
 }
 
 func lookingForSpecificFood(foodName string, foodprogram map[string]*reservations.WeekFood, day reservations.Weekday, meal reservations.Meal) (*reservations.ReserveModel, error) {
