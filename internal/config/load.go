@@ -29,11 +29,11 @@ func New() (*Config, error) {
 	config.DBConfig.AdminPassword = GetEnv("ADMIN_PASSWORD", "admin")
 
 	// Reading postgres config
-	config.PostGresConfig.Host = GetEnv("Host", "localhost")
-	config.PostGresConfig.Port = GetEnv("PORT", "5432")
-	config.PostGresConfig.User = GetEnv("USER", "postgres")
-	config.PostGresConfig.DBName = GetEnv("Database ", "postgres")
-	config.PostGresConfig.Password = GetEnv("PostGresPassword", "")
+	config.PostGresConfig.Host = GetEnv("DB_HOST", "localhost")
+	config.PostGresConfig.Port = GetEnv("DB_PORT", "5432")
+	config.PostGresConfig.User = GetEnv("DB_USER", "postgr")
+	config.PostGresConfig.DBName = GetEnv("DB_NAME", "postgres")
+	config.PostGresConfig.Password = GetEnv("DB_PASSWORD", "")
 
 	// Messenger
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")

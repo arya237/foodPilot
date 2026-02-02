@@ -67,10 +67,11 @@ func Run() error {
 		return err
 	}
 
-	//db := tempdb.NewDb(conf.DBConfig)
 	db := db_postgres.NewDB(conf.PostGresConfig)
+	if db == nil {
+		log.Println("db is nil ...")
+	}
 	container := NewContainer()
-	//container.SetUp(db, conf.SamadConfig)
 
 	container.SetUp(db, conf.SamadConfig)
 
