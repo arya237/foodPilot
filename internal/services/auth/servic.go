@@ -24,7 +24,7 @@ func New(idRepo repositories.Identities, userRepo repositories.User) Auth {
 }
 
 func (a *auth) login(provider models.IdProvider, identifier string) (*models.User, error) {
-	if !slices.Contains(trusted, provider) {
+	if !isTrustedProvider(provider) {
 		return nil, ErrInvalidProvider
 	}
 	identity , err := a.idRepo.GetByProvide(provider, identifier)
@@ -38,6 +38,27 @@ func (a *auth) login(provider models.IdProvider, identifier string) (*models.Use
 	return user, nil
 }
 
-func (a *auth) SignUp(provider models.IdProvider, identifier string) (*models.User, error) {
-	return nil, nil
+func (a *auth) SignUp(provider models.IdProvider, identifier string, user *models.User) (*models.User, error) {
+	if !isTrustedProvider(provider) {
+		return nil, ErrInvalidProvider
+	}
+
+	newUser, err := a.userRepo.Save(user)
+	if err != nil {
+		return nil, err
+	}
+	_, err = a.idRepo.Save(&models.Identities{
+		Provider: provider,
+		Identifier: identifier,
+		UserID: newUser.Id,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return newUser, err
+}
+
+func isTrustedProvider(provider models.IdProvider) bool {
+	return slices.Contains(trusted, provider)
 }
