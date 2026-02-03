@@ -7,8 +7,8 @@ const (
 )
 
 type Identities struct {
-	ID         int
-	UserID     int
-	Provider   IdProvider
-	Identifier string
+	ID         int        `json:"id"`
+	UserID     int        `json:"user_id"`
+	Provider   IdProvider `json:"provider"`
+	Identifier string     `json:"identifier"`
 }
