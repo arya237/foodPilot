@@ -1,7 +1,7 @@
 package samad
 
 import (
-	"github.com/arya237/foodPilot/pkg/reservations"
+	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"sort"
 	"strconv"
 )

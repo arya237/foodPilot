@@ -14,15 +14,14 @@ import (
 	"github.com/arya237/foodPilot/internal/repositories"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	//"github.com/arya237/foodPilot/internal/repositories/memory"
 	repo_postgres "github.com/arya237/foodPilot/internal/repositories/postgres"
 	"github.com/arya237/foodPilot/internal/services"
-	"github.com/arya237/foodPilot/pkg/reservations"
-	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/arya237/foodPilot/internal/getways/reservations"
+	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 )
 
 type Container struct {
-	//db *tempdb.FakeDb
+	
 	db *sql.DB
 	//repositories
 	UserRepo repositories.User

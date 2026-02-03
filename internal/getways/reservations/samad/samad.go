@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/pkg/reservations"
+	"github.com/arya237/foodPilot/internal/getways/reservations"
 )
 
 type TokenResponse struct {

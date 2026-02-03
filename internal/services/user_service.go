@@ -10,8 +10,8 @@ import (
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/pkg/reservations"
-	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/arya237/foodPilot/internal/getways/reservations"
+	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 	"github.com/golang-jwt/jwt/v5"
 )
 
