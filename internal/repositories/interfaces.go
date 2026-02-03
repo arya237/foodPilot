@@ -36,9 +36,8 @@ type RestaurantCredentials interface {
 }
 
 type Identities interface {
-	Save(new *models.Identities)(*models.IdProvider, error)
-	GetByProvide(provide models.IdProvider, identifier string) (*models.IdProvider, error)
-	Delete(id int)
+	Save(new *models.Identities)(*models.Identities, error)
+	GetByProvide(provide models.IdProvider, identifier string) (*models.Identities, error)
 }
 // --------------- Errors -------------------------------
 var (
