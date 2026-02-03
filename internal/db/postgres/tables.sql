@@ -1,11 +1,19 @@
 -------------- Tables -------------------
 CREATE TYPE user_role AS ENUM ('user', 'admin');
+CREATE TYPE id_provider_enum AS ENUM ('telegram');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     role user_role DEFAULT 'user',
     auto_save BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE identities (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider id_provider_enum NOT NULL,
+    identifier VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE restaurant_credentials (
