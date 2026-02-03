@@ -91,12 +91,15 @@ func (m *mockIdentities) GetByProvide(provide models.IdProvider, identifier stri
 }
 
 type mockUser struct {
+	id   int
 	err  error
 	list []*models.User
 }
 
 func (m *mockUser) Save(newUser *models.User) (*models.User, error) {
-	return nil, nil
+	newUser.Id = m.id
+	m.id++
+	return newUser, nil
 }
 func (m *mockUser) GetById(id int) (*models.User, error) {
 	for _, val := range m.list {
