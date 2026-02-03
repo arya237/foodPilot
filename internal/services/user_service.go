@@ -22,6 +22,8 @@ type UserService interface {
 	ViewFoods() ([]*models.Food, error)
 	RateFoods(ID string, foods map[string]int) (string, error)
 	ViewRating(ID int) (map[string]int, error)
+
+	ConnectToResturant(id int, userName, password string) error
 }
 
 type userService struct {
@@ -43,6 +45,29 @@ func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
 		logger:      logger.New("userService"),
 		samad:       samad.NewSamad(config),
 	}
+}
+
+func (u *userService) ConnectToResturant(id int, userName, password string) error {
+	token, err := u.samad.GetAccessToken(userName, password)
+	if err != nil {
+		return ErrTokenGeneration
+	}
+
+	if ok := checkToken(token); !ok {
+		return ErrTokenGeneration
+	}
+
+	userCred := &models.RestaurantCredentials{
+		UserID:   id,
+		Username: userName,
+		Password: password,
+		Token: token,
+	}
+	_, err = u.userCred.Save(userCred)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *userService) SignUp(userName, password string) (*models.User, error) {
@@ -84,6 +109,8 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 	return user, nil
 }
+
+
 func (u *userService) Login(userName, password string) (*models.User, error) {
 
 	user, err := u.userStorage.GetByUserName(userName)
