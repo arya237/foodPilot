@@ -49,18 +49,22 @@ func TestLogin(t *testing.T) {
 			},
 			porovide:   models.TELEGRAM,
 			identifier: "good id",
-			wantUser: testUser,
+			wantUser:   testUser,
 		},
 	}
 
 	for _, tc := range tests {
-		service := New(tc.mockIdentities, tc.mockUser)
-		user, err := service.login(tc.porovide, tc.identifier)
 		t.Run(tc.tag, func(t *testing.T) {
-			assert.ErrorIs(t, err, tc.wantErr)
-			if err == nil {
-				assert.Equal(t, user, tc.wantUser)
+			service := New(tc.mockIdentities, tc.mockUser)
+			user, err := service.login(tc.porovide, tc.identifier)
+
+			if tc.wantErr != nil {
+				assert.ErrorIs(t, err, tc.wantErr)
+				return
 			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.wantUser, user)
 		})
 	}
 }
@@ -95,7 +99,7 @@ func (m *mockUser) Save(newUser *models.User) (*models.User, error) {
 	return nil, nil
 }
 func (m *mockUser) GetById(id int) (*models.User, error) {
-	for _,val := range m.list {
+	for _, val := range m.list {
 		if val.Id == id {
 			return val, nil
 		}
