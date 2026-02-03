@@ -8,10 +8,10 @@ import (
 
 type Auth interface {
 	login(provider models.IdProvider, identifier string) (*models.User, error)
-	SignUp(provider models.IdProvider, identifier string) (*models.User, error)
+	SignUp(provider models.IdProvider, identifier string, user *models.User) (*models.User, error)
 }
 
 var (
-	ErrInvalidProvider = errors.New("this provider is not trusted")
+	ErrInvalidProvider   = errors.New("this provider is not trusted")
 	ErrInvalidCredintial = errors.New("credential is invalid")
 )
