@@ -34,6 +34,12 @@ type RestaurantCredentials interface {
 	Save(r *models.RestaurantCredentials)(*models.RestaurantCredentials, error)
 	GetByUserID(id int)(*models.RestaurantCredentials, error)
 }
+
+type Identities interface {
+	Save(new *models.Identities)(*models.IdProvider, error)
+	GetByProvide(provide models.IdProvider, identifier string) (*models.IdProvider, error)
+	Delete(id int)
+}
 // --------------- Errors -------------------------------
 var (
 	ErrorDuplicate = errors.New("duplicate")
