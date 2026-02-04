@@ -21,26 +21,28 @@ func Start(bot *tgbotapi.BotAPI, auth auth.Auth) error {
 
 	updates := bot.GetUpdatesChan(u)
 
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
+	h := &Handler{
+		bot:  bot,
+		auth: auth,
+	}
 
-		bot.Send(msg)
+	for update := range updates {
+		h.HandleUpdate(update)
 	}
 
 	return nil
 }
 
-func HandleUpdate(update tgbotapi.Update) {
-	if update.Message == nil {
-		return
-	}
+func (h *Handler) HandleUpdate(update tgbotapi.Update) {
+	// if update.Message == nil {
+	// 	return
+	// }
+	// // id := fmt.Sprintf("%d", update.Message.Chat.ID)
 
-	if update.Message.IsCommand() {
-		// handleCommand(update.Message, user)
-		return
-	}
+	// // user, err := h.auth.Login(models.TELEGRAM, id)
+
+	// if update.Message.IsCommand() {
+	// 	// handleCommand(update.Message, user)
+	// 	return
+	// }
 }

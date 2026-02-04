@@ -33,7 +33,7 @@ func TestLogin(t *testing.T) {
 			mockIdentities: &mockIdentities{},
 			porovide:       models.TELEGRAM,
 			identifier:     "bad id",
-			wantErr:        ErrInvalidCredintial,
+			wantErr:        ErrUserNotFound,
 		},
 		{
 			tag: "valid telegram login",

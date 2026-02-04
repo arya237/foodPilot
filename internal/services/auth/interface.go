@@ -14,4 +14,5 @@ type Auth interface {
 var (
 	ErrInvalidProvider   = errors.New("this provider is not trusted")
 	ErrInvalidCredintial = errors.New("credential is invalid")
+	ErrUserNotFound      = errors.New("user not found")
 )
