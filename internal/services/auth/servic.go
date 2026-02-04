@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"slices"
 
 	"github.com/arya237/foodPilot/internal/models"
@@ -23,12 +24,15 @@ func New(idRepo repositories.Identities, userRepo repositories.User) Auth {
 	}
 }
 
-func (a *auth) login(provider models.IdProvider, identifier string) (*models.User, error) {
+func (a *auth) Login(provider models.IdProvider, identifier string) (*models.User, error) {
 	if !isTrustedProvider(provider) {
 		return nil, ErrInvalidProvider
 	}
 	identity , err := a.idRepo.GetByProvide(provider, identifier)
 	if err != nil {
+		if errors.Is(err, repositories.ErrorNotFound) {
+			return nil, ErrUserNotFound
+		}
 		return nil, ErrInvalidCredintial
 	}
 	user, err := a.userRepo.GetById(identity.UserID)

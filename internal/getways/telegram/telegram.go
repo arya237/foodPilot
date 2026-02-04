@@ -3,7 +3,7 @@ package telegram
 import (
 	"log"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tele "gopkg.in/telebot.v3"
 )
 
 type Config struct {
@@ -11,18 +11,19 @@ type Config struct {
 	Token string
 }
 
-func New(cfg *Config) (bot *tgbotapi.BotAPI,err error) {
-	if cfg.API == "" {
-		bot, err = tgbotapi.NewBotAPI(cfg.Token)
-	} else {
-		bot, err = tgbotapi.NewBotAPIWithAPIEndpoint(cfg.Token, cfg.API)
+func New(cfg *Config) (bot *tele.Bot, err error) {
+	pref := tele.Settings{
+		Token: cfg.Token,
+	}
+	if cfg.API != "" {
+		pref.URL = cfg.API
 	}
 
+	bot, err = tele.NewBot(pref)
 	if err != nil {
 		return nil, err
 	}
-	
-	bot.Debug = false
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+
+	log.Printf("Authorized telegram bot")
 	return bot, err
 }

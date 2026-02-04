@@ -33,7 +33,7 @@ func TestLogin(t *testing.T) {
 			mockIdentities: &mockIdentities{},
 			porovide:       models.TELEGRAM,
 			identifier:     "bad id",
-			wantErr:        ErrInvalidCredintial,
+			wantErr:        ErrUserNotFound,
 		},
 		{
 			tag: "valid telegram login",
@@ -56,7 +56,7 @@ func TestLogin(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.tag, func(t *testing.T) {
 			service := New(tc.mockIdentities, tc.mockUser)
-			user, err := service.login(tc.porovide, tc.identifier)
+			user, err := service.Login(tc.porovide, tc.identifier)
 
 			if tc.wantErr != nil {
 				assert.ErrorIs(t, err, tc.wantErr)

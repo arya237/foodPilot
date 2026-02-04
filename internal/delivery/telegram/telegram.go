@@ -2,28 +2,93 @@ package telegram
 
 import (
 	"errors"
+	"fmt"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/arya237/foodPilot/internal/models"
+	"github.com/arya237/foodPilot/internal/services/auth"
+	tele "gopkg.in/telebot.v3"
 )
 
-func Start(bot *tgbotapi.BotAPI) error{
+type Handler struct {
+	bot  *tele.Bot
+	auth auth.Auth
+}
+
+var (
+	btnAboutUs     = "درباره ما"
+	btnAutoReserve = "رزور خودکار"
+)
+
+func AuthMiddleware(service auth.Auth) tele.MiddlewareFunc {
+	return func(next tele.HandlerFunc) tele.HandlerFunc {
+		return func(c tele.Context) error {
+			sender := c.Sender()
+
+			if sender == nil {
+				return next(c)
+			}
+
+			telegramID := fmt.Sprintf("%d", sender.ID)
+
+			internalID, err := service.Login(models.TELEGRAM, telegramID)
+			if err != nil {
+				if !errors.Is(err, auth.ErrUserNotFound) {
+					return c.Send(err)
+				}
+				internalID, err = service.SignUp(models.TELEGRAM, telegramID, &models.User{
+					Username: sender.FirstName,
+					Role:     models.RoleUser,
+				})
+
+				if err != nil {
+					return c.Send(err)
+				}
+
+			}
+
+			c.Set("id", internalID.Id)
+			return next(c)
+		}
+	}
+}
+func Start(bot *tele.Bot, auth auth.Auth) error {
+
 	if bot == nil {
 		return errors.New("Bot is nil")
 	}
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	bot.Use(AuthMiddleware(auth))
 
-	updates := bot.GetUpdatesChan(u)
+	bot.Handle("/start", onStart)
+	bot.Handle(tele.OnText, others)
+	bot.Handle(btnAboutUs, aboutUs)
+	bot.Handle(btnAutoReserve, autoRserve)
+	bot.Start()
+	return nil
+}
 
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
 
-		bot.Send(msg)
+
+func onStart(c tele.Context) error {
+	keyboard := &tele.ReplyMarkup {
+		ResizeKeyboard: true,
 	}
 
-	return nil
+	btnAutoReserve := keyboard.Text(btnAutoReserve)
+	btnAboutUs := keyboard.Text(btnAboutUs)
+	
+	keyboard.Reply(
+		keyboard.Row(btnAutoReserve),
+		keyboard.Row(btnAboutUs),
+	)
+	return c.Send("به فود پایلوت خوش آمدید", keyboard)
+}
+
+
+
+func aboutUs(c tele.Context) error {
+	return c.Send("ما خیلی خفنیم")
+}
+
+func autoRserve(c tele.Context) error {
+	return c.Send("این فیچر در حال توسعه هستش... میاد انشالله")
 }
