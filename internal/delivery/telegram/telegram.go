@@ -14,6 +14,11 @@ type Handler struct {
 	auth auth.Auth
 }
 
+var (
+	btnAboutUs     = "درباره ما"
+	btnAutoReserve = "رزور خودکار"
+)
+
 func AuthMiddleware(service auth.Auth) tele.MiddlewareFunc {
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
@@ -53,14 +58,39 @@ func Start(bot *tele.Bot, auth auth.Auth) error {
 	}
 	bot.Use(AuthMiddleware(auth))
 
-	bot.Handle(tele.OnText, func(c tele.Context) error {
-		id, ok := c.Get("id").(int)
-		if !ok {
-			return c.Send("no no")
-		}
-		return c.Send(fmt.Sprintf("id: %d \nmoew", id))
-	})
-
+	bot.Handle("/start", onStart)
+	bot.Handle(tele.OnText, others)
+	bot.Handle(btnAboutUs, aboutUs)
 	bot.Start()
 	return nil
+}
+
+
+
+func onStart(c tele.Context) error {
+	keyboard := &tele.ReplyMarkup {
+		ResizeKeyboard: true,
+	}
+
+	btnAutoReserve := keyboard.Text(btnAutoReserve)
+	btnAboutUs := keyboard.Text(btnAboutUs)
+	
+	keyboard.Reply(
+		keyboard.Row(btnAutoReserve),
+		keyboard.Row(btnAboutUs),
+	)
+	return c.Send("به فود پایلوت خوش آمدید", keyboard)
+}
+
+func others(c tele.Context) error {
+	id, ok := c.Get("id").(int)
+	if !ok {
+		return c.Send("no no")
+	}
+	return c.Send(fmt.Sprintf("id: %d moew", id))
+}
+
+func aboutUs(c tele.Context) error {
+	
+	return c.Send("ما خیلی خفنیم")
 }
