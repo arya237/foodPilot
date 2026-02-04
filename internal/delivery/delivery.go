@@ -7,13 +7,14 @@ import (
 	"github.com/arya237/foodPilot/internal/delivery/telegram"
 	"github.com/arya237/foodPilot/internal/delivery/web"
 	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/internal/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 const DELIVERY_OPTIONS = 2
 
 func Start(tokenEpereTime time.Duration, userService services.UserService,
-	adminService services.AdminService, resrveService services.Reserve, bot *tgbotapi.BotAPI) error {
+	adminService services.AdminService, resrveService services.Reserve, bot *tgbotapi.BotAPI, auth auth.Auth) error {
 
 	ch := make(chan any)
 
@@ -24,7 +25,7 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	}()
 
 	go func() {
-		err := telegram.Start(bot)
+		err := telegram.Start(bot, auth)
 		log.Println(err)
 		ch <- true
 	}()

@@ -3,10 +3,16 @@ package telegram
 import (
 	"errors"
 
+	"github.com/arya237/foodPilot/internal/services/auth"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Start(bot *tgbotapi.BotAPI) error{
+type Handler struct {
+	bot  *tgbotapi.BotAPI
+	auth auth.Auth
+}
+
+func Start(bot *tgbotapi.BotAPI, auth auth.Auth) error {
 	if bot == nil {
 		return errors.New("Bot is nil")
 	}
@@ -26,4 +32,15 @@ func Start(bot *tgbotapi.BotAPI) error{
 	}
 
 	return nil
+}
+
+func HandleUpdate(update tgbotapi.Update) {
+	if update.Message == nil {
+		return
+	}
+
+	if update.Message.IsCommand() {
+		// handleCommand(update.Message, user)
+		return
+	}
 }
