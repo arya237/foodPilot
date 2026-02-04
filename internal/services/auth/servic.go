@@ -23,7 +23,7 @@ func New(idRepo repositories.Identities, userRepo repositories.User) Auth {
 	}
 }
 
-func (a *auth) login(provider models.IdProvider, identifier string) (*models.User, error) {
+func (a *auth) Login(provider models.IdProvider, identifier string) (*models.User, error) {
 	if !isTrustedProvider(provider) {
 		return nil, ErrInvalidProvider
 	}

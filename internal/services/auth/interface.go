@@ -7,7 +7,7 @@ import (
 )
 
 type Auth interface {
-	login(provider models.IdProvider, identifier string) (*models.User, error)
+	Login(provider models.IdProvider, identifier string) (*models.User, error)
 	SignUp(provider models.IdProvider, identifier string, user *models.User) (*models.User, error)
 }
 
