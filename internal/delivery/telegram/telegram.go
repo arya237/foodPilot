@@ -61,6 +61,7 @@ func Start(bot *tele.Bot, auth auth.Auth) error {
 	bot.Handle("/start", onStart)
 	bot.Handle(tele.OnText, others)
 	bot.Handle(btnAboutUs, aboutUs)
+	bot.Handle(btnAutoReserve, autoRserve)
 	bot.Start()
 	return nil
 }
@@ -91,6 +92,9 @@ func others(c tele.Context) error {
 }
 
 func aboutUs(c tele.Context) error {
-	
 	return c.Send("ما خیلی خفنیم")
+}
+
+func autoRserve(c tele.Context) error {
+	return c.Send("این فیچر در حال توسعه هستش... میاد انشالله")
 }
