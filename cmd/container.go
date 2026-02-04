@@ -13,7 +13,7 @@ import (
 	"github.com/arya237/foodPilot/internal/getways/telegram"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/services/auth"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tele "gopkg.in/telebot.v3"
 
 	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
@@ -81,7 +81,7 @@ func Run() error {
 	container.SetUp(db, conf.SamadConfig)
 
 	connectionTries := 5
-	var bot *tgbotapi.BotAPI
+	var bot *tele.Bot
 	for i := range connectionTries {
 		getBot, err := telegram.New(conf.TelegramBot)
 		if err == nil {

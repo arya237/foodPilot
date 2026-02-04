@@ -8,13 +8,13 @@ import (
 	"github.com/arya237/foodPilot/internal/delivery/web"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/internal/services/auth"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tele "gopkg.in/telebot.v3"
 )
 
 const DELIVERY_OPTIONS = 2
 
 func Start(tokenEpereTime time.Duration, userService services.UserService,
-	adminService services.AdminService, resrveService services.Reserve, bot *tgbotapi.BotAPI, auth auth.Auth) error {
+	adminService services.AdminService, resrveService services.Reserve, bot *tele.Bot, auth auth.Auth) error {
 
 	ch := make(chan any)
 
