@@ -1,0 +1,27 @@
+name: Telegram PR Notify
+
+on:
+  pull_request:
+    types: [opened, closed, reopened]
+
+jobs:
+  telegram:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            📌 ${{ github.event.action}} Pull Request
+            
+            Title: ${{ github.event.pull_request.title }}
+            Author: ${{ github.event.pull_request.user.login }}
+            Number: #${{ github.event.number }}
+            
+            Description:
+
+            ${{ github.event.pull_request.body }}
+            ----------
+            Link: (${{ github.event.pull_request.html_url }})
+          parse_mode: markdown

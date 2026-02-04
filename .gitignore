@@ -21,5 +21,6 @@ go.work
 
 # IDE/editor files
 .vscode/
+.codacy
 .idea/
-private.md
+*private.md

@@ -1,16 +1,20 @@
 package config
 
 import (
+	"github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
-	"github.com/arya237/foodPilot/pkg/messaging"
-	"github.com/arya237/foodPilot/pkg/reservations/samad"
+	"github.com/arya237/foodPilot/internal/getways/email"
+	"github.com/arya237/foodPilot/internal/getways/telegram"
+	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 )
 
 func New() (*Config, error) {
 	config := Config{
 		SamadConfig:     &samad.Config{},
 		DBConfig:        &tempdb.Config{},
-		MessagingConfig: &messaging.Config{},
+		MessagingConfig: &email.Config{},
+		PostGresConfig:  &postgres.Config{},
+		TelegramBot:     &telegram.Config{},
 	}
 
 	// Readin samad config
@@ -18,14 +22,26 @@ func New() (*Config, error) {
 	config.SamadConfig.GetTokenUrl = GetEnv("GETTOKENURL", "")
 	config.SamadConfig.ReserveUrl = GetEnv("RESERVEURL", "")
 	config.SamadConfig.GetSelfIDUrl = GetEnv("GETSELFIDURL", "")
+	config.SamadConfig.AuthHeader = GetEnv("AUTHHEADER", "")
 
 	// Reading fack db config
 	config.DBConfig.AdminUsername = GetEnv("ADMIN_USERNAME", "admin")
 	config.DBConfig.AdminPassword = GetEnv("ADMIN_PASSWORD", "admin")
 
+	// Reading postgres config
+	config.PostGresConfig.Host = GetEnv("DB_HOST", "localhost")
+	config.PostGresConfig.Port = GetEnv("DB_PORT", "5432")
+	config.PostGresConfig.User = GetEnv("DB_USER", "postgr")
+	config.PostGresConfig.DBName = GetEnv("DB_NAME", "postgres")
+	config.PostGresConfig.Password = GetEnv("DB_PASSWORD", "")
+
 	// Messenger
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")
 	config.MessagingConfig.Key = GetEnv("MSG_KEY", "")
+
+	// bot
+	config.TelegramBot.Token = GetEnv("BOT_TOKEN", "")
+	config.TelegramBot.API = GetEnv("BOT_API", "")
 
 	return &config, nil
 }

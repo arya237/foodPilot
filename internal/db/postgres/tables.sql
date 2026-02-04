@@ -1,13 +1,27 @@
 -------------- Tables -------------------
 CREATE TYPE user_role AS ENUM ('user', 'admin');
+CREATE TYPE id_provider_enum AS ENUM ('telegram');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    auto_save BOOLEAN DEFAULT FALSE,
     role user_role DEFAULT 'user',
-    token VARCHAR(500)
+    auto_save BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE identities (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider id_provider_enum NOT NULL,
+    identifier VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE restaurant_credentials (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    username VARCHAR(100),
+    password VARCHAR(100),
+    token text
 );
 
 CREATE TABLE foods (
@@ -26,35 +40,36 @@ CREATE TABLE rates (
 CREATE INDEX idx_users_username ON users(username);
 
 ------------ Test Data ----------------------
-INSERT INTO foods (id, name) VALUES
-(1, 'چلو کباب کوبیده زعفرانی'),
-(3, 'خوراک گوشت چرخ‌کرده با سیب زمینی'),
-(4, 'چلو خورشت آلو با اسفناج'),
-(5, 'چلو جوجه کباب'),
-(6, 'فرنی'),
-(7, 'لوبیا پلو'),
-(8, 'خوراک فلافل'),
-(9, 'خوراک فیله سوخاری'),
-(10, 'چلو خورشت قیمه'),
-(11, 'کلم پلو'),
-(12, 'خوراک عدسی'),
-(13, 'زرشک پلو با مرغ'),
-(14, 'شکلات صبحانه ،شیر،پنیر ،چای'),
-(15, 'تخم مرغ(24عدد)'),
-(16, 'پنیر ،مربا،خامه،چای'),
-(17, 'تخم مرغ(14 عدد)'),
-(18, 'شیرموز(2عدد)، شیر کاکائو(2عدد)،کیک(4عدد)،چایی(5عدد)'),
-(19, 'غلات صبحانه، شیر'),
-(20, 'خوراک پاستا'),
-(21, 'چلو ماهی قزل آلا'),
-(22, 'خوراک ناگت مرغ'),
-(23, 'استانبولی پلو'),
-(24, 'چلو تن ماهی'),
-(25, 'عدس پلو'),
-(26, 'چلو خورشت قورمه سبزی'),
-(27, 'خوراک دلمه'),
-(28, 'چلو کباب کوبیده مرغ'),
-(29, 'خوراک شنیسل مرغ'),
-(30, 'خوراک لوبیا + پوره'),
-(31, 'سوپ جو'),
-(32, 'چلو خورشت بادمجان');
+INSERT INTO foods (name) VALUES
+('چلو کباب کوبیده زعفرانی'),
+('خوراک گوشت چرخ‌کرده با سیب زمینی'),
+('چلو خورشت آلو با اسفناج'),
+('چلو جوجه کباب'),
+('فرنی'),
+('لوبیا پلو'),
+('خوراک فلافل'),
+('خوراک فیله سوخاری'),
+('چلو خورشت قیمه'),
+('کلم پلو'),
+('خوراک عدسی'),
+('زرشک پلو با مرغ'),
+('شکلات صبحانه ،شیر،پنیر ،چای'),
+('تخم مرغ(24عدد)'),
+('پنیر ،مربا،خامه،چای'),
+('تخم مرغ(14 عدد)'),
+('شیرموز(2عدد)، شیر کاکائو(2عدد)،کیک(4عدد)،چایی(5عدد)'),
+('غلات صبحانه، شیر'),
+('خوراک پاستا'),
+('چلو ماهی قزل آلا'),
+('خوراک ناگت مرغ'),
+('استانبولی پلو'),
+('چلو تن ماهی'),
+('عدس پلو'),
+('چلو خورشت قورمه سبزی'),
+('خوراک دلمه'),
+('چلو کباب کوبیده مرغ'),
+('خوراک شنیسل مرغ'),
+('خوراک لوبیا + پوره'),
+('سوپ جو'),
+('چلو خورشت بادمجان');
+

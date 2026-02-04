@@ -30,6 +30,15 @@ type Food interface {
 	Update(new *models.Food) error
 }
 
+type RestaurantCredentials interface {
+	Save(r *models.RestaurantCredentials)(*models.RestaurantCredentials, error)
+	GetByUserID(id int)(*models.RestaurantCredentials, error)
+}
+
+type Identities interface {
+	Save(new *models.Identities)(*models.Identities, error)
+	GetByProvide(provide models.IdProvider, identifier string) (*models.Identities, error)
+}
 // --------------- Errors -------------------------------
 var (
 	ErrorDuplicate = errors.New("duplicate")
