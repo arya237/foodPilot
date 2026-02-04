@@ -83,13 +83,7 @@ func onStart(c tele.Context) error {
 	return c.Send("به فود پایلوت خوش آمدید", keyboard)
 }
 
-func others(c tele.Context) error {
-	id, ok := c.Get("id").(int)
-	if !ok {
-		return c.Send("no no")
-	}
-	return c.Send(fmt.Sprintf("id: %d moew", id))
-}
+
 
 func aboutUs(c tele.Context) error {
 	return c.Send("ما خیلی خفنیم")
