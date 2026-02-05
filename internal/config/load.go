@@ -39,9 +39,9 @@ func New() (*Config, error) {
 	config.MessagingConfig.From = GetEnv("MSG_FROM", "")
 	config.MessagingConfig.Key = GetEnv("MSG_KEY", "")
 
-	// bot
-	config.TelegramBot.Token = GetEnv("BOT_TOKEN", "")
-	config.TelegramBot.API = GetEnv("BOT_API", "")
+	// telgram bitbot
+	config.TelegramBot.Token = GetEnv("TELE_BOT_TOKEN", "")
+	config.TelegramBot.API = GetEnv("TELE_BOT_API", "")
 
 	return &config, nil
 }
