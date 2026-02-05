@@ -23,7 +23,7 @@ func AuthMiddleware(service auth.Auth, provider models.IdProvider) tele.Middlewa
 			internalID, err := service.Login(provider, telegramID)
 			if err != nil {
 				if !errors.Is(err, auth.ErrUserNotFound) {
-					return c.Send(err)
+					return c.Send(err.Error())
 				}
 				internalID, err = service.SignUp(provider, telegramID, &models.User{
 					Username: sender.FirstName,
@@ -31,7 +31,7 @@ func AuthMiddleware(service auth.Auth, provider models.IdProvider) tele.Middlewa
 				})
 
 				if err != nil {
-					return c.Send(err)
+					return c.Send(err.Error())
 				}
 
 			}
