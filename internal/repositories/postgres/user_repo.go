@@ -24,7 +24,7 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	}
 
 	query := `
-		INSERT INTO users (username, auto_save, role) 
+		INSERT INTO users (username, password_hash, Role, SamadConnection) 
 		VALUES ($1, $2, $3) 
 		RETURNING id
 	`
@@ -33,7 +33,6 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	err := r.db.QueryRow(
 		query,
 		newUser.Username,
-		newUser.AutoSave,
 		newUser.Role,
 	).Scan(&id)
 
@@ -63,7 +62,6 @@ func (r *UserRepository) GetById(id int) (*models.User, error) {
 	err := r.db.QueryRow(query, id).Scan(
 		&user.Id,
 		&user.Username,
-		&user.AutoSave,
 		&user.Role,
 	)
 
@@ -92,7 +90,6 @@ func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
 	err := r.db.QueryRow(query, username).Scan(
 		&user.Id,
 		&user.Username,
-		&user.AutoSave,
 		&user.Role,
 	)
 
@@ -129,7 +126,6 @@ func (r *UserRepository) GetAll() ([]*models.User, error) {
 		err := rows.Scan(
 			&user.Id,
 			&user.Username,
-			&user.AutoSave,
 			&user.Role,
 		)
 		if err != nil {
@@ -183,7 +179,6 @@ func (r *UserRepository) Update(updatedUser *models.User) error {
 	result, err := r.db.Exec(
 		query,
 		updatedUser.Username,
-		updatedUser.AutoSave,
 		updatedUser.Role,
 		updatedUser.Id,
 	)

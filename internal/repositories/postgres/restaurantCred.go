@@ -32,7 +32,7 @@ func (r *RestaurantCredentials) Save(new *models.RestaurantCredentials) (*models
 		new.UserID,
 		new.Username,
 		new.Password,
-		new.Token,
+		new.AccessToken,
 	).Scan(&id)
 
 	if err != nil {
@@ -54,7 +54,7 @@ func (r *RestaurantCredentials) GetByUserID(id int) (*models.RestaurantCredentia
 		&cred.UserID,
 		&cred.Username,
 		&cred.Password,
-		&cred.Token,
+		&cred.AccessToken,
 	)
 
 	if err != nil {

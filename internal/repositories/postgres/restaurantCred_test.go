@@ -39,7 +39,7 @@ func TestSaveResturantCred_InvalidUserRefrence(t *testing.T) {
 		UserID: 8000, //nonexsiting
 		Username: "user name",
 		Password: "password",
-		Token: "token",
+		AccessToken: "token",
 	})
 
 	assert.NotNil(t, err)
@@ -60,7 +60,6 @@ func TestSaveAndGetResturantCred_basic(t *testing.T) {
 	user, err := userRepo.Save(&models.User{
 		Username: "SaveAndGetResturantCred",
 		Role: models.RoleUser,
-		AutoSave: false,
 	})
 	assert.Nil(t, err)
 	defer func ()  {
@@ -72,7 +71,7 @@ func TestSaveAndGetResturantCred_basic(t *testing.T) {
 		UserID: user.Id, 
 		Username: "user name",
 		Password: "password",
-		Token: "token",
+		AccessToken: "token",
 	})
 	assert.Nil(t, err)
 
