@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/arya237/foodPilot/internal/delivery/telegram"
+	"github.com/arya237/foodPilot/internal/delivery/bot"
 	"github.com/arya237/foodPilot/internal/delivery/web"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/internal/services/auth"
@@ -14,7 +14,7 @@ import (
 const DELIVERY_OPTIONS = 2
 
 func Start(tokenEpereTime time.Duration, userService services.UserService,
-	adminService services.AdminService, resrveService services.Reserve, bot *tele.Bot, auth auth.Auth) error {
+	adminService services.AdminService, resrveService services.Reserve, teleBot *tele.Bot, auth auth.Auth) error {
 
 	ch := make(chan any)
 
@@ -25,7 +25,7 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	}()
 
 	go func() {
-		err := telegram.Start(bot, auth)
+		err := bot.Start(teleBot, auth)
 		log.Println(err)
 		ch <- true
 	}()
