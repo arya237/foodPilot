@@ -4,6 +4,7 @@ type IdProvider string
 
 const (
 	TELEGRAM IdProvider = "telegram"
+	BALE     IdProvider = "bale"
 )
 
 type Identities struct {
