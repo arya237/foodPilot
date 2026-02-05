@@ -31,15 +31,8 @@ func Run() error {
 	services := NewService(repo, samd)
 
 	connectionTries := 5
-	var teleBot *tele.Bot
-	for i := range connectionTries {
-		getBot, err := bot.New(conf.TelegramBot)
-		if err == nil {
-			teleBot = getBot
-			break
-		}
-		log.Printf("Try[%d]:%s\n", i, err.Error())
-	}
+	teleBot := CreateBot(connectionTries, conf.TelegramBot)
+	
 
 	return delivery.Start(&delivery.NeededServises{
 		User:   services.User,
@@ -49,4 +42,13 @@ func Run() error {
 	}, teleBot)
 }
 
-// func CreateBot(connectionTries int,)
+func CreateBot(connectionTries int, cfg *bot.Config)(*tele.Bot) {
+	for i := range connectionTries {
+		getBot, err := bot.New(cfg)
+		if err == nil {
+			return getBot
+		}
+		log.Printf("Try[%d]:%s\n", i, err.Error())
+	}
+	return nil
+}
