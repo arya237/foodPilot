@@ -6,29 +6,27 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255),
-    role user_role DEFAULT 'user' NOT NULL
+    role user_role DEFAULT 'user' NOT NULL,
+    samad_connection BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE identities (
     id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     provider id_provider_enum NOT NULL,
     identifier VARCHAR(255) NOT NULL,
 
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
-    CONSTRAINT unique_identity_per_provider UNIQUE(provider_id, identifier),
-    INDEX idx_identities_provider_identifier (provider_id, identifier)
-    
+    CONSTRAINT unique_identity_per_provider UNIQUE(provider_id, identifier)
 );
 
 CREATE TABLE restaurant_credentials (
     id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
     username VARCHAR(100),
     password VARCHAR(100),
     access_token text,
     auto_save BOOLEAN DEFAULT FALSE
-
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE foods (
@@ -46,6 +44,7 @@ CREATE TABLE rates (
 
 ------------ Create indexes for ----------
 CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_identities_provider_identifier (provider_id, identifier)
 
 ------------ Test Data ----------------------
 INSERT INTO foods (name) VALUES
