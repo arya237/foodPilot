@@ -7,11 +7,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/internal/getways/reservations"
-	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -36,14 +35,14 @@ type userService struct {
 }
 
 func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
-	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, config *samad.Config) UserService {
+	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, samd reservations.ReserveFunctions) UserService {
 	return &userService{
 		userStorage: userRepo,
-		userCred: userCred,
+		userCred:    userCred,
 		foodStorge:  foodRepo,
 		rateStorage: rateRepo,
 		logger:      logger.New("userService"),
-		samad:       samad.NewSamad(config),
+		samad:       samd,
 	}
 }
 
@@ -61,7 +60,7 @@ func (u *userService) ConnectToResturant(id int, userName, password string) erro
 		UserID:   id,
 		Username: userName,
 		Password: password,
-		Token: token,
+		Token:    token,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -101,7 +100,7 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 		UserID:   user.Id,
 		Username: userName,
 		Password: password,
-		Token: token,
+		Token:    token,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -109,7 +108,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 	return user, nil
 }
-
 
 func (u *userService) Login(userName, password string) (*models.User, error) {
 

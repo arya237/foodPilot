@@ -1,4 +1,4 @@
-package telegram
+package bot
 
 import (
 	"log"
@@ -24,6 +24,6 @@ func New(cfg *Config) (bot *tele.Bot, err error) {
 		return nil, err
 	}
 
-	log.Printf("Authorized telegram bot")
+	log.Printf("Authorized bot bot")
 	return bot, err
 }
