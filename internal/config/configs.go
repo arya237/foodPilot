@@ -14,4 +14,5 @@ type Config struct {
 	DBConfig        *tempdb.Config
 	PostGresConfig  *postgres.Config
 	TelegramBot     *bot.Config
+	BaleBot         *bot.Config
 }
