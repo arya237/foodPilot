@@ -57,10 +57,11 @@ func (u *userService) ConnectToResturant(id int, userName, password string) erro
 	}
 
 	userCred := &models.RestaurantCredentials{
-		UserID:   id,
-		Username: userName,
-		Password: password,
-		Token:    token,
+		UserID:      id,
+		Username:    userName,
+		Password:    password,
+		AccessToken: token,
+		AutoSave:    true,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -89,7 +90,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	user := &models.User{
 		Username: userName,
 		Role:     models.RoleUser, // Default role is user
-		AutoSave: true,
 	}
 	user, err = u.userStorage.Save(user)
 	if err != nil {
@@ -97,10 +97,11 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 
 	userCred := &models.RestaurantCredentials{
-		UserID:   user.Id,
-		Username: userName,
-		Password: password,
-		Token:    token,
+		UserID:      user.Id,
+		Username:    userName,
+		Password:    password,
+		AccessToken: token,
+		AutoSave:    true,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -141,7 +142,6 @@ func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 		return err
 	}
 
-	user.AutoSave = autoSave
 	err = u.userStorage.Update(user)
 	if err != nil {
 		u.logger.Info(err.Error())
