@@ -45,8 +45,8 @@ func New() (*Config, error) {
 	config.TelegramBot.API = GetEnv("TELE_BOT_API", "")
 
 	// Bale bot
-	config.TelegramBot.Token = GetEnv("BALE_BOT_TOKEN", "")
-	config.TelegramBot.API = GetEnv("BALE_BOT_API", "")
+	config.BaleBot.Token = GetEnv("BALE_BOT_TOKEN", "")
+	config.BaleBot.API = GetEnv("BALE_BOT_API", "")
 
 	return &config, nil
 }

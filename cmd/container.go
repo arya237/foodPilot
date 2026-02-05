@@ -33,17 +33,16 @@ func Run() error {
 	connectionTries := 5
 	teleBot := CreateBot(connectionTries, conf.TelegramBot)
 	baleBot := CreateBot(connectionTries, conf.BaleBot)
-	
 
 	return delivery.Start(&delivery.NeededServises{
 		User:   services.User,
 		Admin:  services.Admin,
 		Resrve: services.Reserve,
 		Auth:   services.Auth,
-	}, teleBot , baleBot)
+	}, teleBot, baleBot)
 }
 
-func CreateBot(connectionTries int, cfg *bot.Config)(*tele.Bot) {
+func CreateBot(connectionTries int, cfg *bot.Config) *tele.Bot {
 	for i := range connectionTries {
 		getBot, err := bot.New(cfg)
 		if err == nil {
