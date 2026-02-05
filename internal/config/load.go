@@ -3,8 +3,8 @@ package config
 import (
 	"github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/db/tempdb"
-	"github.com/arya237/foodPilot/internal/getways/email"
 	"github.com/arya237/foodPilot/internal/getways/bot"
+	"github.com/arya237/foodPilot/internal/getways/email"
 	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 )
 
@@ -15,6 +15,7 @@ func New() (*Config, error) {
 		MessagingConfig: &email.Config{},
 		PostGresConfig:  &postgres.Config{},
 		TelegramBot:     &bot.Config{},
+		BaleBot:         &bot.Config{},
 	}
 
 	// Readin samad config
