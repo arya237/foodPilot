@@ -6,6 +6,7 @@ import (
 
 	"github.com/arya237/foodPilot/internal/delivery/bot"
 	"github.com/arya237/foodPilot/internal/delivery/web"
+	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/internal/services/auth"
 	tele "gopkg.in/telebot.v3"
@@ -25,7 +26,7 @@ func Start(tokenEpereTime time.Duration, userService services.UserService,
 	}()
 
 	go func() {
-		err := bot.Start(teleBot, auth)
+		err := bot.Start(teleBot, auth, models.TELEGRAM)
 		log.Println(err)
 		ch <- true
 	}()
