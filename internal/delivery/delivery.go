@@ -12,21 +12,30 @@ import (
 	tele "gopkg.in/telebot.v3"
 )
 
-const DELIVERY_OPTIONS = 2
+const (
+	DELIVERY_OPTIONS = 2
+	TOKEN_EXP = 24 * time.Hour 
+)
 
-func Start(tokenEpereTime time.Duration, userService services.UserService,
-	adminService services.AdminService, resrveService services.Reserve, teleBot *tele.Bot, auth auth.Auth) error {
+type NeededServises struct {
+	User   services.UserService
+	Admin  services.AdminService
+	Resrve services.Reserve
+	Auth   auth.Auth
+}
+
+func Start(services *NeededServises, teleBot *tele.Bot) error {
 
 	ch := make(chan any)
 
 	go func() {
-		err := web.Start(tokenEpereTime, userService, adminService, resrveService)
+		err := web.Start(TOKEN_EXP, services.User, services.Admin, services.Resrve)
 		log.Println(err)
 		ch <- true
 	}()
 
 	go func() {
-		err := bot.Start(teleBot, auth, models.TELEGRAM)
+		err := bot.Start(teleBot, services.Auth, models.TELEGRAM)
 		log.Println(err)
 		ch <- true
 	}()

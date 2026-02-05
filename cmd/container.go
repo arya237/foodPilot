@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"log"
-	"time"
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
@@ -42,5 +41,10 @@ func Run() error {
 		log.Printf("Try[%d]:%s\n", i, err.Error())
 	}
 
-	return delivery.Start(time.Hour, services.User, services.Admin, services.Reserve, bot, services.Auth)
+	return delivery.Start(&delivery.NeededServises{
+		User:   services.User,
+		Admin:  services.Admin,
+		Resrve: services.Reserve,
+		Auth:   services.Auth,
+	}, bot)
 }
