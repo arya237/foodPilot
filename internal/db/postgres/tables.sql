@@ -1,10 +1,10 @@
 -------------- Tables -------------------
 CREATE TYPE user_role AS ENUM ('user', 'admin');
-CREATE TYPE id_provider_enum AS ENUM ('telegram');
+CREATE TYPE id_provider_enum AS ENUM ('telegram', 'bale');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL,
     role user_role DEFAULT 'user',
     auto_save BOOLEAN DEFAULT FALSE
 );
