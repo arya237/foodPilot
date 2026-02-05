@@ -7,7 +7,7 @@ import (
 	"github.com/arya237/foodPilot/internal/config"
 	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/delivery"
-	"github.com/arya237/foodPilot/internal/getways/telegram"
+	"github.com/arya237/foodPilot/internal/getways/bot"
 	tele "gopkg.in/telebot.v3"
 
 	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
@@ -31,11 +31,11 @@ func Run() error {
 	services := NewService(repo, samd)
 
 	connectionTries := 5
-	var bot *tele.Bot
+	var teleBot *tele.Bot
 	for i := range connectionTries {
-		getBot, err := telegram.New(conf.TelegramBot)
+		getBot, err := bot.New(conf.TelegramBot)
 		if err == nil {
-			bot = getBot
+			teleBot = getBot
 			break
 		}
 		log.Printf("Try[%d]:%s\n", i, err.Error())
@@ -46,5 +46,7 @@ func Run() error {
 		Admin:  services.Admin,
 		Resrve: services.Reserve,
 		Auth:   services.Auth,
-	}, bot)
+	}, teleBot)
 }
+
+// func CreateBot(connectionTries int,)
