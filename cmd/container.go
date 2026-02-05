@@ -11,25 +11,15 @@ import (
 	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
 	"github.com/arya237/foodPilot/internal/delivery"
 	"github.com/arya237/foodPilot/internal/getways/telegram"
-	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/internal/services/auth"
 	tele "gopkg.in/telebot.v3"
 
 	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
-	repo_postgres "github.com/arya237/foodPilot/internal/repositories/postgres"
 	"github.com/arya237/foodPilot/internal/services"
 )
 
 type Container struct {
-	db *sql.DB
-	//repositories
-	UserRepo       repositories.User
-	FoodRepo       repositories.Food
-	RateRepo       repositories.Rate
-	CredRepo       repositories.RestaurantCredentials
-	identitiesRepo repositories.Identities
-
 	//service
 	UserService    services.UserService
 	AdminService   services.AdminService
@@ -49,20 +39,15 @@ func NewContainer() *Container {
 func (c *Container) SetUp(db *sql.DB, conf *samad.Config) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.db = db
 
-	c.UserRepo = repo_postgres.NewUserRepo(c.db)
-	c.FoodRepo = repo_postgres.NewFoodRepo(c.db)
-	c.RateRepo = repo_postgres.NewRateRepo(c.db)
-	c.CredRepo = repo_postgres.NewResturantCred(c.db)
-	c.identitiesRepo = repo_postgres.NewIdentities(c.db)
+	repo := NewRepo(db)
 
-	c.UserService = services.NewUserService(c.UserRepo, c.FoodRepo, c.RateRepo, c.CredRepo, conf)
-	c.AdminService = services.NewAdminService(c.UserRepo, c.FoodRepo)
-	c.AuthService = auth.New(c.identitiesRepo, c.UserRepo)
+	c.UserService = services.NewUserService(repo.User, repo.Food, repo.Rate, repo.Cred, conf)
+	c.AdminService = services.NewAdminService(repo.User, repo.Food)
+	c.AuthService = auth.New(repo.identities, repo.User)
 
 	c.Samad = samad.NewSamad(conf)
-	c.ReserveService = services.NewReserveService(c.UserRepo, c.CredRepo, c.UserService, c.Samad)
+	c.ReserveService = services.NewReserveService(repo.User, repo.Cred, c.UserService, c.Samad)
 }
 
 func Run() error {
