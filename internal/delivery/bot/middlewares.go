@@ -9,7 +9,7 @@ import (
 	tele "gopkg.in/telebot.v3"
 )
 
-func AuthMiddleware(service auth.Auth) tele.MiddlewareFunc {
+func AuthMiddleware(service auth.Auth, provider models.IdProvider) tele.MiddlewareFunc {
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
 			sender := c.Sender()
@@ -20,12 +20,12 @@ func AuthMiddleware(service auth.Auth) tele.MiddlewareFunc {
 
 			telegramID := fmt.Sprintf("%d", sender.ID)
 
-			internalID, err := service.Login(models.TELEGRAM, telegramID)
+			internalID, err := service.Login(provider, telegramID)
 			if err != nil {
 				if !errors.Is(err, auth.ErrUserNotFound) {
 					return c.Send(err)
 				}
-				internalID, err = service.SignUp(models.TELEGRAM, telegramID, &models.User{
+				internalID, err = service.SignUp(provider, telegramID, &models.User{
 					Username: sender.FirstName,
 					Role:     models.RoleUser,
 				})
