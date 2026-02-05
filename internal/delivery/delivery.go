@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	DELIVERY_OPTIONS = 2
+	DELIVERY_OPTIONS = 3
 	TOKEN_EXP = 24 * time.Hour 
 )
 
@@ -24,19 +24,25 @@ type NeededServises struct {
 	Auth   auth.Auth
 }
 
-func Start(services *NeededServises, teleBot *tele.Bot) error {
+func Start(services *NeededServises, teleBot *tele.Bot, baleBot *tele.Bot) error {
 
 	ch := make(chan any)
 
 	go func() {
 		err := web.Start(TOKEN_EXP, services.User, services.Admin, services.Resrve)
-		log.Println(err)
+		log.Println("delivery web:", err)
 		ch <- true
 	}()
 
 	go func() {
 		err := bot.Start(teleBot, services.Auth, models.TELEGRAM)
-		log.Println(err)
+		log.Println("delivery telegram:", err)
+		ch <- true
+	}()
+
+	go func() {
+		err := bot.Start(baleBot, services.Auth, models.BALE)
+		log.Println("delivery Bale:", err)
 		ch <- true
 	}()
 

@@ -32,6 +32,7 @@ func Run() error {
 
 	connectionTries := 5
 	teleBot := CreateBot(connectionTries, conf.TelegramBot)
+	baleBot := CreateBot(connectionTries, conf.BaleBot)
 	
 
 	return delivery.Start(&delivery.NeededServises{
@@ -39,7 +40,7 @@ func Run() error {
 		Admin:  services.Admin,
 		Resrve: services.Reserve,
 		Auth:   services.Auth,
-	}, teleBot)
+	}, teleBot , baleBot)
 }
 
 func CreateBot(connectionTries int, cfg *bot.Config)(*tele.Bot) {
