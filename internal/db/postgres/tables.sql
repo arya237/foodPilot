@@ -5,15 +5,19 @@ CREATE TYPE id_provider_enum AS ENUM ('telegram', 'bale');
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
-    role user_role DEFAULT 'user',
-    auto_save BOOLEAN DEFAULT FALSE
+    password_hash VARCHAR(255),
+    role user_role DEFAULT 'user' NOT NULL,
+    samad_connection BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE identities (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     provider id_provider_enum NOT NULL,
-    identifier VARCHAR(255) NOT NULL
+    identifier VARCHAR(255) NOT NULL,
+
+
+    CONSTRAINT unique_identity_per_provider UNIQUE(provider, identifier)
 );
 
 CREATE TABLE restaurant_credentials (
@@ -21,7 +25,8 @@ CREATE TABLE restaurant_credentials (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     username VARCHAR(100),
     password VARCHAR(100),
-    token text
+    access_token text,
+    auto_save BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE foods (
@@ -33,11 +38,13 @@ CREATE TABLE rates (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     food_id INTEGER NOT NULL REFERENCES foods(id) ON DELETE CASCADE,
     score INTEGER NOT NULL,
+
     PRIMARY KEY (user_id, food_id)
 );
 
 ------------ Create indexes for ----------
 CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_identities_provider_identifier ON identities (provider, identifier);
 
 ------------ Test Data ----------------------
 INSERT INTO foods (name) VALUES

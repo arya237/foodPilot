@@ -88,14 +88,14 @@ func (r *reserve) ReserveFood() ([]*UserReserveResult, error) {
 		}()
 	}
 
-	go func() {
-		for _, user := range users {
-			if user.AutoSave {
-				jobs <- user
-			}
-		}
-		close(jobs)
-	}()
+	// go func() {
+	// 	for _, user := range users {
+	// 		if user.AutoSave {
+	// 			jobs <- user
+	// 		}
+	// 	}
+	// 	close(jobs)
+	// }()
 
 	// collect results after workers finish
 	go func() {

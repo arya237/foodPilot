@@ -21,8 +21,8 @@ func NewResturantCred(db *sql.DB) repo.RestaurantCredentials {
 
 func (r *RestaurantCredentials) Save(new *models.RestaurantCredentials) (*models.RestaurantCredentials, error) {
 	query := `
-		INSERT INTO restaurant_credentials (user_id, username, password, token) 
-		VALUES ($1, $2, $3, $4) 
+		INSERT INTO restaurant_credentials (user_id, username, password, access_token, auto_save) 
+		VALUES ($1, $2, $3, $4, $5) 
 		RETURNING id
 	`
 
@@ -32,7 +32,8 @@ func (r *RestaurantCredentials) Save(new *models.RestaurantCredentials) (*models
 		new.UserID,
 		new.Username,
 		new.Password,
-		new.Token,
+		new.AccessToken,
+		new.AutoSave,
 	).Scan(&id)
 
 	if err != nil {
@@ -44,7 +45,7 @@ func (r *RestaurantCredentials) Save(new *models.RestaurantCredentials) (*models
 
 func (r *RestaurantCredentials) GetByUserID(id int) (*models.RestaurantCredentials, error) {
 	query := `
-		SELECT id, user_id, username, password, token 
+		SELECT id, user_id, username, password, access_token, auto_save
 		FROM restaurant_credentials
 		WHERE user_id = $1
 	`
@@ -54,7 +55,8 @@ func (r *RestaurantCredentials) GetByUserID(id int) (*models.RestaurantCredentia
 		&cred.UserID,
 		&cred.Username,
 		&cred.Password,
-		&cred.Token,
+		&cred.AccessToken,
+		&cred.AutoSave,
 	)
 
 	if err != nil {

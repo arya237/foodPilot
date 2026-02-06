@@ -35,7 +35,6 @@ func (s *adminService) AddUser(userName, password string, role models.UserRole) 
 	user := &models.User{
 		Username: userName,
 		Role:     role,
-		AutoSave: true,
 	}
 
 	savedUser, err := s.user.Save(user)
@@ -68,7 +67,7 @@ func (s *adminService) GetUsers() ([]*models.User, error) {
 }
 
 func (s *adminService) UpdateUser(id int, userName, password string, autosave bool, role models.UserRole, token string) error {
-	newUser := models.User{Id: id, Username: userName, AutoSave: autosave, Role: role}
+	newUser := models.User{Id: id, Username: userName, Role: role}
 	err := s.user.Update(&newUser)
 	if err != nil {
 		s.logger.Info(err.Error())
