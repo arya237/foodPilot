@@ -17,12 +17,12 @@ CREATE TABLE identities (
     identifier VARCHAR(255) NOT NULL,
 
 
-    CONSTRAINT unique_identity_per_provider UNIQUE(provider_id, identifier)
+    CONSTRAINT unique_identity_per_provider UNIQUE(provider, identifier)
 );
 
 CREATE TABLE restaurant_credentials (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     username VARCHAR(100),
     password VARCHAR(100),
     access_token text,
@@ -44,7 +44,7 @@ CREATE TABLE rates (
 
 ------------ Create indexes for ----------
 CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_identities_provider_identifier (provider_id, identifier)
+CREATE INDEX idx_identities_provider_identifier ON identities (provider, identifier);
 
 ------------ Test Data ----------------------
 INSERT INTO foods (name) VALUES
