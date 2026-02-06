@@ -18,6 +18,9 @@ services:
       timeout: 5s
       retries: 5
 
+    networks:
+      - foodpilot_network
+
   app:
       build: .
       container_name: food-pilot
@@ -49,11 +52,21 @@ services:
         MSG_FROM: ${MSG_FROM}
         MSG_KEY: ${MSG_KEY}
 
-        #
-        BOT_TOKEN: ${BOT_TOKEN}
-        BOT_API: ${BOT_API}
+        # telegram bot
+        TELE_BOT_TOKEN: ${TELE_BOT_TOKEN}
+        TELE_BOT_API: ${TELE_BOT_API}
+        
+        # Bale bot
+        BALE_BOT_TOKEN: ${BALE_BOT_TOKEN}
+        BALE_BOT_API: ${BALE_BOT_API}
+      networks:
+      - foodpilot_network
    
 
 volumes:
   postgres_data:
 
+networks:
+  foodpilot_network:
+    name: foodpilot_network
+    driver: bridge
