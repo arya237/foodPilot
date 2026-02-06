@@ -7,11 +7,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 	"github.com/arya237/foodPilot/pkg/logger"
-	"github.com/arya237/foodPilot/internal/getways/reservations"
-	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -36,14 +35,14 @@ type userService struct {
 }
 
 func NewUserService(userRepo repositories.User, foodRepo repositories.Food,
-	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, config *samad.Config) UserService {
+	rateRepo repositories.Rate, userCred repositories.RestaurantCredentials, samd reservations.ReserveFunctions) UserService {
 	return &userService{
 		userStorage: userRepo,
-		userCred: userCred,
+		userCred:    userCred,
 		foodStorge:  foodRepo,
 		rateStorage: rateRepo,
 		logger:      logger.New("userService"),
-		samad:       samad.NewSamad(config),
+		samad:       samd,
 	}
 }
 
@@ -58,10 +57,11 @@ func (u *userService) ConnectToResturant(id int, userName, password string) erro
 	}
 
 	userCred := &models.RestaurantCredentials{
-		UserID:   id,
-		Username: userName,
-		Password: password,
-		Token: token,
+		UserID:      id,
+		Username:    userName,
+		Password:    password,
+		AccessToken: token,
+		AutoSave:    true,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -90,7 +90,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	user := &models.User{
 		Username: userName,
 		Role:     models.RoleUser, // Default role is user
-		AutoSave: true,
 	}
 	user, err = u.userStorage.Save(user)
 	if err != nil {
@@ -98,10 +97,11 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 
 	userCred := &models.RestaurantCredentials{
-		UserID:   user.Id,
-		Username: userName,
-		Password: password,
-		Token: token,
+		UserID:      user.Id,
+		Username:    userName,
+		Password:    password,
+		AccessToken: token,
+		AutoSave:    true,
 	}
 	_, err = u.userCred.Save(userCred)
 	if err != nil {
@@ -109,7 +109,6 @@ func (u *userService) SignUp(userName, password string) (*models.User, error) {
 	}
 	return user, nil
 }
-
 
 func (u *userService) Login(userName, password string) (*models.User, error) {
 
@@ -143,7 +142,6 @@ func (u *userService) ToggleAutoSave(userID int, autoSave bool) error {
 		return err
 	}
 
-	user.AutoSave = autoSave
 	err = u.userStorage.Update(user)
 	if err != nil {
 		u.logger.Info(err.Error())

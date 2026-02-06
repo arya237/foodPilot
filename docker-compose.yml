@@ -4,20 +4,69 @@ services:
     container_name: postgres_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5422:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./internal/db/postgres/tables.sql:/docker-entrypoint-initdb.d/tables.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     networks:
-      - postgres_network
+      - foodpilot_network
+
+  app:
+      build: .
+      container_name: food-pilot
+      restart: unless-stopped
+      depends_on:
+        postgres:
+          condition: service_healthy
+      ports:
+        - "8080:8080"
+      environment:
+        # samad
+        GETTOKENURL: ${GETTOKENURL}
+        GETPROGRAMURL: ${GETPROGRAMURL}
+        RESERVEURL: ${RESERVEURL}
+        GETSELFIDURL: ${GETSELFIDURL}
+        AUTHHEADER: ${AUTHHEADER}
+
+        # jwt
+        JWT_SECRET: ${JWT_SECRET}
+
+        # DB
+        DB_HOST: postgres
+        DB_PORT: 5432
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_NAME: ${DB_NAME}
+
+        # 
+        MSG_FROM: ${MSG_FROM}
+        MSG_KEY: ${MSG_KEY}
+
+        # telegram bot
+        TELE_BOT_TOKEN: ${TELE_BOT_TOKEN}
+        TELE_BOT_API: ${TELE_BOT_API}
+        
+        # Bale bot
+        BALE_BOT_TOKEN: ${BALE_BOT_TOKEN}
+        BALE_BOT_API: ${BALE_BOT_API}
+      networks:
+      - foodpilot_network
+   
 
 volumes:
   postgres_data:
 
 networks:
-  postgres_network:
+  foodpilot_network:
+    name: foodpilot_network
     driver: bridge

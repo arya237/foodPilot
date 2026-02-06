@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	trusted = []models.IdProvider{models.TELEGRAM}
+	trusted = []models.IdProvider{models.TELEGRAM, models.BALE}
 )
 
 type auth struct {
