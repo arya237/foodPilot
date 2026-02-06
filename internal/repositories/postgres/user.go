@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/arya237/foodPilot/internal/models"
@@ -15,17 +16,17 @@ type UserRepository struct {
 }
 
 func NewUserRepo(db *sql.DB) *UserRepository {
+	if db == nil {
+		log.Fatal("there is no connection")
+	}
+
 	return &UserRepository{db: db}
 }
 
 func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
-	if r.db == nil {
-		return nil, errors.New("database connection is nil")
-	}
-
 	query := `
-		INSERT INTO users (username, password_hash, Role, SamadConnection) 
-		VALUES ($1, $2, $3) 
+		INSERT INTO users (username, password_hash, role, samad_connection) 
+		VALUES ($1, $2, $3, $4) 
 		RETURNING id
 	`
 
@@ -33,7 +34,9 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 	err := r.db.QueryRow(
 		query,
 		newUser.Username,
+		newUser.HashPassword,
 		newUser.Role,
+		newUser.SamadConnection,
 	).Scan(&id)
 
 	if err != nil {
@@ -48,12 +51,8 @@ func (r *UserRepository) Save(newUser *models.User) (*models.User, error) {
 }
 
 func (r *UserRepository) GetById(id int) (*models.User, error) {
-	if r.db == nil {
-		return nil, errors.New("database connection is nil")
-	}
-
 	query := `
-		SELECT id, username, auto_save, role 
+		SELECT id, username, password_hash, role, samad_connection 
 		FROM users 
 		WHERE id = $1
 	`
@@ -62,7 +61,9 @@ func (r *UserRepository) GetById(id int) (*models.User, error) {
 	err := r.db.QueryRow(query, id).Scan(
 		&user.Id,
 		&user.Username,
+		&user.HashPassword,
 		&user.Role,
+		&user.SamadConnection,
 	)
 
 	if err != nil {
@@ -76,12 +77,8 @@ func (r *UserRepository) GetById(id int) (*models.User, error) {
 }
 
 func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
-	if r.db == nil {
-		return nil, errors.New("database connection is nil")
-	}
-
 	query := `
-		SELECT id, username, auto_save, role
+		SELECT id, username, password_hash, role, samad_connection
 		FROM users 
 		WHERE username = $1
 	`
@@ -90,7 +87,9 @@ func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
 	err := r.db.QueryRow(query, username).Scan(
 		&user.Id,
 		&user.Username,
+		&user.HashPassword,
 		&user.Role,
+		&user.SamadConnection,
 	)
 
 	if err != nil {
@@ -104,12 +103,8 @@ func (r *UserRepository) GetByUserName(username string) (*models.User, error) {
 }
 
 func (r *UserRepository) GetAll() ([]*models.User, error) {
-	if r.db == nil {
-		return nil, errors.New("database connection is nil")
-	}
-
 	query := `
-		SELECT id, username, auto_save, role
+		SELECT id, username, password_hash, role, samad_connection
 		FROM users 
 		ORDER BY id
 	`
@@ -126,7 +121,9 @@ func (r *UserRepository) GetAll() ([]*models.User, error) {
 		err := rows.Scan(
 			&user.Id,
 			&user.Username,
+			&user.HashPassword,
 			&user.Role,
+			&user.SamadConnection,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan user: %w", err)
@@ -142,10 +139,6 @@ func (r *UserRepository) GetAll() ([]*models.User, error) {
 }
 
 func (r *UserRepository) Delete(id int) error {
-	if r.db == nil {
-		return errors.New("database connection is nil")
-	}
-
 	query := `DELETE FROM users WHERE id = $1`
 
 	result, err := r.db.Exec(query, id)
@@ -172,14 +165,16 @@ func (r *UserRepository) Update(updatedUser *models.User) error {
 
 	query := `
 		UPDATE users 
-		SET username = $1, auto_save = $2,  role = $3 
-		WHERE id = $4
+		SET username = $1, password_hash = $2, role = $3, samad_connection = $4
+		WHERE id = $5
 	`
 
 	result, err := r.db.Exec(
 		query,
 		updatedUser.Username,
+		updatedUser.HashPassword,
 		updatedUser.Role,
+		updatedUser.SamadConnection,
 		updatedUser.Id,
 	)
 
