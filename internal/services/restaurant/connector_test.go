@@ -23,6 +23,11 @@ func (m *MockUserRepo) GetById(id int) (*models.User, error) {
 	return user, args.Error(1)
 }
 
+func (m *MockUserRepo) Update(new *models.User) error {
+	args := m.Called(new)
+	return args.Error(0)
+}
+
 // --------------------------------------------------
 type MockCredRepo struct {
 	mock.Mock
@@ -73,8 +78,8 @@ func TestConnect(t *testing.T) {
 		wantErr  error
 	}{
 		{
-			tag: "non exsting user",
-			userID: 5,
+			tag:      "non exsting user",
+			userID:   5,
 			username: "username",
 			password: "password",
 			setup: func(u *MockUserRepo, c *MockCredRepo, r *MockRestaurant) {
@@ -84,8 +89,8 @@ func TestConnect(t *testing.T) {
 			wantErr: ErrUserNotFound,
 		},
 		{
-			tag: "user has connection",
-			userID: 1,
+			tag:      "user has connection",
+			userID:   1,
 			username: "username",
 			password: "password",
 			setup: func(u *MockUserRepo, c *MockCredRepo, r *MockRestaurant) {
@@ -100,8 +105,8 @@ func TestConnect(t *testing.T) {
 			wantErr: ErrAlreadyConnected,
 		},
 		{
-			tag: "invalid credentials",
-			userID: 1,
+			tag:      "invalid credentials",
+			userID:   1,
 			username: "username",
 			password: "password",
 			setup: func(u *MockUserRepo, c *MockCredRepo, r *MockRestaurant) {
@@ -120,8 +125,8 @@ func TestConnect(t *testing.T) {
 			wantErr: ErrAuthFailed,
 		},
 		{
-			tag: "succses full",
-			userID: 1,
+			tag:      "succses full",
+			userID:   1,
 			username: "u",
 			password: "p",
 			setup: func(u *MockUserRepo, c *MockCredRepo, r *MockRestaurant) {
@@ -139,6 +144,10 @@ func TestConnect(t *testing.T) {
 
 				c.On("Save", mock.AnythingOfType("*models.RestaurantCredentials")).
 					Return(&models.RestaurantCredentials{}, nil).
+					Once()
+
+				u.On("Update", mock.AnythingOfType("*models.User")).
+					Return(nil).
 					Once()
 			},
 		},
@@ -163,7 +172,7 @@ func TestConnect(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
-			// userRepo.AssertExpectations(t)
+			userRepo.AssertExpectations(t)
 			credRepo.AssertExpectations(t)
 			restaurant.AssertExpectations(t)
 		})

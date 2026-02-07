@@ -19,6 +19,7 @@ var (
 
 type UserStorage interface {
 	GetById(id int) (*models.User, error)
+	Update(new *models.User) error
 }
 
 type resturant interface {
@@ -42,7 +43,7 @@ func New(credStorage repositories.RestaurantCredentials, user UserStorage, restu
 }
 
 func (c *connector) Connect(userID int, username, password string) error {
-	_, err := c.userStorage.GetById(userID)
+	user, err := c.userStorage.GetById(userID)
 	if err != nil {
 		return ErrUserNotFound
 	}
@@ -68,6 +69,13 @@ func (c *connector) Connect(userID int, username, password string) error {
 	if err != nil {
 		return err
 	}
+	
+	user.SamadConnection = true
+	err = c.userStorage.Update(user)
+	if err != nil {
+		return err
+	}
+
 
 	return nil
 }
