@@ -39,6 +39,7 @@ func Run() error {
 		Admin:  services.Admin,
 		Resrve: services.Reserve,
 		Auth:   services.Auth,
+		Restaurant: services.Restaurant,
 	}, teleBot, baleBot)
 }
 

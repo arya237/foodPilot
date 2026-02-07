@@ -7,6 +7,7 @@ import (
 
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/services/auth"
+	"github.com/arya237/foodPilot/internal/services/restaurant"
 	tele "gopkg.in/telebot.v3"
 )
 
@@ -33,24 +34,25 @@ type userState struct {
 }
 
 type handler struct {
-	mu sync.RWMutex
-
-	cache map[int64]userState
+	restaurant restaurant.Connector
+	mu         sync.RWMutex
+	cache      map[int64]userState
 }
 
-func newHandler() *handler {
+func newHandler(restaurant restaurant.Connector) *handler {
 	return &handler{
-		cache: make(map[int64]userState),
+		cache:      make(map[int64]userState),
+		restaurant: restaurant,
 	}
 }
-func Start(bot *tele.Bot, auth auth.Auth, provider models.IdProvider) error {
+func Start(bot *tele.Bot, auth auth.Auth, restaurant restaurant.Connector, provider models.IdProvider) error {
 
 	if bot == nil {
 		return errors.New("Bot is nil")
 	}
 	bot.Use(AuthMiddleware(auth, provider))
 
-	h := newHandler()
+	h := newHandler(restaurant)
 	bot.Handle("/start", onStart)
 	bot.Handle(btnAboutUs, aboutUs)
 	bot.Handle(btnAutoReserve, h.onRestaurantLogin)
@@ -98,28 +100,36 @@ func (h *handler) onUsername(c tele.Context) error {
 	username := c.Message().Text
 
 	h.cache[c.Chat().ID] = userState{
-		userID: c.Chat().ID,
-		state:  waitingForPassword,
+		userID:   c.Chat().ID,
+		state:    waitingForPassword,
 		username: username,
 	}
-	
+
 	return c.Send("پسورد بده")
 }
 
 func (h *handler) onPassword(c tele.Context) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+	id, ok := c.Get("id").(int)
+	if !ok {
+		c.Send("توکنت گم شده برو بخ توسعه دهنده ها بگو")
+	}
+	err := h.restaurant.Connect(id, h.cache[c.Chat().ID].username, c.Message().Text)
+	if err != nil {
+		str := fmt.Sprintf("[%s],[%s] -> [%s]", h.cache[c.Chat().ID].username, c.Message().Text, err.Error())
+		return c.Send(str)
+	}
+	
 	h.cache[c.Chat().ID] = userState{
 		userID: c.Chat().ID,
 		state:  idel,
 	}
-	
-
 	return c.Send("تامام")
 }
 
 func (h *handler) onWrong(c tele.Context) error {
-	
+
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
