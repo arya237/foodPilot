@@ -21,6 +21,4 @@ func aboutUs(c tele.Context) error {
 	return c.Send("ما خیلی خفنیم")
 }
 
-func autoRserve(c tele.Context) error {
-	return c.Send("این فیچر در حال توسعه هستش... میاد انشالله")
-}
+
