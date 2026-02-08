@@ -1,8 +1,6 @@
 package bot
 
 import (
-	"fmt"
-
 	tele "gopkg.in/telebot.v3"
 )
 
@@ -14,7 +12,7 @@ func (h *handler) onRestaurantLogin(c tele.Context) error {
 	}
 	h.mu.Unlock()
 
-	return c.Send("نام کاربری بده")
+	return c.Send("لطفا نام کاربری خود در سماد را وارد کنید")
 }
 
 func (h *handler) onUsername(c tele.Context) error {
@@ -28,7 +26,7 @@ func (h *handler) onUsername(c tele.Context) error {
 		username: username,
 	}
 
-	return c.Send("پسورد بده")
+	return c.Send("لطفا پسورد خود در سماد را وارد کنید.")
 }
 
 func (h *handler) onPassword(c tele.Context) error {
@@ -40,13 +38,12 @@ func (h *handler) onPassword(c tele.Context) error {
 	}
 	err := h.restaurant.Connect(id, h.cache[c.Chat().ID].username, c.Message().Text)
 	if err != nil {
-		str := fmt.Sprintf("[%s],[%s] -> [%s]", h.cache[c.Chat().ID].username, c.Message().Text, err.Error())
-		return c.Send(str)
+		return c.Send("اتصال برقرار نشد! این خطا می تواند حاصل اختلالات شبکه یا رمز نا معتبر باشد.")
 	}
 
 	h.cache[c.Chat().ID] = userState{
 		userID: c.Chat().ID,
 		state:  idel,
 	}
-	return c.Send("تامام", mainMenu(true))
+	return c.Send("اتصال برقرار شد. از منوی اصلی در قسمت تنظیمات  رزور خودکار می توانید اقدام به مدیریت حساب خود کنید.", mainMenu(true))
 }
