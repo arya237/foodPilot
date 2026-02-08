@@ -21,18 +21,12 @@ func newHandler(restaurant restaurant.Connector) *handler {
 }
 
 func onStart(c tele.Context) error {
-	keyboard := &tele.ReplyMarkup{
-		ResizeKeyboard: true,
+	connection := false
+	if con, ok := c.Get("connection").(bool); ok {
+		connection = con
 	}
-
-	btnAutoReserve := keyboard.Text(btnAutoReserve)
-	btnAboutUs := keyboard.Text(btnAboutUs)
-
-	keyboard.Reply(
-		keyboard.Row(btnAutoReserve),
-		keyboard.Row(btnAboutUs),
-	)
-	return c.Send("به فود پایلوت خوش آمدید", keyboard)
+	
+	return c.Send("به فود پایلوت خوش آمدید", mainMenu(connection))
 }
 
 func aboutUs(c tele.Context) error {

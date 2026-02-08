@@ -48,5 +48,5 @@ func (h *handler) onPassword(c tele.Context) error {
 		userID: c.Chat().ID,
 		state:  idel,
 	}
-	return c.Send("تامام")
+	return c.Send("تامام", mainMenu(true))
 }

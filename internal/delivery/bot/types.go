@@ -1,9 +1,5 @@
 package bot
 
-var (
-	btnAboutUs     = "درباره ما"
-	btnAutoReserve = "رزور خودکار"
-)
 
 type state int
 
