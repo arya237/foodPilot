@@ -4,13 +4,15 @@ import (
 	"github.com/arya237/foodPilot/internal/getways/reservations"
 	"github.com/arya237/foodPilot/internal/services"
 	"github.com/arya237/foodPilot/internal/services/auth"
+	"github.com/arya237/foodPilot/internal/services/restaurant"
 )
 
 type Service struct {
-	User    services.UserService
-	Admin   services.AdminService
-	Reserve services.Reserve
-	Auth    auth.Auth
+	User       services.UserService
+	Admin      services.AdminService
+	Reserve    services.Reserve
+	Auth       auth.Auth
+	Restaurant restaurant.Connector
 }
 
 func NewService(repo *Repo, samad reservations.ReserveFunctions) *Service {
@@ -20,5 +22,6 @@ func NewService(repo *Repo, samad reservations.ReserveFunctions) *Service {
 		Admin:   services.NewAdminService(repo.User, repo.Food),
 		Reserve: services.NewReserveService(repo.User, repo.Cred, userService, samad),
 		Auth:    auth.New(repo.identities, repo.User),
+		Restaurant: restaurant.New(repo.Cred, repo.User, samad),
 	}
 }

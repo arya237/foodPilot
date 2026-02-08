@@ -35,8 +35,9 @@ func AuthMiddleware(service auth.Auth, provider models.IdProvider) tele.Middlewa
 				}
 
 			}
-
+			c.Set("connection", internalID.SamadConnection)
 			c.Set("id", internalID.Id)
+
 			return next(c)
 		}
 	}
