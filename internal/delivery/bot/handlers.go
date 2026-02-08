@@ -32,3 +32,7 @@ func onStart(c tele.Context) error {
 func aboutUs(c tele.Context) error {
 	return c.Send("ما خیلی خفنیم")
 }
+
+func onRestaurantSetting(c tele.Context) error {
+	return c.Send("این فیچر اسنپ گرفته الاناست که برسه")
+}

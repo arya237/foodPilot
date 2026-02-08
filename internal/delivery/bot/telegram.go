@@ -21,6 +21,7 @@ func Start(bot *tele.Bot, auth auth.Auth, restaurant restaurant.Connector, provi
 	bot.Handle(btnAboutUs, aboutUs)
 	bot.Handle(btnAutoReserve, h.onRestaurantLogin)
 	bot.Handle(tele.OnText, h.onText)
+	bot.Handle(btnRestaurantSetting, onRestaurantSetting)
 
 	bot.Start()
 	return nil
