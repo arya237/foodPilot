@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
-	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
+	db_postgres "github.com/arya237/foodPilot/internal/infrastructure/postgres"
 	"github.com/arya237/foodPilot/internal/delivery"
 	"github.com/arya237/foodPilot/internal/infrastructure/bot"
 	tele "gopkg.in/telebot.v3"

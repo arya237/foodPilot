@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"github.com/arya237/foodPilot/internal/db/tempdb"
+	"github.com/arya237/foodPilot/internal/infrastructure/tempdb"
 	"github.com/arya237/foodPilot/internal/models"
 	"github.com/arya237/foodPilot/internal/repositories"
 )

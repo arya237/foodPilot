@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/arya237/foodPilot/internal/db/postgres"
+	"github.com/arya237/foodPilot/internal/infrastructure/postgres"
 )
 
 var (
