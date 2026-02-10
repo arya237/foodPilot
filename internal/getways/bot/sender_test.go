@@ -22,6 +22,7 @@ func TestSend(t *testing.T) {
 		chatID  = "398725378"
 		message = "test"
 	)
+	
 	err = sender.Send(chatID, message)
 	assert.NoError(t, err)
 }
