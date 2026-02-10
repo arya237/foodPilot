@@ -13,3 +13,11 @@ type Identities struct {
 	Provider   IdProvider `json:"provider"`
 	Identifier string     `json:"identifier"`
 }
+
+func (i IdProvider) IsValid() bool {
+	switch i {
+	case TELEGRAM, BALE:
+		return true
+	}
+	return false
+}
