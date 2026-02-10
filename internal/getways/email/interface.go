@@ -5,6 +5,3 @@ type Config struct {
 	Key  string
 }
 
-type Sender interface{
-	Send(to, message string) error
-}
