@@ -33,7 +33,7 @@ dep: ## Download and vendor dependencies
 
 swag: ## Generate Swagger docs (requires github.com/swaggo/swag)
 	@which swag >/dev/null 2>&1 || (echo "Installing swag..." && go install github.com/swaggo/swag/cmd/swag@latest)
-	swag init -g internal/web/setup.go -o docs
+	swag init -g internal/delivery/web/setup.go -o docs
 	@echo "Swagger docs generated in ./docs"
 
 clean: ## Remove build artifacts

@@ -8,25 +8,25 @@ import (
 )
 
 type broadcastRequest struct {
-	provider models.IdProvider
-	msg      string
+	Provider models.IdProvider
+	Msg      string
 }
 type broadcastResponse struct {
-	response string
+	Response string
 }
 
-// GetFood      godoc
-// @Summary     Add new user
-// @Description Register new user
+// Broadcast     godoc
+// @Summary     Broadcast message to users
+// @Description Send a broadcast message to all users of a specific provider
 // @Tags        Admin
 // @Security    BearerAuth
 // @Accept      json
-// @Param       newUser body AddNewUserRequest true "User info"
 // @Produce     json
-// @Success     201 {object} AddNewUserResponse
-// @Failure     500 {object} ErrorResponse
+// @Param       request body broadcastRequest true "Broadcast message details"
+// @Success     200 {object} broadcastResponse
 // @Failure     400 {object} ErrorResponse
-// @Router      /api/admin/user [POST]
+// @Failure     500 {object} ErrorResponse
+// @Router      /api/admin/broadcast [POST]
 func (h *AdminHandler) broadcast(c *gin.Context) {
 	var req broadcastRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -36,7 +36,7 @@ func (h *AdminHandler) broadcast(c *gin.Context) {
 		return
 	}
 
-	if err := h.notifier.Broadcast(req.provider, req.msg); err != nil {
+	if err := h.notifier.Broadcast(req.Provider, req.Msg); err != nil {
 
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Error: err.Error(),
@@ -45,6 +45,6 @@ func (h *AdminHandler) broadcast(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, broadcastResponse{
-		response: "send",
+		Response: "send",
 	})
 }
