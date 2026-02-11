@@ -25,7 +25,7 @@ type NeededServises struct {
 	Resrve     services.Reserve
 	Auth       auth.Auth
 	Restaurant restaurant.Connector
-	notifier   admin.Notifier
+	Notifier   admin.Notifier
 }
 
 func Start(services *NeededServises, teleBot *tele.Bot, baleBot *tele.Bot) error {
@@ -33,7 +33,7 @@ func Start(services *NeededServises, teleBot *tele.Bot, baleBot *tele.Bot) error
 	ch := make(chan any)
 
 	go func() {
-		err := web.Start(TOKEN_EXP, services.User, services.Admin, services.Resrve, services.notifier)
+		err := web.Start(TOKEN_EXP, services.User, services.Admin, services.Resrve, services.Notifier)
 		log.Println("delivery web:", err)
 		ch <- true
 	}()
