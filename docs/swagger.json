@@ -479,6 +479,52 @@
                 }
             }
         },
+        "/api/tmp/broadcast": {
+            "post": {
+                "description": "Send a broadcast message to all users of a specific provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tmp"
+                ],
+                "summary": "Broadcast message to users",
+                "parameters": [
+                    {
+                        "description": "Broadcast message details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tmp.broadcastRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.broadcastResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/autosave": {
             "post": {
                 "security": [
@@ -963,6 +1009,34 @@
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "tmp.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message"
+                }
+            }
+        },
+        "tmp.broadcastRequest": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string"
+                },
+                "provider": {
+                    "$ref": "#/definitions/models.IdProvider"
+                }
+            }
+        },
+        "tmp.broadcastResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }

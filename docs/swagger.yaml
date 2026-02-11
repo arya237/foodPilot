@@ -218,6 +218,24 @@ definitions:
       username:
         type: string
     type: object
+  tmp.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  tmp.broadcastRequest:
+    properties:
+      msg:
+        type: string
+      provider:
+        $ref: '#/definitions/models.IdProvider'
+    type: object
+  tmp.broadcastResponse:
+    properties:
+      response:
+        type: string
+    type: object
   user.AutoSaveRequest:
     properties:
       autosave:
@@ -576,6 +594,36 @@ paths:
       summary: signup a new user
       tags:
       - Auth
+  /api/tmp/broadcast:
+    post:
+      consumes:
+      - application/json
+      description: Send a broadcast message to all users of a specific provider
+      parameters:
+      - description: Broadcast message details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/tmp.broadcastRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tmp.broadcastResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/tmp.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/tmp.ErrorResponse'
+      summary: Broadcast message to users
+      tags:
+      - tmp
   /api/user/autosave:
     post:
       consumes:
