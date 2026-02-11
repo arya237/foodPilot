@@ -38,6 +38,7 @@ func (i *identities) Save(new *models.Identities) (*models.Identities, error) {
     }
 	return  new, nil
 }
+
 func (i *identities) GetByProvide(provide models.IdProvider, identifier string) (*models.Identities, error) {
 	query := `
 	SELECT id, user_id, provider, identifier
@@ -59,5 +60,10 @@ func (i *identities) GetByProvide(provide models.IdProvider, identifier string) 
 		return nil, err
 	}
 	return &identity, nil
+}
+
+func (i *identities) ListByProvider(provider models.IdProvider, page, pageSize int) ([]*models.Identities, error) {
+	//TODO
+	return nil, nil
 }
 
