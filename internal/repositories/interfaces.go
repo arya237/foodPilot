@@ -44,4 +44,5 @@ type Identities interface {
 var (
 	ErrorDuplicate = errors.New("duplicate")
 	ErrorNotFound  = errors.New("there is no entity in database")
+	ErrorBadArgument = errors.New("bad argument")
 )
