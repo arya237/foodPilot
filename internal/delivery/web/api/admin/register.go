@@ -5,6 +5,7 @@ import (
 
 	"github.com/arya237/foodPilot/internal/delivery/web/middelware"
 	"github.com/arya237/foodPilot/internal/services"
+	"github.com/arya237/foodPilot/internal/services/admin"
 	"github.com/arya237/foodPilot/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
@@ -13,14 +14,16 @@ import (
 
 type AdminHandler struct {
 	AdminService   services.AdminService
+	notifier       admin.Notifier
 	ReserveService services.Reserve
 	Logger         logger.Logger
 }
 
-func New(adminSerivce services.AdminService, reserveService services.Reserve) *AdminHandler {
+func New(adminSerivce services.AdminService, reserveService services.Reserve, notifier admin.Notifier) *AdminHandler {
 	return &AdminHandler{
 		AdminService:   adminSerivce,
 		ReserveService: reserveService,
+		notifier:       notifier,
 		Logger:         logger.New("Admin panel logger"),
 	}
 }
@@ -46,4 +49,5 @@ func RegisterRoutes(group *gin.RouterGroup, adminHandler AdminHandler) {
 	group.DELETE("/food/:foodID", adminHandler.DeleteFood)
 
 	group.POST("/reserve", adminHandler.ReserveFood)
+	group.POST("/broadcast", adminHandler.broadcast)
 }
