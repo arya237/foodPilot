@@ -64,6 +64,46 @@ func (i *identities) GetByProvide(provide models.IdProvider, identifier string) 
 
 func (i *identities) ListByProvider(provider models.IdProvider, page, pageSize int) ([]*models.Identities, error) {
 	//TODO
-	return nil, nil
+	if !provider.IsValid() {
+		return nil, repositories.ErrorBadArgument
+	}
+	if page <= 0 || pageSize <= 0 {
+		return nil, repositories.ErrorBadArgument
+	}
+
+	var identities []*models.Identities
+	offset := (page - 1) * pageSize
+	
+	query := `
+	SELECT id, user_id, provider, identifier
+	FROM identities
+	WHERE provider = $1
+	ORDER BY id
+	LIMIT $2 OFFSET $3`
+
+	rows, err := i.db.Query(query, provider, pageSize, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var identity models.Identities
+		err := rows.Scan(
+			&identity.ID,
+			&identity.UserID,
+			&identity.Provider,
+			&identity.Identifier,
+		)
+		if err != nil {
+			return nil, err
+		}
+		identities = append(identities, &identity)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
+	return identities, nil
 }
 
