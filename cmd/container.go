@@ -20,6 +20,10 @@ func Run() error {
 		return err
 	}
 
+	connectionTries := 3
+	teleBot := CreateBot(connectionTries, conf.TelegramBot)
+	baleBot := CreateBot(connectionTries, conf.BaleBot)
+
 	db := db_postgres.NewDB(conf.PostGresConfig)
 	if db == nil {
 		log.Fatal("db is nil ...")
@@ -28,11 +32,9 @@ func Run() error {
 	samd := samad.NewSamad(conf.SamadConfig)
 	repo := NewRepo(db)
 
-	services := NewService(repo, samd)
-
-	connectionTries := 5
-	teleBot := CreateBot(connectionTries, conf.TelegramBot)
-	baleBot := CreateBot(connectionTries, conf.BaleBot)
+	
+	getways := NewGetway(teleBot, baleBot)
+	services := NewService(repo, samd, getways)
 
 	return delivery.Start(&delivery.NeededServises{
 		User:   services.User,
