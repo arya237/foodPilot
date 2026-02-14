@@ -24,6 +24,6 @@ func New(cfg *Config) (bot *tele.Bot, err error) {
 		return nil, err
 	}
 
-	log.Printf("Authorized bot bot")
+	log.Printf("Authorized bot %s", bot.Me.Username)
 	return bot, err
 }

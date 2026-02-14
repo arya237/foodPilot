@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/arya237/foodPilot/internal/getways"
 	gomail "gopkg.in/mail.v2"
 )
 
@@ -12,7 +13,7 @@ type emailMessenger struct {
 	Key  string
 }
 
-func New(cfg Config) Sender {
+func New(cfg Config) getways.Sender {
 	if cfg.Key == "" || cfg.From == "" {
 		log.Fatal("key or from is empty")
 	}
