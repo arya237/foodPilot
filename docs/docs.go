@@ -19,6 +19,57 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/broadcast": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Send a broadcast message to all users of a specific provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Broadcast message to users",
+                "parameters": [
+                    {
+                        "description": "Broadcast message details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.broadcastRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.broadcastResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/food": {
             "get": {
                 "security": [
@@ -437,6 +488,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tmp/broadcast": {
+            "post": {
+                "description": "Send a broadcast message to all users of a specific provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tmp"
+                ],
+                "summary": "Broadcast message to users",
+                "parameters": [
+                    {
+                        "description": "Broadcast message details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tmp.broadcastRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.broadcastResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/tmp.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/autosave": {
             "post": {
                 "security": [
@@ -707,6 +804,25 @@ const docTemplate = `{
                 }
             }
         },
+        "admin.broadcastRequest": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string"
+                },
+                "provider": {
+                    "$ref": "#/definitions/models.IdProvider"
+                }
+            }
+        },
+        "admin.broadcastResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -783,20 +899,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.IdProvider": {
+            "type": "string",
+            "enum": [
+                "telegram",
+                "bale"
+            ],
+            "x-enum-varnames": [
+                "TELEGRAM",
+                "BALE"
+            ]
+        },
         "models.User": {
             "type": "object",
             "properties": {
-                "auto_save": {
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "role": {
                     "$ref": "#/definitions/models.UserRole"
                 },
-                "token": {
-                    "type": "string"
+                "samad_connection": {
+                    "type": "boolean"
                 },
                 "username": {
                     "type": "string"
@@ -841,13 +965,13 @@ const docTemplate = `{
                 7
             ],
             "x-enum-varnames": [
+                "Saturday",
                 "Sunday",
                 "Monday",
                 "Tuesday",
                 "Wednesday",
                 "Thursday",
-                "Friday",
-                "Saturday"
+                "Friday"
             ]
         },
         "services.DayResult": {
@@ -894,6 +1018,34 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "tmp.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message"
+                }
+            }
+        },
+        "tmp.broadcastRequest": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string"
+                },
+                "provider": {
+                    "$ref": "#/definitions/models.IdProvider"
+                }
+            }
+        },
+        "tmp.broadcastResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
                     "type": "string"
                 }
             }

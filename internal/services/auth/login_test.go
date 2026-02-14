@@ -121,3 +121,7 @@ func (m *mockUser) Delete(id int) error {
 func (m *mockUser) Update(new *models.User) error {
 	return nil
 }
+func (i *mockIdentities) ListByProvider(provider models.IdProvider, page, pageSize int) ([]*models.Identities, error) {
+	//TODO
+	return nil, nil
+}

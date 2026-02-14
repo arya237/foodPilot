@@ -5,9 +5,9 @@ import (
 
 	_ "github.com/arya237/foodPilot/docs"
 	"github.com/arya237/foodPilot/internal/config"
-	db_postgres "github.com/arya237/foodPilot/internal/db/postgres"
+	db_postgres "github.com/arya237/foodPilot/internal/infrastructure/postgres"
 	"github.com/arya237/foodPilot/internal/delivery"
-	"github.com/arya237/foodPilot/internal/getways/bot"
+	"github.com/arya237/foodPilot/internal/infrastructure/bot"
 	tele "gopkg.in/telebot.v3"
 
 	"github.com/arya237/foodPilot/internal/getways/reservations/samad"
@@ -20,6 +20,10 @@ func Run() error {
 		return err
 	}
 
+	connectionTries := 3
+	teleBot := CreateBot(connectionTries, conf.TelegramBot)
+	baleBot := CreateBot(connectionTries, conf.BaleBot)
+
 	db := db_postgres.NewDB(conf.PostGresConfig)
 	if db == nil {
 		log.Fatal("db is nil ...")
@@ -28,11 +32,9 @@ func Run() error {
 	samd := samad.NewSamad(conf.SamadConfig)
 	repo := NewRepo(db)
 
-	services := NewService(repo, samd)
-
-	connectionTries := 5
-	teleBot := CreateBot(connectionTries, conf.TelegramBot)
-	baleBot := CreateBot(connectionTries, conf.BaleBot)
+	
+	getways := NewGetway(teleBot, baleBot)
+	services := NewService(repo, samd, getways)
 
 	return delivery.Start(&delivery.NeededServises{
 		User:   services.User,
@@ -40,6 +42,7 @@ func Run() error {
 		Resrve: services.Reserve,
 		Auth:   services.Auth,
 		Restaurant: services.Restaurant,
+		Notifier: services.Notifier,
 	}, teleBot, baleBot)
 }
 

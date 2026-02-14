@@ -3,7 +3,7 @@ package postgres
 import ( 
 	"testing"
 
-	"github.com/arya237/foodPilot/internal/db/postgres"
+	"github.com/arya237/foodPilot/internal/infrastructure/postgres"
 	"github.com/stretchr/testify/assert"
 )
 

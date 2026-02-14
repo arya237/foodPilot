@@ -38,9 +38,11 @@ type RestaurantCredentials interface {
 type Identities interface {
 	Save(new *models.Identities)(*models.Identities, error)
 	GetByProvide(provide models.IdProvider, identifier string) (*models.Identities, error)
+	ListByProvider(provider models.IdProvider, page, pageSize int) ([]*models.Identities, error)
 }
 // --------------- Errors -------------------------------
 var (
 	ErrorDuplicate = errors.New("duplicate")
 	ErrorNotFound  = errors.New("there is no entity in database")
+	ErrorBadArgument = errors.New("bad argument")
 )
