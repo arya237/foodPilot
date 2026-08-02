@@ -2,8 +2,6 @@
 
 **FoodPilot** is an automation tool that helps students of **Bu-Ali Sina University** automatically reserve meals without the hassle of manual booking. Built with **Go 1.24**, it’s lightweight, fast, and easy to run both locally and in containers. 
 
-
-*[Try food pilot Now](foodpilot.ir)*
 ---
 
 ## Features  
